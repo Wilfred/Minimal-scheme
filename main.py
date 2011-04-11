@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
-# Python 3 assumed
+import sys
+import os
+
+assert sys.version.startswith('3.'), "Python 3 required"
 
 from lexer import lexer
 from parser import parser
