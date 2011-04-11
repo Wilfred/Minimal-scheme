@@ -158,14 +158,15 @@ def eval_symbol(symbol_string):
     elif symbol_string == 'if':
 
         def if_function(arguments):
-            if len(arguments) != 3:
-                raise SchemeTypeError("Need to pass exactly three arguments to `if`.")
+            if len(arguments) not in [2,3]:
+                raise SchemeTypeError("Need to pass either two or three arguments to `if`.")
 
             condition = eval_s_expression(arguments[0])
 
             # everything except an explicit false boolean is true
             if condition == False:
-                return eval_s_expression(arguments[2])
+                if len(arguments) == 3:
+                    return eval_s_expression(arguments[2])
             else:
                 return eval_s_expression(arguments[1])
 

@@ -18,5 +18,16 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 12)
 
+    def test_if_two_arguments(self):
+        program = "(if #t 1)"
+
+        self.assertEqual(eval_program(program), 1)
+
+    def test_if_three_arguments(self):
+        program = "(if #t 2 3)"
+
+        self.assertEqual(eval_program(program), 2)
+
+
 if __name__ == '__main__':
     unittest.main()
