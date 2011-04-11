@@ -1,0 +1,5 @@
+Minimal scheme: a toy scheme interpreter written in Python
+
+Targetting R5RS (HTML copy of spec:
+http://people.csail.mit.edu/jaffer/r5rs_toc.html), or at least an
+interesting subset of it.
