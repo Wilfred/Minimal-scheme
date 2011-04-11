@@ -9,21 +9,32 @@ from lexer import lexer
 from parser import parser
 from evaluator import eval_program, InterpreterException
 
-while True:
-    try:
-        program_text = input('scheme> ')
-        parse_tree = parser.parse(program_text)
+if __name__ == '__main__':
+    if len(sys.argv) > 1:
+        # program file passed in
+        path = os.path.abspath(sys.argv[1])
+        program = open(path, 'r').read()
 
-        # print(parse_tree)
+        try:
+            eval_program(program)
+        except InterpreterException as e:
+            print("Error: %s" % e.message)
 
-        result = eval_program(parse_tree)
+    else:
+        # interactive mode
+        while True:
+            try:
+                program_text = input('scheme> ')
+                parse_tree = parser.parse(program_text)
 
-        if not result is None:
-            print(result)
-        
-    except EOFError:
-        break
-    except InterpreterException as e:
-        print("Error: %s" % e.message)
-        continue
+                # print(parse_tree)
 
+                result = eval_program(parse_tree)
+
+                if not result is None:
+                    print(result)
+
+            except EOFError:
+                break
+            except InterpreterException as e:
+                print("Error: %s" % e.message)
