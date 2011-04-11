@@ -228,6 +228,16 @@ def eval_symbol(symbol_string):
 
         return make_lambda_function
 
+    elif symbol_string == 'quote':
+
+        def return_argument_unevaluated(arguments):
+            if len(arguments) != 1:
+                raise SchemeTypeError("Quote takes exactly one argument, received %d" % len(arguments))
+
+            return arguments[0]
+
+        return return_argument_unevaluated
+
     elif symbol_string in variables:
 
         return variables[symbol_string]
