@@ -8,6 +8,9 @@ class InterpreterException(Exception):
 class UndefinedVariable(InterpreterException):
     pass
 
+class RedefinedVariable(InterpreterException):
+    pass
+
 class SchemeTypeError(InterpreterException):
     # 'TypeError' is a built-in Python exception
     pass
@@ -137,7 +140,7 @@ def eval_symbol(symbol_string):
     
     elif symbol_string == 'define':
 
-        def save_variable(arguments):
+        def define_variable(arguments):
             if len(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `define`.")
 
@@ -151,9 +154,35 @@ def eval_symbol(symbol_string):
             if atom_type != 'SYMBOL':
                 raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
 
+            if atom_string in variables:
+                raise RedefinedVariable("Cannot define %s, as it has already been defined." % atom_string)
+
             variables[atom_string] = eval_s_expression(arguments[1])
 
-        return save_variable
+        return define_variable
+
+    elif symbol_string == 'set!':
+
+        def set_variable(arguments):
+            if len(arguments) != 2:
+                raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
+
+            expression_type, expression = arguments[0]
+
+            if expression_type != 'ATOM':
+                raise SchemeTypeError("Can't assign to %s, must an atom." % expression_type)
+
+            atom_type, atom_string = expression
+
+            if atom_type != 'SYMBOL':
+                raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
+
+            if atom_string not in variables:
+                raise UndefinedVariable("Can't assign to undefined variable %s." % atom_string)
+
+            variables[atom_string] = eval_s_expression(arguments[1])
+
+        return set_variable
 
     elif symbol_string == 'if':
 
@@ -245,7 +274,7 @@ def eval_symbol(symbol_string):
 
     else:
 
-        raise UndefinedVariable('%s has not been defined.' % symbol_string)
+        raise UndefinedVariable('%s has not been defined (environment: %s).' % (symbol_string, variables))
 
 def eval_boolean(boolean_string):
     if boolean_string == '#t':

@@ -2,12 +2,15 @@
 
 import sys
 import unittest
-from evaluator import eval_program
+from evaluator import eval_program, variables
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
 
 class InterpreterTest(unittest.TestCase):
+    def tearDown(self):
+        variables.clear()
+
     def test_variable_evaluation(self):
         program = "(define x 28) x"
 
@@ -25,6 +28,11 @@ class InterpreterTest(unittest.TestCase):
 
     def test_if_three_arguments(self):
         program = "(if #t 2 3)"
+
+        self.assertEqual(eval_program(program), 2)
+
+    def test_variable_assignment(self):
+        program = "(define x 1) (set! x 2) x"
 
         self.assertEqual(eval_program(program), 2)
 
