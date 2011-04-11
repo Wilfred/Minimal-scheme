@@ -120,17 +120,18 @@ def eval_symbol(symbol_string):
 
         return subtract_function
 
-    elif symbol_string == 'equal?':
+    elif symbol_string == '=':
 
         def equality_function(arguments):
-            # currently only defined for numbers, doesn't compare lists
-            if len(arguments) != 2:
-                raise SchemeTypeError("Equality test takes exactly two arguments.")
+            if len(arguments) < 2:
+                raise SchemeTypeError("Equality test requires two arguments or more.")
 
-            if eval_s_expression(arguments[0]) == eval_s_expression(arguments[1]):
-                return True
-            else:
-                return False
+            first_operand = eval_s_expression(arguments[0])
+
+            for argument in arguments[1:]:
+                if eval_s_expression(argument) != first_operand:
+                    return False
+            return True
 
         return equality_function
     
