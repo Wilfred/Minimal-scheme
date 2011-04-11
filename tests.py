@@ -13,7 +13,10 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 28)
 
+    def test_procedure_call(self):
+        program = "((if #f + *) 3 4)"
 
+        self.assertEqual(eval_program(program), 12)
 
 if __name__ == '__main__':
     unittest.main()
