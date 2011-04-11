@@ -1,3 +1,6 @@
+from parser import parser
+
+
 class InterpreterException(Exception):
     def __init__(self, message):
         self.message = message
@@ -17,7 +20,9 @@ def eval_program(program):
     if not program:
         return
 
-    head, tail = program
+    parse_tree = parser.parse(program)
+
+    head, tail = parse_tree
     result = eval_s_expression(head)
 
     while tail:

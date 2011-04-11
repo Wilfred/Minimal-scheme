@@ -6,7 +6,6 @@ import os
 assert sys.version.startswith('3.'), "Python 3 required"
 
 from lexer import lexer
-from parser import parser
 from evaluator import eval_program, InterpreterException
 
 if __name__ == '__main__':
@@ -24,12 +23,8 @@ if __name__ == '__main__':
         # interactive mode
         while True:
             try:
-                program_text = input('scheme> ')
-                parse_tree = parser.parse(program_text)
-
-                # print(parse_tree)
-
-                result = eval_program(parse_tree)
+                program = input('scheme> ')
+                result = eval_program(program)
 
                 if not result is None:
                     print(result)
