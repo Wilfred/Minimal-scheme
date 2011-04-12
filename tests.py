@@ -36,6 +36,10 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 2)
 
+    def test_lambda(self):
+        program = "((lambda (x) (+ x x)) 4)"
+
+        self.assertEqual(eval_program(program), 8)
 
 if __name__ == '__main__':
     unittest.main()
