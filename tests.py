@@ -8,11 +8,8 @@ assert sys.version.startswith('3.'), "Python 3 required"
 
 
 class InterpreterTest(unittest.TestCase):
-    def tearDown(self):
-        variables.clear()
-
     def test_variable_evaluation(self):
-        program = "(define x 28) x"
+        program = "(define y 28) y"
 
         self.assertEqual(eval_program(program), 28)
 
