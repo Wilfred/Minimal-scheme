@@ -1,20 +1,7 @@
 from parser import parser, Atom
-
-
-class InterpreterException(Exception):
-    def __init__(self, message):
-        self.message = message
-
-class UndefinedVariable(InterpreterException):
-    pass
-
-class RedefinedVariable(InterpreterException):
-    pass
-
-class SchemeTypeError(InterpreterException):
-    # 'TypeError' is a built-in Python exception
-    pass
-
+from errors import InterpreterException, UndefinedVariable, RedefinedVariable, SchemeTypeError
+from utils import flatten_linked_list, map_linked_list, len_linked_list
+from built_ins import built_ins
 
 variables = {}
 
@@ -68,78 +55,7 @@ def eval_number(number_string):
     return int(number_string)
 
 def eval_symbol(symbol_string):
-    if symbol_string == '+':
-
-        def add_function(arguments):
-            total = 0
-
-            arguments = map_linked_list(eval_s_expression, arguments)
-
-            for argument in flatten_linked_list(arguments):
-                if type(argument) == int:
-                    total += argument
-                else:
-                    raise SchemeTypeError("Can't add something that isn't an integer.")
-            return total
-
-        return add_function
-
-    elif symbol_string == '*':
-
-        def multiply_function(arguments):
-            product = 1
-
-            arguments = map_linked_list(eval_s_expression, arguments)
-            
-            for argument in flatten_linked_list(arguments):
-                if type(argument) == int:
-                    product *= argument
-                else:
-                    raise SchemeTypeError("Can't multiply something that isn't an integer.")
-            return product
-
-        return multiply_function
-
-    elif symbol_string == '-':
-
-        def subtract_function(arguments):
-            if not arguments:
-                raise SchemeTypeError("Subtract takes at least one argument")
-
-            arguments = map_linked_list(eval_s_expression, arguments)
-            head, tail = arguments
-
-            if not tail:
-                # only one argument, we just negate it
-                return -1 * head
-            else:
-                total = head
-
-                for argument in flatten_linked_list(tail):
-                    total -= argument
-
-                return total
-
-        return subtract_function
-
-    elif symbol_string == '=':
-
-        def equality_function(arguments):
-            if len_linked_list(arguments) < 2:
-                raise SchemeTypeError("Equality test requires two arguments or more.")
-
-            arguments = map_linked_list(eval_s_expression, arguments)
-
-            head, tail = arguments
-
-            for argument in flatten_linked_list(tail):
-                if argument != head:
-                    return False
-            return True
-
-        return equality_function
-    
-    elif symbol_string == 'define':
+    if symbol_string == 'define':
 
         def define_variable(arguments):
             if len_linked_list(arguments) != 2:
@@ -290,6 +206,19 @@ def eval_symbol(symbol_string):
 
         return variables[symbol_string]
 
+    elif symbol_string in built_ins:
+
+        def built_in_function(arguments):
+            # all built in functions evaluate all their arguments
+            # we do it here to avoid circular dependencies that would require circular imports
+            arguments = map_linked_list(eval_s_expression, arguments)
+
+            function = built_ins[symbol_string]
+
+            return function(arguments)
+
+        return built_in_function
+
     else:
 
         raise UndefinedVariable('%s has not been defined (environment: %s).' % (symbol_string, variables))
@@ -299,24 +228,3 @@ def eval_boolean(boolean_string):
         return True
     elif boolean_string == '#f':
         return False
-
-def flatten_linked_list(linked_list):
-    if not linked_list:
-        return []
-
-    head, tail = linked_list
-    return [head] + flatten_linked_list(tail)
-
-def map_linked_list(function, linked_list):
-    if not linked_list:
-        return None
-
-    head, tail = linked_list
-    return (function(head), map_linked_list(function, tail))
-
-def len_linked_list(linked_list):
-    if not linked_list:
-        return 0
-
-    head, tail = linked_list
-    return 1 + len_linked_list(tail)
