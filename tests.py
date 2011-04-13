@@ -38,5 +38,19 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 8)
 
+    def test_less_than(self):
+        program = "(< 1 1)"
+        self.assertEqual(eval_program(program), False)
+
+        program = "(< 1 2 4)"
+        self.assertEqual(eval_program(program), True)
+
+    def test_greater_than(self):
+        program = "(> 1 1)"
+        self.assertEqual(eval_program(program), False)
+
+        program = "(> 11 10 0)"
+        self.assertEqual(eval_program(program), True)
+
 if __name__ == '__main__':
     unittest.main()

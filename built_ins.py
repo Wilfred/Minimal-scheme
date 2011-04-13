@@ -58,3 +58,31 @@ def equality_function(arguments):
     return True
 
 built_ins['='] = equality_function
+
+def less_than(arguments):
+    if len_linked_list(arguments) < 2:
+        raise SchemeTypeError("Less than test requires at least two arguments.")
+
+    flat_arguments = flatten_linked_list(arguments)
+
+    for i in range(len(flat_arguments) - 1):
+        if not flat_arguments[i] < flat_arguments[i+1]:
+            return False
+
+    return True
+
+built_ins['<'] = less_than
+
+def greater_than(arguments):
+    if len_linked_list(arguments) < 2:
+        raise SchemeTypeError("Greater than test requires at least two arguments.")
+
+    flat_arguments = flatten_linked_list(arguments)
+
+    for i in range(len(flat_arguments) - 1):
+        if not flat_arguments[i] > flat_arguments[i+1]:
+            return False
+
+    return True
+
+built_ins['>'] = greater_than
