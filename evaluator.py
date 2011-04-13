@@ -1,4 +1,4 @@
-from parser import parser
+from parser import parser, Atom
 
 
 class InterpreterException(Exception):
@@ -34,42 +34,35 @@ def eval_program(program):
 
     return result
 
+
 def eval_s_expression(s_expression):
-    expression_type, expression = s_expression
+    if isinstance(s_expression, tuple):
+        return eval_list(s_expression)
+    else:
+        return eval_atom(s_expression)
 
-    if expression_type == 'LIST':
-        return eval_list(expression)
-    elif expression_type == 'ATOM':
-        return eval_atom(expression)
 
-def eval_list(lst): # list is a reserved word
-    # since every list is a linked list, we flatten the tail:
-    # i.e. (+ 1 2) is stored as (+, (1, (2, None)))
-
-    head, tail = lst
-
-    arguments = []
-    while tail:
-        arguments.append(tail[0])
-        tail = tail[1]
+def eval_list(linked_list):
+    head, tail = linked_list
 
     # find the function we are calling
     function = eval_s_expression(head)
 
+    # atom evaluate to themselves:
+    if not tail:
+        return function
+
     # call it (we require the function to decide whether or not to
     # evalue the arguments)
-    return function(arguments)
-
+    return function(tail)
 
 def eval_atom(atom):
-    atom_type, atom_string = atom
-
-    if atom_type == 'NUMBER':
-        return eval_number(atom_string)
-    elif atom_type == 'SYMBOL':
-        return eval_symbol(atom_string)
-    elif atom_type == 'BOOLEAN':
-        return eval_boolean(atom_string)
+    if atom.type == 'NUMBER':
+        return eval_number(atom.value)
+    elif atom.type == 'SYMBOL':
+        return eval_symbol(atom.value)
+    elif atom.type == 'BOOLEAN':
+        return eval_boolean(atom.value)
 
 def eval_number(number_string):
     return int(number_string)
@@ -79,9 +72,10 @@ def eval_symbol(symbol_string):
 
         def add_function(arguments):
             total = 0
-            for argument in arguments:
-                argument = eval_s_expression(argument)
 
+            arguments = map_linked_list(eval_s_expression, arguments)
+
+            for argument in flatten_linked_list(arguments):
                 if type(argument) == int:
                     total += argument
                 else:
@@ -95,9 +89,9 @@ def eval_symbol(symbol_string):
         def multiply_function(arguments):
             product = 1
 
-            for argument in arguments:
-                argument = eval_s_expression(argument)
-
+            arguments = map_linked_list(eval_s_expression, arguments)
+            
+            for argument in flatten_linked_list(arguments):
                 if type(argument) == int:
                     product *= argument
                 else:
@@ -109,15 +103,20 @@ def eval_symbol(symbol_string):
     elif symbol_string == '-':
 
         def subtract_function(arguments):
-            if len(arguments) == 0:
+            if not arguments:
                 raise SchemeTypeError("Subtract takes at least one argument")
-            elif len(arguments) == 1:
-                return -1 * eval_s_expression(arguments[0])
-            else:
-                total = eval_s_expression(arguments[0])
 
-                for argument in arguments[1:]:
-                    total -= eval_s_expression(argument)
+            arguments = map_linked_list(eval_s_expression, arguments)
+            head, tail = arguments
+
+            if not tail:
+                # only one argument, we just negate it
+                return -1 * head
+            else:
+                total = head
+
+                for argument in flatten_linked_list(tail):
+                    total -= argument
 
                 return total
 
@@ -126,13 +125,15 @@ def eval_symbol(symbol_string):
     elif symbol_string == '=':
 
         def equality_function(arguments):
-            if len(arguments) < 2:
+            if len_linked_list(arguments) < 2:
                 raise SchemeTypeError("Equality test requires two arguments or more.")
 
-            first_operand = eval_s_expression(arguments[0])
+            arguments = map_linked_list(eval_s_expression, arguments)
 
-            for argument in arguments[1:]:
-                if eval_s_expression(argument) != first_operand:
+            head, tail = arguments
+
+            for argument in flatten_linked_list(tail):
+                if argument != head:
                     return False
             return True
 
@@ -141,74 +142,47 @@ def eval_symbol(symbol_string):
     elif symbol_string == 'define':
 
         def define_variable(arguments):
-            if len(arguments) != 2:
+            if len_linked_list(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `define`.")
 
-            expression_type, expression = arguments[0]
+            head, tail = arguments
 
-            if expression_type == 'ATOM':
+            if isinstance(head, Atom):
                 # variable assignment
-                atom_type, atom_string = expression
-
-                if atom_type != 'SYMBOL':
+                if head.type != 'SYMBOL':
                     raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
-                
-                # import pdb; pdb.set_trace()
-                if atom_string in variables:
-                    raise RedefinedVariable("Cannot define %s, as it has already been defined." % atom_string)
 
-                variables[atom_string] = eval_s_expression(arguments[1])
+                if head.value in variables:
+                    raise RedefinedVariable("Cannot define %s, as it has already been defined." % head.value)
 
-            elif expression_type == 'LIST':
+                variables[head.value] = eval_s_expression(tail)
+
+            else:
                 # function definition
-                function_name_atom, function_parameters = expression
-                
-                atom_type, atom = function_name_atom
+                function_name, function_parameters = head
 
-                if atom_type != "ATOM":
-                    raise SchemeTypeError("Function name must be an atom, not a %s" % atom_type)
+                if function_name.type != "SYMBOL":
+                    raise SchemeTypeError("Function names must be symbols, not a %s." % function_name.type)
 
-                symbol_type, function_name = atom
+                for parameter in flatten_linked_list(function_parameters):
+                    if parameter.type != "SYMBOL":
+                        raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
 
-                if symbol_type != "SYMBOL":
-                    raise SchemeTypeError("Function names must be symbols, not a %s." % symbol_type)
-
-                function_arguments = []
-                head, tail = function_parameters
-                while True:
-                    head_type, head_value = head
-
-                    if head_type != "ATOM":
-                        raise SchemeTypeError("Function arguments must be atoms, not a %s." % head_type)
-
-                    if head_value[0] != "SYMBOL":
-                        raise SchemeTypeError("Function arguments must be symbols, not a %s." % head_type)
-
-                    function_argument = head_value[1]
-                    if function_argument not in function_arguments:
-                        function_arguments.append(function_argument)
-                    else:
-                        raise SchemeTypeError("Repeated argument name to function.")
-
-                    if tail is None:
-                        break
-
-                    head, tail = head
-
-                function_body = arguments[1]
+                function_body = tail
 
                 def named_function(arguments):
-                    if len(arguments) != len(function_arguments):
+                    if len_linked_list(arguments) != len_linked_list(function_parameters):
                         raise SchemeTypeError("%s takes %d arguments, %d given." % \
-                                                  (function_name, len(function_arguments), len(arguments)))
+                                                  (function_name, len_linked_list(function_parameters), len_linked_list(arguments)))
 
                     # create function scope by saving old environment
                     global variables
                     global_variables = variables.copy()
 
                     # evaluate arguments
-                    for (variable_name, variable_expression) in zip(function_arguments, arguments):
-                        variables[variable_name] = eval_s_expression(variable_expression)
+                    for (parameter_name, parameter_expression) in zip(flatten_linked_list(function_parameters),
+                                                                      flatten_linked_list(arguments)):
+                        variables[parameter_expression] = eval_s_expression(parameter_expression)
 
                     # evaluate the function block
                     result = eval_s_expression(function_body)
@@ -221,103 +195,81 @@ def eval_symbol(symbol_string):
                 # assign this function to this name
                 variables[function_name] = named_function
 
-            else:
-                raise SchemeTypeError("Can't define a %s, must an atom or a list." % expression_type)
-
         return define_variable
 
     elif symbol_string == 'set!':
 
         def set_variable(arguments):
-            if len(arguments) != 2:
+            if len_linked_list(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
 
-            expression_type, expression = arguments[0]
+            variable_name, variable_expression = arguments
 
-            if expression_type != 'ATOM':
-                raise SchemeTypeError("Can't assign to %s, must an atom." % expression_type)
-
-            atom_type, atom_string = expression
-
-            if atom_type != 'SYMBOL':
+            if variable_name.type != 'SYMBOL':
                 raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
 
-            if atom_string not in variables:
+            if variable_name.value not in variables:
                 raise UndefinedVariable("Can't assign to undefined variable %s." % atom_string)
 
-            variables[atom_string] = eval_s_expression(arguments[1])
+            variables[variable_name.value] = eval_s_expression(variable_expression)
 
         return set_variable
 
     elif symbol_string == 'if':
 
         def if_function(arguments):
-            if len(arguments) not in [2,3]:
+            if len_linked_list(arguments) not in [2,3]:
                 raise SchemeTypeError("Need to pass either two or three arguments to `if`.")
 
-            condition = eval_s_expression(arguments[0])
+            condition, tail = arguments
+            condition = eval_s_expression(condition)
 
+            then_expression, else_expression = tail
+            
             # everything except an explicit false boolean is true
-            if condition == False:
-                if len(arguments) == 3:
-                    return eval_s_expression(arguments[2])
+            if condition != False:
+                return eval_s_expression(then_expression)
             else:
-                return eval_s_expression(arguments[1])
+                if else_expression:
+                    return eval_s_expression(else_expression)
 
         return if_function
 
     elif symbol_string == 'lambda':
 
         def make_lambda_function(arguments):
-            if len(arguments) != 2:
+            if len_linked_list(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `lambda`.")
 
-            expression_type, expression = arguments[0]
+            parameter_list, function_body = arguments
 
-            if expression_type != 'LIST':
+            if not isinstance(parameter_list, tuple):
                 raise SchemeTypeError("The first argument to `lambda` must be list of variables.")
 
-            head, tail = expression
-            variable_names = []
-            while True:
-                variable_expression_type, variable_expression = head
-
-                if variable_expression_type != 'ATOM':
-                    raise SchemeTypeError("Can only assign to atoms, not %s in lambda expressions." % variable_expression_type)
-
-                atom_type, atom_string = variable_expression
-
-                if atom_type != 'SYMBOL':
-                    raise SchemeTypeError("Can only assign to symbols, not %s." % atom_type)
-
-                # it checks out as a valid variable name, so save it
-                variable_names.append(atom_string)
-
-                if tail is None:
-                    break
-
-                head, tail = tail
+            for parameter in flatten_linked_list(parameter_list):
+                if parameter.type != "SYMBOL":
+                    raise SchemeTypeError("Paramaters of lambda functions must be symbols, not %s." % parameter.type)
 
             def lambda_function(_arguments):
-                if len(_arguments) != len(variable_names):
+                if len_linked_list(_arguments) != len_linked_list(parameter_list):
                     raise SchemeTypeError("Wrong number of arguments for this "
-                                          "lambda function, was expecting %d, received %d" % (len(variable_names), len(_arguments)))
+                                          "lambda function, was expecting %d, received %d" % (len_linked_list(parameter_list), len_linked_list(_arguments)))
 
                 # save the global scope variables elsewhere so we can restore them
                 global variables
                 global_variables = variables.copy()
 
-                for (variable_name, variable_expression) in zip(variable_names, _arguments):
-                    variables[variable_name] = eval_s_expression(variable_expression)
+                for (parameter_name, parameter_expression) in zip(flatten_linked_list(parameter_list),
+                                                                  flatten_linked_list(_arguments)):
+                    variables[parameter_name.value] = eval_s_expression(parameter_expression)
 
                 # now we have set up the correct scope, evaluate our function block
-                result = eval_s_expression(arguments[1]) 
+                result = eval_s_expression(function_body)
 
                 # now restore the original environment
                 variables = global_variables
 
                 return result
-
 
             return lambda_function
 
@@ -326,10 +278,11 @@ def eval_symbol(symbol_string):
     elif symbol_string == 'quote':
 
         def return_argument_unevaluated(arguments):
-            if len(arguments) != 1:
+            if len_linked_list(arguments) != 1:
                 raise SchemeTypeError("Quote takes exactly one argument, received %d" % len(arguments))
 
-            return arguments[0]
+            head, tail = arguments
+            return head
 
         return return_argument_unevaluated
 
@@ -346,3 +299,24 @@ def eval_boolean(boolean_string):
         return True
     elif boolean_string == '#f':
         return False
+
+def flatten_linked_list(linked_list):
+    if not linked_list:
+        return []
+
+    head, tail = linked_list
+    return [head] + flatten_linked_list(tail)
+
+def map_linked_list(function, linked_list):
+    if not linked_list:
+        return None
+
+    head, tail = linked_list
+    return (function(head), map_linked_list(function, tail))
+
+def len_linked_list(linked_list):
+    if not linked_list:
+        return 0
+
+    head, tail = linked_list
+    return 1 + len_linked_list(tail)
