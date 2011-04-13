@@ -146,18 +146,83 @@ def eval_symbol(symbol_string):
 
             expression_type, expression = arguments[0]
 
-            if expression_type != 'ATOM':
-                raise SchemeTypeError("Can't assign to %s, must an atom." % expression_type)
+            if expression_type == 'ATOM':
+                # variable assignment
+                atom_type, atom_string = expression
 
-            atom_type, atom_string = expression
+                if atom_type != 'SYMBOL':
+                    raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
+                
+                # import pdb; pdb.set_trace()
+                if atom_string in variables:
+                    raise RedefinedVariable("Cannot define %s, as it has already been defined." % atom_string)
 
-            if atom_type != 'SYMBOL':
-                raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
+                variables[atom_string] = eval_s_expression(arguments[1])
 
-            if atom_string in variables:
-                raise RedefinedVariable("Cannot define %s, as it has already been defined." % atom_string)
+            elif expression_type == 'LIST':
+                # function definition
+                function_name_atom, function_parameters = expression
+                
+                atom_type, atom = function_name_atom
 
-            variables[atom_string] = eval_s_expression(arguments[1])
+                if atom_type != "ATOM":
+                    raise SchemeTypeError("Function name must be an atom, not a %s" % atom_type)
+
+                symbol_type, function_name = atom
+
+                if symbol_type != "SYMBOL":
+                    raise SchemeTypeError("Function names must be symbols, not a %s." % symbol_type)
+
+                function_arguments = []
+                head, tail = function_parameters
+                while True:
+                    head_type, head_value = head
+
+                    if head_type != "ATOM":
+                        raise SchemeTypeError("Function arguments must be atoms, not a %s." % head_type)
+
+                    if head_value[0] != "SYMBOL":
+                        raise SchemeTypeError("Function arguments must be symbols, not a %s." % head_type)
+
+                    function_argument = head_value[1]
+                    if function_argument not in function_arguments:
+                        function_arguments.append(function_argument)
+                    else:
+                        raise SchemeTypeError("Repeated argument name to function.")
+
+                    if tail is None:
+                        break
+
+                    head, tail = head
+
+                function_body = arguments[1]
+
+                def named_function(arguments):
+                    if len(arguments) != len(function_arguments):
+                        raise SchemeTypeError("%s takes %d arguments, %d given." % \
+                                                  (function_name, len(function_arguments), len(arguments)))
+
+                    # create function scope by saving old environment
+                    global variables
+                    global_variables = variables.copy()
+
+                    # evaluate arguments
+                    for (variable_name, variable_expression) in zip(function_arguments, arguments):
+                        variables[variable_name] = eval_s_expression(variable_expression)
+
+                    # evaluate the function block
+                    result = eval_s_expression(function_body)
+
+                    # restore old environment
+                    variables = global_variables
+
+                    return result
+
+                # assign this function to this name
+                variables[function_name] = named_function
+
+            else:
+                raise SchemeTypeError("Can't define a %s, must an atom or a list." % expression_type)
 
         return define_variable
 
