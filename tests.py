@@ -33,6 +33,11 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 2)
 
+    def test_function_definition(self):
+        program = "(define (z) 1) (z)"
+
+        self.assertEqual(eval_program(program), 1)
+
     def test_lambda(self):
         program = "((lambda (x) (+ x x)) 4)"
 
