@@ -66,7 +66,7 @@ def eval_symbol(symbol_string):
             if isinstance(head, Atom):
                 # variable assignment
                 if head.type != 'SYMBOL':
-                    raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
+                    raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % head.type)
 
                 if head.value in variables:
                     raise RedefinedVariable("Cannot define %s, as it has already been defined." % head.value)
@@ -98,7 +98,7 @@ def eval_symbol(symbol_string):
                     # evaluate arguments
                     for (parameter_name, parameter_expression) in zip(flatten_linked_list(function_parameters),
                                                                       flatten_linked_list(arguments)):
-                        variables[parameter_expression] = eval_s_expression(parameter_expression)
+                        variables[parameter_name.value] = eval_s_expression(parameter_expression)
 
                     # evaluate the function block
                     result = eval_s_expression(function_body)
@@ -109,7 +109,7 @@ def eval_symbol(symbol_string):
                     return result
 
                 # assign this function to this name
-                variables[function_name] = named_function
+                variables[function_name.value] = named_function
 
         return define_variable
 
@@ -122,10 +122,10 @@ def eval_symbol(symbol_string):
             variable_name, variable_expression = arguments
 
             if variable_name.type != 'SYMBOL':
-                raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % expression_type)
+                raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.type)
 
             if variable_name.value not in variables:
-                raise UndefinedVariable("Can't assign to undefined variable %s." % atom_string)
+                raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.type)
 
             variables[variable_name.value] = eval_s_expression(variable_expression)
 
