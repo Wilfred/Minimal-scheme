@@ -35,10 +35,6 @@ def eval_list(linked_list):
     # find the function we are calling
     function = eval_s_expression(head)
 
-    # atom evaluate to themselves:
-    if not tail:
-        return function
-
     # call it (we require the function to decide whether or not to
     # evalue the arguments)
     return function(tail)
@@ -71,7 +67,9 @@ def eval_symbol(symbol_string):
                 if head.value in variables:
                     raise RedefinedVariable("Cannot define %s, as it has already been defined." % head.value)
 
-                variables[head.value] = eval_s_expression(tail)
+                variable_value_expression, empty_tail = tail
+
+                variables[head.value] = eval_s_expression(variable_value_expression)
 
             else:
                 # function definition
@@ -84,7 +82,11 @@ def eval_symbol(symbol_string):
                     if parameter.type != "SYMBOL":
                         raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
 
-                function_body = tail
+                function_body, empty_tail = tail
+
+                # check if this function can take a variable number of arguments
+                for parameter in flatten_linked_list(function_parameters):
+                    pass
 
                 def named_function(arguments):
                     if len_linked_list(arguments) != len_linked_list(function_parameters):
@@ -119,7 +121,8 @@ def eval_symbol(symbol_string):
             if len_linked_list(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
 
-            variable_name, variable_expression = arguments
+            variable_name, variable_expression_list = arguments
+            variable_value_expression, empty_tail = variable_expression_list
 
             if variable_name.type != 'SYMBOL':
                 raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.type)
@@ -127,7 +130,7 @@ def eval_symbol(symbol_string):
             if variable_name.value not in variables:
                 raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.type)
 
-            variables[variable_name.value] = eval_s_expression(variable_expression)
+            variables[variable_name.value] = eval_s_expression(variable_value_expression)
 
         return set_variable
 
@@ -140,13 +143,14 @@ def eval_symbol(symbol_string):
             condition, tail = arguments
             condition = eval_s_expression(condition)
 
-            then_expression, else_expression = tail
+            then_expression, else_expression_list = tail
             
             # everything except an explicit false boolean is true
             if condition != False:
                 return eval_s_expression(then_expression)
             else:
-                if else_expression:
+                if else_expression_list:
+                    else_expression, empty_tail = else_expression_list
                     return eval_s_expression(else_expression)
 
         return if_function
@@ -157,7 +161,8 @@ def eval_symbol(symbol_string):
             if len_linked_list(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `lambda`.")
 
-            parameter_list, function_body = arguments
+            parameter_list, function_body_list = arguments
+            function_body, empty_tail = function_body_list
 
             if not isinstance(parameter_list, tuple):
                 raise SchemeTypeError("The first argument to `lambda` must be list of variables.")
