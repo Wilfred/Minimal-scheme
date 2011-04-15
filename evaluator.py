@@ -41,15 +41,20 @@ def eval_list(linked_list):
     return function(tail)
 
 def eval_atom(atom):
-    if atom.type == 'NUMBER':
-        return eval_number(atom.value)
+    if atom.type == 'INTEGER':
+        return eval_integer(atom.value)
+    elif atom.type == 'FLOATING_POINT':
+        return eval_floating_point(atom.value)
     elif atom.type == 'SYMBOL':
         return eval_symbol(atom.value)
     elif atom.type == 'BOOLEAN':
         return eval_boolean(atom.value)
 
-def eval_number(number_string):
+def eval_integer(number_string):
     return int(number_string)
+
+def eval_floating_point(number_string):
+    return float(number_string)
 
 def eval_symbol(symbol_string):
     if symbol_string == 'define':

@@ -65,8 +65,12 @@ def p_atom_symbol(p):
     p[0] = Atom('SYMBOL', p[1])
 
 def p_atom_number(p):
-    "atom : NUMBER"
-    p[0] = Atom('NUMBER', p[1])
+    "atom : INTEGER"
+    p[0] = Atom('INTEGER', p[1])
+
+def p_atom_floating_point(p):
+    "atom : FLOATING_POINT"
+    p[0] = Atom('FLOATING_POINT', p[1])
 
 def p_atom_boolean(p):
     "atom : BOOLEAN"

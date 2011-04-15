@@ -7,6 +7,22 @@ from evaluator import eval_program, variables
 assert sys.version.startswith('3.'), "Python 3 required"
 
 
+class LexerText(unittest.TestCase):
+    def test_integer(self):
+        program = "3"
+        result = eval_program(program)
+
+        self.assertEqual(result, 3)
+        self.assertEqual(type(result), int)
+
+    def test_floating_point(self):
+        program = "2.0"
+        result = eval_program(program)
+
+        self.assertEqual(result, 2.0)
+        self.assertEqual(type(result), float)
+
+
 class InterpreterTest(unittest.TestCase):
     def test_variable_evaluation(self):
         program = "(define y 28) y"
