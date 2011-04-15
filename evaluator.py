@@ -218,7 +218,7 @@ def eval_symbol(symbol_string):
 
             for parameter in flatten_linked_list(parameter_list):
                 if parameter.type != "SYMBOL":
-                    raise SchemeTypeError("Paramaters of lambda functions must be symbols, not %s." % parameter.type)
+                    raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
 
             def lambda_function(_arguments):
                 if len_linked_list(_arguments) != len_linked_list(parameter_list):
