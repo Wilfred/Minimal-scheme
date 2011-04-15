@@ -92,3 +92,22 @@ def greater_than(arguments):
             return False
 
     return True
+
+@name_function('/')
+def divide(arguments):
+    # TODO: support exact fractions
+    # TODO: return integer if all arguments were integers and result is whole number
+    if not arguments:
+        raise SchemeTypeError("Division atkes at least on argument.")
+
+    head, tail = arguments
+
+    if tail is None:
+        return 1 / head
+    else:
+        result = head
+
+        for argument in flatten_linked_list(tail):
+            result /= argument
+
+        return result

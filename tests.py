@@ -68,6 +68,13 @@ class MathsTest(unittest.TestCase):
     def setUp(self):
         load_standard_library()
 
+    def test_division(self):
+        program = "(/ 8)"
+        self.assertEqual(eval_program(program), 0.125)
+
+        program = "(/ 12 3 2)"
+        self.assertEqual(eval_program(program), 2)
+
     def test_less_than(self):
         program = "(< 1 1)"
         self.assertEqual(eval_program(program), False)
