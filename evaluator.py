@@ -6,6 +6,12 @@ from built_ins import built_ins
 
 variables = {}
 
+def load_standard_library():
+    with open('library.scm') as library_file:
+        library_code = library_file.read()
+        eval_program(library_code)
+
+
 def eval_program(program):
     # a program is a linked list of s-expressions
     if not program:

@@ -2,7 +2,7 @@
 
 import sys
 import unittest
-from evaluator import eval_program, variables
+from evaluator import eval_program, variables, load_standard_library
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
@@ -65,6 +65,9 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(eval_program(program), 8)
 
 class MathsTest(unittest.TestCase):
+    def setUp(self):
+        load_standard_library()
+
     def test_less_than(self):
         program = "(< 1 1)"
         self.assertEqual(eval_program(program), False)
@@ -77,6 +80,11 @@ class MathsTest(unittest.TestCase):
         self.assertEqual(eval_program(program), False)
 
         program = "(> 11 10 0)"
+        self.assertEqual(eval_program(program), True)
+
+    def test_zero_predicate(self):
+        program = "(zero? 0)"
+
         self.assertEqual(eval_program(program), True)
 
 

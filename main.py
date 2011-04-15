@@ -6,9 +6,11 @@ import os
 assert sys.version.startswith('3.'), "Python 3 required"
 
 from lexer import lexer
-from evaluator import eval_program, InterpreterException
+from evaluator import eval_program, InterpreterException, load_standard_library
 
 if __name__ == '__main__':
+    load_standard_library()
+
     if len(sys.argv) > 1:
         # program file passed in
         path = os.path.abspath(sys.argv[1])
