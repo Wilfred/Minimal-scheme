@@ -11,3 +11,7 @@ class RedefinedVariable(InterpreterException):
 class SchemeTypeError(InterpreterException):
     # 'TypeError' is a built-in Python exception
     pass
+
+class SchemeSyntaxError(InterpreterException):
+    # SyntaxError is also a built-in Python exception
+    pass

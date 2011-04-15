@@ -1,5 +1,6 @@
 from parser import parser, Atom
-from errors import InterpreterException, UndefinedVariable, RedefinedVariable, SchemeTypeError
+from errors import (InterpreterException, UndefinedVariable, RedefinedVariable,
+                    SchemeTypeError, SchemeSyntaxError)
 from utils import flatten_linked_list, map_linked_list, len_linked_list
 from built_ins import built_ins
 
@@ -85,8 +86,53 @@ def eval_symbol(symbol_string):
                 function_body, empty_tail = tail
 
                 # check if this function can take a variable number of arguments
+                is_variadic = False
                 for parameter in flatten_linked_list(function_parameters):
-                    pass
+                    if parameter.value == '.':
+                        if not is_variadic:
+                            is_variadic = True
+                        else:
+                            raise SchemeSyntaxError("May not have . more than once in a parameter list.")
+
+                def named_variadic_function(arguments):
+                    explicit_parameters = [] # parameters before the .
+
+                    # collect up explicit parameter names and final improper list parameter
+                    head, tail = function_parameters
+                    while True:
+                        if head.value == '.':
+                            improper_list_parameter, empty_tail = tail
+
+                            if not empty_tail is None:
+                                raise SchemeSyntaxError("You can only have one improper list"
+                                                        " (you have %s parameters after the '.')." % len_linked_list(tail))
+
+                            break
+                        else:
+                            explicit_parameters.append(head)
+                            head, tail = tail
+
+                    # check we have been given sufficient arguments for our explicit parameters
+                    if len_linked_list(arguments) < len(explicit_parameters):
+                        raise SchemeTypeError("%s takes at least %d arguments, you only provided %d." % \
+                                                  (function_name.value, len(explicit_parameters),
+                                                   len_linked_list(arguments)))
+
+                    # assign to all our parameters
+                    global variables
+                    global_variables = variables.copy()
+
+                    while explicit_parameters:
+                        head, arguments = arguments
+
+                        variables[explicit_parameters.pop(0).value] = eval_s_expression(head)
+
+                    # evaluate our function_body in this environment
+                    result = eval_s_expression(function_body)
+
+                    variables = global_variables
+
+                    return result
 
                 def named_function(arguments):
                     if len_linked_list(arguments) != len_linked_list(function_parameters):
@@ -111,7 +157,10 @@ def eval_symbol(symbol_string):
                     return result
 
                 # assign this function to this name
-                variables[function_name.value] = named_function
+                if is_variadic:
+                    variables[function_name.value] = named_variadic_function
+                else:
+                    variables[function_name.value] = named_function
 
         return define_variable
 

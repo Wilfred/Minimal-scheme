@@ -38,6 +38,11 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 1)
 
+    def test_variadic_function_definition(self):
+        program = "(define (foo . args) 1) (foo)"
+
+        self.assertEqual(eval_program(program), 1)
+
     def test_lambda(self):
         program = "((lambda (x) (+ x x)) 4)"
 
