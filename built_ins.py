@@ -3,6 +3,14 @@ from errors import SchemeTypeError
 
 built_ins = {}
 
+# a decorator for giving a name to built-in
+def name_function(function_name):
+    def name_function_decorator(function):
+        built_ins[function_name] = function
+
+    return name_function_decorator
+
+@name_function('+')
 def add_function(arguments):
     total = 0
 
@@ -13,8 +21,8 @@ def add_function(arguments):
             raise SchemeTypeError("Can't add something that isn't an integer.")
     return total
 
-built_ins['+'] = add_function
 
+@name_function('*')
 def multiply_function(arguments):
     product = 1
 
@@ -25,8 +33,8 @@ def multiply_function(arguments):
             raise SchemeTypeError("Can't multiply something that isn't an integer.")
     return product
 
-built_ins['*'] = multiply_function
 
+@name_function('-')
 def subtract_function(arguments):
     if not arguments:
         raise SchemeTypeError("Subtract takes at least one argument")
@@ -44,8 +52,8 @@ def subtract_function(arguments):
 
         return total
 
-built_ins['-'] = subtract_function
 
+@name_function('=')
 def equality_function(arguments):
     if len_linked_list(arguments) < 2:
         raise SchemeTypeError("Equality test requires two arguments or more.")
@@ -57,8 +65,8 @@ def equality_function(arguments):
             return False
     return True
 
-built_ins['='] = equality_function
 
+@name_function('<')
 def less_than(arguments):
     if len_linked_list(arguments) < 2:
         raise SchemeTypeError("Less than test requires at least two arguments.")
@@ -71,8 +79,8 @@ def less_than(arguments):
 
     return True
 
-built_ins['<'] = less_than
 
+@name_function('>')
 def greater_than(arguments):
     if len_linked_list(arguments) < 2:
         raise SchemeTypeError("Greater than test requires at least two arguments.")
@@ -84,5 +92,3 @@ def greater_than(arguments):
             return False
 
     return True
-
-built_ins['>'] = greater_than
