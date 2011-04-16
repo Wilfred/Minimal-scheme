@@ -64,6 +64,11 @@ class InterpreterTest(unittest.TestCase):
 
         self.assertEqual(eval_program(program), 8)
 
+    def test_comment(self):
+        program = "; 1"
+
+        self.assertEqual(eval_program(program), None)
+
 class MathsTest(unittest.TestCase):
     def setUp(self):
         load_standard_library()

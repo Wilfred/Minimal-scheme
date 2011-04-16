@@ -14,10 +14,10 @@ def load_standard_library():
 
 def eval_program(program):
     # a program is a linked list of s-expressions
-    if not program:
-        return
-
     parse_tree = parser.parse(program)
+
+    if not parse_tree:
+        return
 
     head, tail = parse_tree
     result = eval_s_expression(head)
