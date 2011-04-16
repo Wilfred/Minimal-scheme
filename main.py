@@ -2,11 +2,31 @@
 
 import sys
 import os
+import cmd
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
 from lexer import lexer
 from evaluator import eval_program, InterpreterException, load_standard_library
+
+class Repl(cmd.Cmd):
+    intro = "Welcome to Minimal Scheme 0.1 alpha."
+    prompt = "scheme> "
+
+    def onecmd(self, program):
+        if program == 'EOF':
+            print() # for tidyness' sake
+            sys.exit(0)
+
+        try:
+            result = eval_program(program)
+
+            if not result is None:
+                print(result)
+
+        except InterpreterException as e:
+            print("Error: %s" % e.message)
+
 
 if __name__ == '__main__':
     load_standard_library()
@@ -23,15 +43,4 @@ if __name__ == '__main__':
 
     else:
         # interactive mode
-        while True:
-            try:
-                program = input('scheme> ')
-                result = eval_program(program)
-
-                if not result is None:
-                    print(result)
-
-            except EOFError:
-                break
-            except InterpreterException as e:
-                print("Error: %s" % e.message)
+        Repl().cmdloop()
