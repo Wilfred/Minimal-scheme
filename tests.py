@@ -46,6 +46,13 @@ class LexerText(InterpreterTest):
         self.assertEqual(result, 2.0)
         self.assertEqual(type(result), float)
 
+    def test_boolean(self):
+        program = "#t"
+        result = eval_program(program).get_python_equivalent()
+
+        self.assertEqual(result, True)
+        self.assertEqual(type(result), bool)
+
 
 class EvaluatorTest(InterpreterTest):
     def test_variable_evaluation(self):
@@ -129,6 +136,10 @@ class MathsTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, True)
 
+    def test_equality(self):
+        program = "(= 0 0)"
+
+        self.assertEvaluatesTo(program, True)
 
 if __name__ == '__main__':
     unittest.main()
