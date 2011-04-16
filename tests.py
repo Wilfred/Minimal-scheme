@@ -77,6 +77,15 @@ class EvaluatorTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, None)
 
+class ListTest(InterpreterTest):
+    def test_car(self):
+        program = "(car (quote (1 2 3)))"
+        self.assertEvaluatesTo(program, 1)
+
+    def test_cdr(self):
+        program = "(cdr (quote (1 2 3)))"
+        self.assertEvaluatesTo(program, [2, 3])
+
 class MathsTest(InterpreterTest):
     def test_division(self):
         program = "(/ 8)"

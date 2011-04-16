@@ -10,6 +10,29 @@ def name_function(function_name):
 
     return name_function_decorator
 
+
+@name_function('car')
+def car_function(arguments):
+    if len_linked_list(arguments) != 1:
+        raise SchemeTypeError("car takes exactly one argument")
+
+    first_argument, is_empty = arguments
+
+    head, tail = first_argument
+    return head
+
+
+@name_function('cdr')
+def cdr_function(arguments):
+    if len_linked_list(arguments) != 1:
+        raise SchemeTypeError("car takes exactly one argument")
+
+    first_argument, is_empty = arguments
+
+    head, tail = first_argument
+    return tail
+
+
 @name_function('+')
 def add_function(arguments):
     total = 0
