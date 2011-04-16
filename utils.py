@@ -1,4 +1,11 @@
 def flatten_linked_list(linked_list):
+    """Return a nested Python list equivalent to this linked list made
+    with tuples.
+
+    >>> flatten_linked_list((1, (2, None)))
+    [1, 2]
+
+    """
     if not linked_list:
         return []
 
