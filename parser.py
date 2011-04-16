@@ -31,6 +31,9 @@ class Atom(object):
     def __repr__(self):
         return "<Atom: %s (%s)>" % (str(self.value), self.type)
 
+    def get_python_equivalent(self):
+        return self.value
+
 
 def p_program(p):
     "program : sexpression program"
@@ -67,14 +70,18 @@ def p_atom_symbol(p):
 
 def p_atom_number(p):
     "atom : INTEGER"
-    p[0] = Atom('INTEGER', p[1])
+    p[0] = Atom('INTEGER', int(p[1]))
 
 def p_atom_floating_point(p):
     "atom : FLOATING_POINT"
-    p[0] = Atom('FLOATING_POINT', p[1])
+    p[0] = Atom('FLOATING_POINT', float(p[1]))
 
 def p_atom_boolean(p):
     "atom : BOOLEAN"
-    p[0] = Atom('BOOLEAN', p[1])
+    if p[1] == '#t':
+        p[0] = Atom('BOOLEAN', True)
+    else:
+        p[0] = Atom('BOOLEAN', False)
+
 
 parser = ply.yacc.yacc()

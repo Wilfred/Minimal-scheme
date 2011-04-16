@@ -1,5 +1,6 @@
 from utils import flatten_linked_list, len_linked_list
 from errors import SchemeTypeError
+from parser import Atom
 
 built_ins = {}
 
@@ -35,23 +36,23 @@ def cdr_function(arguments):
 
 @name_function('+')
 def add_function(arguments):
-    total = 0
+    total = Atom('INTEGER', 0)
 
     for argument in flatten_linked_list(arguments):
-        if type(argument) == int:
-            total += argument
+        if argument.type == "INTEGER":
+            total.value += argument.value
         else:
-            raise SchemeTypeError("Can't add something that isn't an integer.")
+            raise SchemeTypeError("Addition is only defined for integers, you gave me %s." % argument.type)
     return total
 
 
 @name_function('*')
 def multiply_function(arguments):
-    product = 1
+    product = Atom('INTEGER', 1)
 
     for argument in flatten_linked_list(arguments):
-        if type(argument) == int:
-            product *= argument
+        if argument.type == 'INTEGER':
+            product.value *= argument.value
         else:
             raise SchemeTypeError("Can't multiply something that isn't an integer.")
     return product
@@ -66,9 +67,9 @@ def subtract_function(arguments):
 
     if not tail:
         # only one argument, we just negate it
-        return -1 * head
+        return Atom('INTEGER', -1 * head.value)
     else:
-        total = head
+        total = Atom('INTEGER', head.value)
 
         for argument in flatten_linked_list(tail):
             total -= argument
@@ -84,9 +85,10 @@ def equality_function(arguments):
     head, tail = arguments
 
     for argument in flatten_linked_list(tail):
-        if argument != head:
-            return False
-    return True
+        if argument.value != head.value:
+            return Atom('BOOLEAN', False)
+
+    return Atom('BOOLEAN', True)
 
 
 @name_function('<')
@@ -97,10 +99,10 @@ def less_than(arguments):
     flat_arguments = flatten_linked_list(arguments)
 
     for i in range(len(flat_arguments) - 1):
-        if not flat_arguments[i] < flat_arguments[i+1]:
-            return False
+        if not flat_arguments[i].value < flat_arguments[i+1].value:
+            return Atom('BOOLEAN', False)
 
-    return True
+    return Atom('BOOLEAN', True)
 
 
 @name_function('>')
@@ -111,10 +113,10 @@ def greater_than(arguments):
     flat_arguments = flatten_linked_list(arguments)
 
     for i in range(len(flat_arguments) - 1):
-        if not flat_arguments[i] > flat_arguments[i+1]:
-            return False
+        if not flat_arguments[i].value > flat_arguments[i+1].value:
+            return Atom('BOOLEAN', False)
 
-    return True
+    return Atom('BOOLEAN', True)
 
 @name_function('/')
 def divide(arguments):
@@ -126,11 +128,11 @@ def divide(arguments):
     head, tail = arguments
 
     if tail is None:
-        return 1 / head
+        return Atom('FLOATING_POINT', 1 / head.value)
     else:
-        result = head
+        result = Atom('FLOATING_POINT', head.value)
 
         for argument in flatten_linked_list(tail):
-            result /= argument
+            result.value /= argument.value
 
         return result

@@ -47,20 +47,11 @@ def eval_list(linked_list):
     return function(tail)
 
 def eval_atom(atom):
-    if atom.type == 'INTEGER':
-        return eval_integer(atom.value)
-    elif atom.type == 'FLOATING_POINT':
-        return eval_floating_point(atom.value)
-    elif atom.type == 'SYMBOL':
+    # with the exception of symbols, atoms evaluate to themselves
+    if atom.type == 'SYMBOL':
         return eval_symbol(atom.value)
-    elif atom.type == 'BOOLEAN':
-        return eval_boolean(atom.value)
-
-def eval_integer(number_string):
-    return int(number_string)
-
-def eval_floating_point(number_string):
-    return float(number_string)
+    else:
+        return atom
 
 def eval_symbol(symbol_string):
     if symbol_string == 'define':
@@ -206,7 +197,7 @@ def eval_symbol(symbol_string):
             then_expression, else_expression_list = tail
             
             # everything except an explicit false boolean is true
-            if condition != False:
+            if not (condition.type == 'BOOLEAN' and condition.value == False):
                 return eval_s_expression(then_expression)
             else:
                 if else_expression_list:
@@ -287,9 +278,3 @@ def eval_symbol(symbol_string):
     else:
 
         raise UndefinedVariable('%s has not been defined (environment: %s).' % (symbol_string, variables))
-
-def eval_boolean(boolean_string):
-    if boolean_string == '#t':
-        return True
-    elif boolean_string == '#f':
-        return False

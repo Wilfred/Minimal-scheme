@@ -3,6 +3,8 @@
 import sys
 import unittest
 from evaluator import eval_program, variables, load_standard_library
+from parser import Atom
+from utils import flatten_linked_list
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
@@ -12,20 +14,34 @@ class InterpreterTest(unittest.TestCase):
         load_standard_library()
 
     def assertEvaluatesTo(self, program, expected_result):
-        result = eval_program(program)
+        internal_result = eval_program(program)
+
+        if internal_result:
+            if isinstance(internal_result, Atom):
+                result = internal_result.get_python_equivalent()
+            else:
+                # is a list
+                # TODO: recurse on nested lists
+                result = []
+                for atom in flatten_linked_list(internal_result):
+                    result.append(atom.get_python_equivalent())
+
+        else:
+            result = None
+        
         self.assertEqual(result, expected_result)
 
 class LexerText(InterpreterTest):
     def test_integer(self):
         program = "3"
-        result = eval_program(program)
+        result = eval_program(program).get_python_equivalent()
 
         self.assertEqual(result, 3)
         self.assertEqual(type(result), int)
 
     def test_floating_point(self):
         program = "2.0"
-        result = eval_program(program)
+        result = eval_program(program).get_python_equivalent()
 
         self.assertEqual(result, 2.0)
         self.assertEqual(type(result), float)
