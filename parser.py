@@ -29,7 +29,8 @@ class Atom(object):
         self.value = value
 
     def __repr__(self):
-        return str(self.value)
+        return "<Atom: %s (%s)>" % (str(self.value), self.type)
+
 
 def p_program(p):
     "program : sexpression program"
