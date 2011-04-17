@@ -13,7 +13,7 @@ def name_function(function_name):
 
 
 @name_function('car')
-def car_function(arguments):
+def car(arguments):
     if safe_len(arguments) != 1:
         raise SchemeTypeError("car takes exactly one argument")
 
@@ -23,7 +23,7 @@ def car_function(arguments):
 
 
 @name_function('cdr')
-def cdr_function(arguments):
+def cdr(arguments):
     if safe_len(arguments) != 1:
         raise SchemeTypeError("car takes exactly one argument")
 
@@ -33,7 +33,7 @@ def cdr_function(arguments):
 
 
 @name_function('+')
-def add_function(arguments):
+def add(arguments):
     total = Atom('INTEGER', 0)
 
     for argument in safe_iter(arguments):
@@ -45,7 +45,7 @@ def add_function(arguments):
 
 
 @name_function('*')
-def multiply_function(arguments):
+def multiply(arguments):
     product = Atom('INTEGER', 1)
 
     for argument in safe_iter(arguments):
@@ -57,7 +57,7 @@ def multiply_function(arguments):
 
 
 @name_function('-')
-def subtract_function(arguments):
+def subtract(arguments):
     if not arguments:
         raise SchemeTypeError("Subtract takes at least one argument")
 
@@ -74,7 +74,7 @@ def subtract_function(arguments):
 
 
 @name_function('=')
-def equality_function(arguments):
+def equality(arguments):
     if safe_len(arguments) < 2:
         raise SchemeTypeError("Equality test requires two arguments or more.")
 
