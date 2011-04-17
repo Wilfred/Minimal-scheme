@@ -1,4 +1,5 @@
 import ply.yacc
+from collections import Sequence
 
 from lexer import tokens
 
@@ -31,8 +32,70 @@ class Atom(object):
     def __repr__(self):
         return "<Atom: %s (%s)>" % (str(self.value), self.type)
 
+    def __eq__(self, other):
+        if other.type == self.type and other.value == self.value:
+            return True
+
+        return False
+
     def get_python_equivalent(self):
         return self.value
+
+
+class LinkedListNode(Sequence):
+    def __init__(self, head, tail=None):
+        self.head = head
+        self.tail = tail
+
+    def __len__(self):
+        if self.tail is None:
+            return 1
+
+        return 1 + self.tail.__len__()
+
+    def __getitem__(self, index):
+        if index == 0:
+            return self.head
+
+        elif self.tail is None:
+            # specified an index greater than the length
+            raise IndexError()
+        else:
+            return self.tail.__getitem__(index - 1)
+
+    def __setitem__(self, index, value):
+        if index == 0:
+            self.head = value
+
+        elif self.tail is None:
+            # specified an index greater than the length
+            raise IndexError()
+        else:
+            return self.tail.__setitem__(index - 1, value)
+
+    def __repr__(self):
+        return "<LinkedList: %s>" % str(self.get_python_equivalent())
+
+    def index(self, value):
+        """Find the first occurrence of value in the list, and return its index.
+
+        """
+        if self.head == value:
+            return 0
+
+        elif self.tail is None:
+            raise ValueError
+
+        else:
+            return 1 + self.tail.index(value)
+
+
+    def get_python_equivalent(self):
+        if self.tail is None:
+            return [self.head.get_python_equivalent()]
+        else:
+            python_list = [self.head.get_python_equivalent()]
+            return python_list + self.tail.get_python_equivalent()
 
 
 def p_program(p):
@@ -58,7 +121,7 @@ def p_list(p):
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"
     # a list is therefore a nested tuple:
-    p[0] = (p[1], p[2])
+    p[0] = LinkedListNode(head=p[1], tail=p[2])
 
 def p_listargument_empty(p):
     "listarguments :"

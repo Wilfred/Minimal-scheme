@@ -3,8 +3,6 @@
 import sys
 import unittest
 from evaluator import eval_program, variables, load_standard_library
-from parser import Atom
-from utils import flatten_linked_list
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
@@ -17,15 +15,7 @@ class InterpreterTest(unittest.TestCase):
         internal_result = eval_program(program)
 
         if internal_result:
-            if isinstance(internal_result, Atom):
-                result = internal_result.get_python_equivalent()
-            else:
-                # is a list
-                # TODO: recurse on nested lists
-                result = []
-                for atom in flatten_linked_list(internal_result):
-                    result.append(atom.get_python_equivalent())
-
+            result = internal_result.get_python_equivalent()
         else:
             result = None
         
