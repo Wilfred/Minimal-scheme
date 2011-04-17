@@ -17,7 +17,7 @@ def load_built_ins():
             return function(arguments)
 
         return decorated_function
-        
+
     for (function_name, function) in built_ins.items():
         variables[function_name] = arguments_evaluated(function)
 

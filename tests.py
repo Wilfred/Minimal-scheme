@@ -173,14 +173,23 @@ class MathsTest(InterpreterTest):
         program = "(> 11 10 0)"
         self.assertEvaluatesTo(program, True)
 
+    def test_equality(self):
+        program = "(= 0 0)"
+
+        self.assertEvaluatesTo(program, True)
+
+    # remaining tests in this class are library code:
     def test_zero_predicate(self):
         program = "(zero? 0)"
 
         self.assertEvaluatesTo(program, True)
 
-    def test_equality(self):
-        program = "(= 0 0)"
+    def test_positive_predicate(self):
+        program = "(positive? 1)"
+        self.assertEvaluatesTo(program, True)
 
+    def test_negative_predicate(self):
+        program = "(negative? (- 1))"
         self.assertEvaluatesTo(program, True)
 
 if __name__ == '__main__':
