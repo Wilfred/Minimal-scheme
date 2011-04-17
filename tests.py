@@ -100,6 +100,13 @@ class ListTest(InterpreterTest):
         self.assertEvaluatesTo(program, [2, 3])
 
 class MathsTest(InterpreterTest):
+    def test_addition(self):
+        program = "(+ 1 2 3)"
+        self.assertEvaluatesTo(program, 6)
+
+        program = "(+)"
+        self.assertEvaluatesTo(program, 0)
+
     def test_division(self):
         program = "(/ 8)"
         self.assertEvaluatesTo(program, 0.125)
