@@ -107,6 +107,13 @@ class MathsTest(InterpreterTest):
         program = "(+)"
         self.assertEvaluatesTo(program, 0)
 
+    def test_multiplication(self):
+        program = "(* 2 2 3)"
+        self.assertEvaluatesTo(program, 12)
+
+        program = "(*)"
+        self.assertEvaluatesTo(program, 1)
+
     def test_division(self):
         program = "(/ 8)"
         self.assertEvaluatesTo(program, 0.125)
