@@ -7,6 +7,20 @@ from copy import deepcopy
 
 variables = {}
 
+def load_built_ins():
+    # a built in differs from primitives: it always has all its arguments evaluated
+    def arguments_evaluated(function):
+        def decorated_function(arguments):
+            for i in range(safe_len(arguments)):
+                arguments[i] = eval_s_expression(arguments[i])
+
+            return function(arguments)
+
+        return decorated_function
+        
+    for (function_name, function) in built_ins.items():
+        variables[function_name] = arguments_evaluated(function)
+
 def load_standard_library():
     with open('library.scm') as library_file:
         library_code = library_file.read()
@@ -282,20 +296,6 @@ def eval_symbol(symbol_string):
     elif symbol_string in variables:
 
         return variables[symbol_string]
-
-    elif symbol_string in built_ins:
-
-        def built_in_function(arguments):
-            # all built in functions evaluate all their arguments
-            # we do it here to avoid circular dependencies that would require circular imports
-            for i in range(safe_len(arguments)):
-                arguments[i] = eval_s_expression(arguments[i])
-
-            function = built_ins[symbol_string]
-
-            return function(arguments)
-
-        return built_in_function
 
     else:
 

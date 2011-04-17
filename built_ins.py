@@ -9,7 +9,24 @@ def name_function(function_name):
     def name_function_decorator(function):
         built_ins[function_name] = function
 
+        # we return the function too, so we can use multiple decorators
+        return function
+
     return name_function_decorator
+
+@name_function('eq?')
+@name_function('eqv?')
+def test_equivalence(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("Equivalence predicate takes two "
+                              "arguments, received %d." % safe_len(arguments))
+
+    # since we have defined __eq__ on Atom objects and == on
+    # LinkedListNodes compares addresses, we can just use a normal equality test
+    if arguments[0] == arguments[1]:
+        return Atom('BOOLEAN', True)
+    else:
+        return Atom('BOOLEAN', False)
 
 
 @name_function('car')

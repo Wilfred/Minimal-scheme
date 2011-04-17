@@ -2,13 +2,14 @@
 
 import sys
 import unittest
-from evaluator import eval_program, variables, load_standard_library
+from evaluator import eval_program, variables, load_standard_library, load_built_ins
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
 
 class InterpreterTest(unittest.TestCase):
     def setUp(self):
+        load_built_ins()
         load_standard_library()
 
     def assertEvaluatesTo(self, program, expected_result):
@@ -98,6 +99,27 @@ class EvaluatorTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, None)
 
+
+class EquivalenceTest(InterpreterTest):
+    def test_eqv(self):
+        program = "(eqv? 1 1)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(eqv? (quote foo) (quote foo))"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(eqv? car car)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(eqv? (quote ()) (quote ()))"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(eqv? (cons 1 2) (cons 1 2))"
+        self.assertEvaluatesTo(program, False)
+
+    def test_eq(self):
+        program = "(eq? (quote foo) (quote foo))"
+        self.assertEvaluatesTo(program, True)
 
 class ListTest(InterpreterTest):
     def test_car(self):
