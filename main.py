@@ -22,7 +22,12 @@ class Repl(cmd.Cmd):
             result = eval_program(program)
 
             if not result is None:
-                print(result.get_python_equivalent())
+                if hasattr(result, "get_python_equivalent"):
+                    # is an atom or list
+                    print(result.get_python_equivalent())
+                else:
+                    # function object
+                    print(result)
 
         except InterpreterException as e:
             print("Error: %s" % e.message)
