@@ -25,7 +25,7 @@ def car(arguments):
 @name_function('cdr')
 def cdr(arguments):
     if safe_len(arguments) != 1:
-        raise SchemeTypeError("car takes exactly one argument")
+        raise SchemeTypeError("cdr takes exactly one argument")
 
     list_given = arguments[0]
 
