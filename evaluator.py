@@ -2,7 +2,7 @@ from parser import parser, Atom, LinkedListNode
 from errors import (InterpreterException, UndefinedVariable, RedefinedVariable,
                     SchemeTypeError, SchemeSyntaxError)
 from built_ins import built_ins
-from utils import safe_len
+from utils import safe_len, safe_iter
 from copy import deepcopy
 
 variables = {}
@@ -82,23 +82,21 @@ def eval_symbol(symbol_string):
                 # check that all our arguments are symbols:
                 function_parameters = function_name_with_parameters.tail
 
-                if function_parameters:
-                    for parameter in function_parameters:
-                        if parameter.type != "SYMBOL":
-                            raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
+                for parameter in safe_iter(function_parameters):
+                    if parameter.type != "SYMBOL":
+                        raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
 
                 function_body = arguments.tail.head
 
                 # check if this function can take a variable number of arguments
                 is_variadic = False
 
-                if function_parameters:
-                    for parameter in function_parameters:
-                        if parameter.value == '.':
-                            if is_variadic:
-                                raise SchemeSyntaxError("May not have . more than once in a parameter list.")
-                            else:
-                                is_variadic = True
+                for parameter in safe_iter(function_parameters):
+                    if parameter.value == '.':
+                        if is_variadic:
+                            raise SchemeSyntaxError("May not have . more than once in a parameter list.")
+                        else:
+                            is_variadic = True
 
                 if is_variadic:
                     dot_position = function_parameters.index(Atom('SYMBOL', '.'))
@@ -134,9 +132,9 @@ def eval_symbol(symbol_string):
                     global variables
                     global_variables = variables.copy()
 
-                    if explicit_parameters:
-                        for (parameter, parameter_expression) in zip(explicit_parameters, arguments):
-                            variables[parameter.value] = eval_s_expression(parameter_expression)
+                    for (parameter, parameter_expression) in zip(safe_iter(explicit_parameters),
+                                                                 safe_iter(arguments)):
+                        variables[parameter.value] = eval_s_expression(parameter_expression)
 
                     # put the remaining arguments in our improper parameter
                     if arguments:
@@ -160,9 +158,8 @@ def eval_symbol(symbol_string):
                     global_variables = variables.copy()
 
                     # evaluate arguments
-                    if function_parameters:
-                        for (parameter_name, parameter_expression) in zip(function_parameters,
-                                                                          arguments):
+                    for (parameter_name, parameter_expression) in zip(safe_iter(function_parameters),
+                                                                      safe_iter(arguments)):
                             variables[parameter_name.value] = eval_s_expression(parameter_expression)
 
                     # evaluate the function block
@@ -244,8 +241,8 @@ def eval_symbol(symbol_string):
                 global variables
                 global_variables = variables.copy()
 
-                for (parameter_name, parameter_expression) in zip(parameter_list,
-                                                                  _arguments):
+                for (parameter_name, parameter_expression) in zip(safe_iter(parameter_list),
+                                                                  safe_iter(_arguments)):
                     variables[parameter_name.value] = eval_s_expression(parameter_expression)
 
                 # now we have set up the correct scope, evaluate our function block

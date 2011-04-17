@@ -1,6 +1,6 @@
 from errors import SchemeTypeError
 from parser import Atom
-from utils import safe_len
+from utils import safe_len, safe_iter
 
 built_ins = {}
 
@@ -36,12 +36,11 @@ def cdr_function(arguments):
 def add_function(arguments):
     total = Atom('INTEGER', 0)
 
-    if arguments:
-        for argument in arguments:
-            if argument.type == "INTEGER":
-                total.value += argument.value
-            else:
-                raise SchemeTypeError("Addition is only defined for integers, you gave me %s." % argument.type)
+    for argument in safe_iter(arguments):
+        if argument.type == "INTEGER":
+            total.value += argument.value
+        else:
+            raise SchemeTypeError("Addition is only defined for integers, you gave me %s." % argument.type)
     return total
 
 
@@ -49,12 +48,11 @@ def add_function(arguments):
 def multiply_function(arguments):
     product = Atom('INTEGER', 1)
 
-    if arguments:
-        for argument in arguments:
-            if argument.type == 'INTEGER':
-                product.value *= argument.value
-            else:
-                raise SchemeTypeError("Can't multiply something that isn't an integer.")
+    for argument in safe_iter(arguments):
+        if argument.type == 'INTEGER':
+            product.value *= argument.value
+        else:
+            raise SchemeTypeError("Can't multiply something that isn't an integer.")
     return product
 
 
