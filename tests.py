@@ -85,10 +85,16 @@ class EvaluatorTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, 8)
 
+    def test_begin(self):
+        program = "(begin (define n 1) (+ n 3))"
+
+        self.assertEvaluatesTo(program, 4)
+
     def test_comment(self):
         program = "; 1"
 
         self.assertEvaluatesTo(program, None)
+
 
 class ListTest(InterpreterTest):
     def test_car(self):

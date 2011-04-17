@@ -267,6 +267,18 @@ def eval_symbol(symbol_string):
 
         return return_argument_unevaluated
 
+    elif symbol_string == 'begin':
+
+        def evaluate_sequence(arguments):
+            result = None
+
+            for argument in arguments:
+                result = eval_s_expression(argument)
+
+            return result
+
+        return evaluate_sequence
+
     elif symbol_string in variables:
 
         return variables[symbol_string]
