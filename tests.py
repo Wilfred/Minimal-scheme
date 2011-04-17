@@ -44,6 +44,13 @@ class LexerText(InterpreterTest):
         self.assertEqual(result, True)
         self.assertEqual(type(result), bool)
 
+    def test_character(self):
+        program = "#\\a"
+        self.assertEvaluatesTo(program, 'a')
+
+        program = "#\\newline"
+        self.assertEvaluatesTo(program, '\n')
+
 
 class EvaluatorTest(InterpreterTest):
     def test_variable_evaluation(self):

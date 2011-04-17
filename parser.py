@@ -18,7 +18,7 @@ list : ( listarguments )
 listarguments : sexp listarguments
               |
 
-atom : SYMBOL | NUMBER | BOOLEAN
+atom : SYMBOL | NUMBER | BOOLEAN | CHARACTER
 
 """
 
@@ -154,6 +154,10 @@ def p_atom_boolean(p):
         p[0] = Atom('BOOLEAN', True)
     else:
         p[0] = Atom('BOOLEAN', False)
+
+def p_atom_character(p):
+    "atom : CHARACTER"
+    p[0] = Atom('CHARACTER', p[1])
 
 
 parser = ply.yacc.yacc()
