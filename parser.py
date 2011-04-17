@@ -76,6 +76,10 @@ class LinkedListNode(Sequence):
     def __repr__(self):
         return "<LinkedList: %s>" % str(self.get_python_equivalent())
 
+    def __bool__(self):
+        # an empty LinkedList is just None, so we always return True here
+        return True
+
     def index(self, value):
         """Find the first occurrence of value in the list, and return its index.
 
@@ -95,8 +99,13 @@ class LinkedListNode(Sequence):
             return [self.head.get_python_equivalent()]
         else:
             python_list = [self.head.get_python_equivalent()]
-            return python_list + self.tail.get_python_equivalent()
 
+            if hasattr(self.tail, 'type'):
+                # is an improper list, so self.tail is an Atom
+                return python_list + ['.', self.tail.get_python_equivalent()]
+            else:
+                # normal list
+                return python_list + self.tail.get_python_equivalent()
 
 def p_program(p):
     "program : sexpression program"

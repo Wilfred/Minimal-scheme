@@ -1,5 +1,5 @@
 from errors import SchemeTypeError
-from parser import Atom
+from parser import Atom, LinkedListNode
 from utils import safe_len, safe_iter
 
 built_ins = {}
@@ -30,6 +30,14 @@ def cdr(arguments):
     list_given = arguments[0]
 
     return list_given.tail
+
+
+@name_function('cons')
+def cons(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("cons takes exactly two arguments.")
+
+    return LinkedListNode(arguments[0], arguments[1])
 
 
 @name_function('+')

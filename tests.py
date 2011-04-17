@@ -99,6 +99,13 @@ class ListTest(InterpreterTest):
         program = "(cdr (quote (1 2 3)))"
         self.assertEvaluatesTo(program, [2, 3])
 
+    def test_cons(self):
+        program = "(cons 1 (quote (2 3)))"
+        self.assertEvaluatesTo(program, [1, 2, 3])
+
+        program = "(cons 1 2)"
+        self.assertEvaluatesTo(program, [1, '.', 2])
+
 class MathsTest(InterpreterTest):
     def test_addition(self):
         program = "(+ 1 2 3)"
