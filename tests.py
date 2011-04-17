@@ -85,6 +85,9 @@ class EvaluatorTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, 8)
 
+        program = "((lambda () 1))"
+        self.assertEvaluatesTo(program, 1)
+
     def test_begin(self):
         program = "(begin (define n 1) (+ n 3))"
 

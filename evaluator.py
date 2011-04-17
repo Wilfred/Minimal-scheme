@@ -225,10 +225,10 @@ def eval_symbol(symbol_string):
             parameter_list = arguments.head
             function_body = arguments.tail.head
 
-            if not isinstance(parameter_list, LinkedListNode):
-                raise SchemeTypeError("The first argument to `lambda` must be list of variables.")
+            if isinstance(parameter_list, Atom):
+                raise SchemeTypeError("The first argument to `lambda` must be a list of variables.")
 
-            for parameter in parameter_list:
+            for parameter in safe_iter(parameter_list):
                 if parameter.type != "SYMBOL":
                     raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
 
