@@ -144,6 +144,13 @@ class ListTest(InterpreterTest):
         program = "(cons 1 2)"
         self.assertEvaluatesTo(program, [1, '.', 2])
 
+    def test_pair(self):
+        program = "(pair? (quote (a b)))"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(pair? (quote ()))"
+        self.assertEvaluatesTo(program, False)
+
 class MathsTest(InterpreterTest):
     def test_addition(self):
         program = "(+ 1 2 3)"

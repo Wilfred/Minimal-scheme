@@ -57,6 +57,21 @@ def cons(arguments):
     return LinkedListNode(arguments[0], arguments[1])
 
 
+@name_function('pair?')
+def pair(arguments):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("pair? takes exactly one argument.")
+
+    if hasattr(arguments[0], 'type'):
+        # is an atom
+        return Atom('BOOLEAN', False)
+    elif not arguments[0]:
+        # is an empty list
+        return Atom('BOOLEAN', False)
+
+    return Atom('BOOLEAN', True)
+
+
 @name_function('+')
 def add(arguments):
     total = Atom('INTEGER', 0)
