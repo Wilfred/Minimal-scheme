@@ -152,6 +152,13 @@ class MathsTest(InterpreterTest):
         program = "(+)"
         self.assertEvaluatesTo(program, 0)
 
+    def test_subtraction(self):
+        program = "(- 1 2 3)"
+        self.assertEvaluatesTo(program, -4)
+
+        program = "(- 2)"
+        self.assertEvaluatesTo(program, -2)
+
     def test_multiplication(self):
         program = "(* 2 2 3)"
         self.assertEvaluatesTo(program, 12)
