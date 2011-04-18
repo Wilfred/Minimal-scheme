@@ -25,7 +25,7 @@ No support for exact fractions or complex numbers.
 
 ### Lists
 
-`car`, `cdr`
+`car`, `cdr`, `cons`
 
 ### Other
 
