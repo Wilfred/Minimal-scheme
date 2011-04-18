@@ -5,9 +5,25 @@ tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_SYMBOL = r'[a-zA-Z*+/!?=<>.-]+'
-t_INTEGER = r'[0-9]+'
-t_FLOATING_POINT = r"([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)"
-t_BOOLEAN = r'\#t|\#f'
+
+def t_FLOATING_POINT(t):
+    r"([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)"
+    t.value = float(t.value)
+    return t
+
+def t_INTEGER(t):
+    r'[0-9]+'
+    t.value = int(t.value)
+    return t
+
+def t_BOOLEAN(t):
+    r'\#t|\#f'
+    if t.value == "#t":
+        t.value = True
+    else:
+        t.value = False
+
+    return t
 
 def t_CHARACTER(t):
     r'\#\\(space|newline|.)'
