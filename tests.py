@@ -199,5 +199,33 @@ class MathsTest(InterpreterTest):
         program = "(negative? (- 1))"
         self.assertEvaluatesTo(program, True)
 
+class CharacterTest(InterpreterTest):
+    def test_char_predicate(self):
+        program = "(char? #\\a)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(char? 0)"
+        self.assertEvaluatesTo(program, False)
+
+    def test_equality(self):
+        program = "(char=? #\\  #\\space)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_char_less_than(self):
+        program = "(char<? #\\A #\\B)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_char_greater_than(self):
+        program = "(char>? #\\1 #\\0)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_char_less_or_equal(self):
+        program = "(char<=? #\\z #\\z)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_char_greater_or_equal(self):
+        program = "(char>=? #\\( #\\()"
+        self.assertEvaluatesTo(program, True)
+
 if __name__ == '__main__':
     unittest.main()

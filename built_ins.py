@@ -149,3 +149,89 @@ def divide(arguments):
             result.value /= argument.value
 
         return result
+
+@name_function('char?')
+def is_char(arguments):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("char? takes exactly one argument.")
+
+    if arguments[0].type == "CHARACTER":
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
+
+@name_function('char=?')
+def char_equal(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("char=? takes exactly two arguments.")
+
+    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+        raise SchemeTypeError("char=? takes only character arguments, got a "
+                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+
+    if arguments[0].value == arguments[1].value:
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
+
+@name_function('char<?')
+def char_less_than(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("char<? takes exactly two arguments.")
+
+    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+        raise SchemeTypeError("char<? takes only character arguments, got a "
+                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+
+    if arguments[0].value < arguments[1].value:
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
+
+@name_function('char>?')
+def char_greater_than(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("char>? takes exactly two arguments.")
+
+    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+        raise SchemeTypeError("char>? takes only character arguments, got a "
+                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+
+    if arguments[0].value > arguments[1].value:
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
+
+@name_function('char<=?')
+def char_less_or_equal(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("char<=? takes exactly two arguments.")
+
+    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+        raise SchemeTypeError("char<=? takes only character arguments, got a "
+                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+
+    if arguments[0].value <= arguments[1].value:
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
+
+@name_function('char>=?')
+def char_greater_or_equal(arguments):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("char>=? takes exactly two arguments.")
+
+    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+        raise SchemeTypeError("char>=? takes only character arguments, got a "
+                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+
+    if arguments[0].value >= arguments[1].value:
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
