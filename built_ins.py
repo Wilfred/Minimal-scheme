@@ -72,6 +72,51 @@ def pair(arguments):
     return Atom('BOOLEAN', True)
 
 
+@name_function('rational?')
+@name_function('real?')
+@name_function('complex?')
+@name_function('number?')
+def number(arguments):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("number? takes exactly one argument, "
+                              "you gave me %d." % safe_len(arguments))
+
+    if arguments[0].type in ['INTEGER', 'FLOATING_POINT']:
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
+
+
+@name_function('exact?')
+def exact(arguments):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("exact? takes exactly one argument, "
+                              "you gave me %d." % safe_len(arguments))
+
+    if arguments[0].type == 'INTEGER':
+        return Atom('BOOLEAN', True)
+    elif arguments[0].type == 'FLOATING_POINT':
+        return Atom('BOOLEAN', False)
+    else:
+        raise SchemeTypeError("exact? only takes integers or floating point "
+                              "numbers as arguments, you gave me ""%s." % \
+                                  safe_len(arguments))
+
+@name_function('inexact?')
+def inexact(arguments):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("inexact? takes exactly one argument, "
+                              "you gave me %d." % safe_len(arguments))
+
+    if arguments[0].type == 'FLOATING_POINT':
+        return Atom('BOOLEAN', True)
+    elif arguments[0].type == 'INTEGER':
+        return Atom('BOOLEAN', False)
+    else:
+        raise SchemeTypeError("exact? only takes integers or floating point "
+                              "numbers as arguments, you gave me ""%s." % \
+                                  safe_len(arguments))
+
 @name_function('+')
 def add(arguments):
     if not arguments:

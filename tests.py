@@ -211,6 +211,42 @@ class MathsTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, True)
 
+    def test_number(self):
+        program = "(number? 1)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(number? 1.0)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(number? #\\a)"
+        self.assertEvaluatesTo(program, False)
+
+    def test_complex(self):
+        program = "(complex? 0)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_rational(self):
+        program = "(rational? 1.1)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_real(self):
+        program = "(real? 1.2)"
+        self.assertEvaluatesTo(program, True)
+
+    def test_exact(self):
+        program = "(exact? 1)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(exact? 1.0)"
+        self.assertEvaluatesTo(program, False)
+
+    def test_inexact(self):
+        program = "(inexact? 0)"
+        self.assertEvaluatesTo(program, False)
+
+        program = "(inexact? 0.0)"
+        self.assertEvaluatesTo(program, True)
+
     # remaining tests in this class are library code:
     def test_zero_predicate(self):
         program = "(zero? 0)"
