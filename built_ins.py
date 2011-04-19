@@ -148,10 +148,16 @@ def subtract(arguments):
 @name_function('=')
 def equality(arguments):
     if safe_len(arguments) < 2:
-        raise SchemeTypeError("Equality test requires two arguments or more.")
+        raise SchemeTypeError("Equality test requires two arguments or more, "
+                              "you gave %d." % safe_len(arguments))
 
-    for argument in arguments.tail:
-        if argument.value != arguments.head.value:
+    for argument in arguments:
+        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Numerical equality test is only defined "
+                                  "for integers and floating point numbers, "
+                                  "you gave me %s." % argument.type)
+
+        if argument.value != arguments[0].value:
             return Atom('BOOLEAN', False)
 
     return Atom('BOOLEAN', True)
