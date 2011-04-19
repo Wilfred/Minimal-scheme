@@ -159,6 +159,9 @@ class MathsTest(InterpreterTest):
         program = "(+)"
         self.assertEvaluatesTo(program, 0)
 
+        program = "(+ 1 2.5)"
+        self.assertEvaluatesTo(program, 3.5)
+
     def test_subtraction(self):
         program = "(- 1 2 3)"
         self.assertEvaluatesTo(program, -4)
@@ -166,12 +169,21 @@ class MathsTest(InterpreterTest):
         program = "(- 2)"
         self.assertEvaluatesTo(program, -2)
 
+        program = "(- 0.1)"
+        self.assertEvaluatesTo(program, -0.1)
+
+        program = "(- 10.0 0.5)"
+        self.assertEvaluatesTo(program, 9.5)
+
     def test_multiplication(self):
         program = "(* 2 2 3)"
         self.assertEvaluatesTo(program, 12)
 
         program = "(*)"
         self.assertEvaluatesTo(program, 1)
+
+        program = "(* 3 0.5)"
+        self.assertEvaluatesTo(program, 1.5)
 
     def test_division(self):
         program = "(/ 8)"

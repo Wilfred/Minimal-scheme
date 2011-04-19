@@ -74,43 +74,75 @@ def pair(arguments):
 
 @name_function('+')
 def add(arguments):
-    total = Atom('INTEGER', 0)
+    if not arguments:
+        return Atom('INTEGER', 0)
+
+    if arguments[0].type == "INTEGER":
+        total = Atom('INTEGER', 0)
+    elif arguments[0].type == "FLOATING_POINT":
+        total = Atom('FLOATING_POINT', 0.0)
 
     for argument in safe_iter(arguments):
-        if argument.type == "INTEGER":
-            total.value += argument.value
-        else:
-            raise SchemeTypeError("Addition is only defined for integers, you gave me %s." % argument.type)
+        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Addition is only defined for integers and "
+                                  "floating point, you gave me %s." % argument.type)
+
+        if total.type == "INTEGER" and argument.type == "FLOATING_POINT":
+            total.type = "FLOATING_POINT"
+
+        total.value += argument.value
     return total
 
 
 @name_function('*')
 def multiply(arguments):
-    product = Atom('INTEGER', 1)
+    if not arguments:
+        return Atom('INTEGER', 1)
+
+    if arguments[0].type == "INTEGER":
+        product = Atom('INTEGER', 1)
+    elif arguments[0].type == "FLOATING_POINT":
+        product = Atom('FLOATING_POINT', 1.0)
 
     for argument in safe_iter(arguments):
-        if argument.type == 'INTEGER':
-            product.value *= argument.value
-        else:
-            raise SchemeTypeError("Can't multiply something that isn't an integer.")
+        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Multiplication is only defined for integers and "
+                                  "floating point, you gave me %s." % argument.type)
+
+        if product.type == "INTEGER" and argument.type == "FLOATING_POINT":
+            product.type = "FLOATING_POINT"
+
+        product.value *= argument.value
+
     return product
 
 
 @name_function('-')
 def subtract(arguments):
     if not arguments:
-        raise SchemeTypeError("Subtract takes at least one argument")
+        raise SchemeTypeError("Subtract takes at least one argument.")
 
-    if not arguments.tail:
+    if safe_len(arguments) == 1:
+        if arguments[0].type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Subtraction is only defined for integers and "
+                                  "floating point, you gave me %s." % arguments[0].type)
+
         # only one argument, we just negate it
-        return Atom('INTEGER', -1 * arguments.head.value)
-    else:
-        total = Atom('INTEGER', arguments.head.value)
+        return Atom(arguments[0].type, -1 * arguments[0].value)
+        
+    total = Atom(arguments[0].type, arguments[0].value)
 
-        for argument in arguments.tail:
-            total.value -= argument.value
+    for argument in arguments.tail:
+        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Subtraction is only defined for integers and "
+                                  "floating point, you gave me %s." % argument.type)
+        
+        if total.type == "INTEGER" and argument.type == "FLOATING_POINT":
+            total.type = "FLOATING_POINT"
 
-        return total
+        total.value -= argument.value
+
+    return total
 
 
 @name_function('=')
