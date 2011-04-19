@@ -30,3 +30,9 @@ No support for exact fractions or complex numbers.
 ### Other
 
 Comments work too!
+
+## Known bugs
+
+* Type checking doesn't handle lists yet (so `(+ (quote x) (quote x))`
+  and `(number? (quote x))` crash)
+* The environment isn't wiped after each test
