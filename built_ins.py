@@ -94,6 +94,34 @@ def add(arguments):
     return total
 
 
+@name_function('-')
+def subtract(arguments):
+    if not arguments:
+        raise SchemeTypeError("Subtract takes at least one argument.")
+
+    if safe_len(arguments) == 1:
+        if arguments[0].type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Subtraction is only defined for integers and "
+                                  "floating point, you gave me %s." % arguments[0].type)
+
+        # only one argument, we just negate it
+        return Atom(arguments[0].type, -1 * arguments[0].value)
+
+    total = Atom(arguments[0].type, arguments[0].value)
+
+    for argument in arguments.tail:
+        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+            raise SchemeTypeError("Subtraction is only defined for integers and "
+                                  "floating point, you gave me %s." % argument.type)
+
+        if total.type == "INTEGER" and argument.type == "FLOATING_POINT":
+            total.type = "FLOATING_POINT"
+
+        total.value -= argument.value
+
+    return total
+
+
 @name_function('*')
 def multiply(arguments):
     if not arguments:
@@ -117,32 +145,22 @@ def multiply(arguments):
     return product
 
 
-@name_function('-')
-def subtract(arguments):
+@name_function('/')
+def divide(arguments):
+    # TODO: support exact fractions
+    # TODO: return integer if all arguments were integers and result is whole number
     if not arguments:
-        raise SchemeTypeError("Subtract takes at least one argument.")
+        raise SchemeTypeError("Division requires at least one argument.")
 
-    if safe_len(arguments) == 1:
-        if arguments[0].type not in ['INTEGER', 'FLOATING_POINT']:
-            raise SchemeTypeError("Subtraction is only defined for integers and "
-                                  "floating point, you gave me %s." % arguments[0].type)
+    if arguments.tail is None:
+        return Atom('FLOATING_POINT', 1 / arguments.head.value)
+    else:
+        result = Atom('FLOATING_POINT', arguments.head.value)
 
-        # only one argument, we just negate it
-        return Atom(arguments[0].type, -1 * arguments[0].value)
-        
-    total = Atom(arguments[0].type, arguments[0].value)
+        for argument in arguments.tail:
+            result.value /= argument.value
 
-    for argument in arguments.tail:
-        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
-            raise SchemeTypeError("Subtraction is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.type)
-        
-        if total.type == "INTEGER" and argument.type == "FLOATING_POINT":
-            total.type = "FLOATING_POINT"
-
-        total.value -= argument.value
-
-    return total
+        return result
 
 
 @name_function('=')
@@ -186,22 +204,6 @@ def greater_than(arguments):
 
     return Atom('BOOLEAN', True)
 
-@name_function('/')
-def divide(arguments):
-    # TODO: support exact fractions
-    # TODO: return integer if all arguments were integers and result is whole number
-    if not arguments:
-        raise SchemeTypeError("Division requires at least one argument.")
-
-    if arguments.tail is None:
-        return Atom('FLOATING_POINT', 1 / arguments.head.value)
-    else:
-        result = Atom('FLOATING_POINT', arguments.head.value)
-
-        for argument in arguments.tail:
-            result.value /= argument.value
-
-        return result
 
 @name_function('char?')
 def is_char(arguments):
