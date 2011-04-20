@@ -8,3 +8,9 @@ def safe_iter(linked_list):
         return []
 
     return iter(linked_list)
+
+def get_type(internal_object):
+    if hasattr(internal_object, "type"):
+        return internal_object.type
+    else:
+        return "LIST"

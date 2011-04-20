@@ -1,6 +1,6 @@
 from errors import SchemeTypeError
 from parser import Atom, LinkedListNode
-from utils import safe_len, safe_iter
+from utils import safe_len, safe_iter, get_type
 
 built_ins = {}
 
@@ -62,14 +62,11 @@ def pair(arguments):
     if safe_len(arguments) != 1:
         raise SchemeTypeError("pair? takes exactly one argument.")
 
-    if hasattr(arguments[0], 'type'):
-        # is an atom
-        return Atom('BOOLEAN', False)
-    elif not arguments[0]:
-        # is an empty list
-        return Atom('BOOLEAN', False)
+    if get_type(arguments[0]) and arguments[0]:
+        # non-empty list
+        return Atom('BOOLEAN', True)
 
-    return Atom('BOOLEAN', True)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('rational?')
@@ -81,7 +78,7 @@ def number(arguments):
         raise SchemeTypeError("number? takes exactly one argument, "
                               "you gave me %d." % safe_len(arguments))
 
-    if arguments[0].type in ['INTEGER', 'FLOATING_POINT']:
+    if get_type(arguments[0]) in ['INTEGER', 'FLOATING_POINT']:
         return Atom('BOOLEAN', True)
 
     return Atom('BOOLEAN', False)
@@ -93,9 +90,9 @@ def exact(arguments):
         raise SchemeTypeError("exact? takes exactly one argument, "
                               "you gave me %d." % safe_len(arguments))
 
-    if arguments[0].type == 'INTEGER':
+    if get_type(arguments[0]) == 'INTEGER':
         return Atom('BOOLEAN', True)
-    elif arguments[0].type == 'FLOATING_POINT':
+    elif get_type(arguments[0]) == 'FLOATING_POINT':
         return Atom('BOOLEAN', False)
     else:
         raise SchemeTypeError("exact? only takes integers or floating point "
@@ -108,9 +105,9 @@ def inexact(arguments):
         raise SchemeTypeError("inexact? takes exactly one argument, "
                               "you gave me %d." % safe_len(arguments))
 
-    if arguments[0].type == 'FLOATING_POINT':
+    if get_type(arguments[0]) == 'FLOATING_POINT':
         return Atom('BOOLEAN', True)
-    elif arguments[0].type == 'INTEGER':
+    elif get_type(arguments[0]) == 'INTEGER':
         return Atom('BOOLEAN', False)
     else:
         raise SchemeTypeError("exact? only takes integers or floating point "
@@ -122,9 +119,9 @@ def add(arguments):
     if not arguments:
         return Atom('INTEGER', 0)
 
-    if arguments[0].type == "INTEGER":
+    if get_type(arguments[0]) == "INTEGER":
         total = Atom('INTEGER', 0)
-    elif arguments[0].type == "FLOATING_POINT":
+    elif get_type(arguments[0]) == "FLOATING_POINT":
         total = Atom('FLOATING_POINT', 0.0)
 
     for argument in safe_iter(arguments):
@@ -132,7 +129,7 @@ def add(arguments):
             raise SchemeTypeError("Addition is only defined for integers and "
                                   "floating point, you gave me %s." % argument.type)
 
-        if total.type == "INTEGER" and argument.type == "FLOATING_POINT":
+        if get_type(total) == "INTEGER" and get_type(argument) == "FLOATING_POINT":
             total.type = "FLOATING_POINT"
 
         total.value += argument.value
@@ -145,7 +142,7 @@ def subtract(arguments):
         raise SchemeTypeError("Subtract takes at least one argument.")
 
     if safe_len(arguments) == 1:
-        if arguments[0].type not in ['INTEGER', 'FLOATING_POINT']:
+        if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
             raise SchemeTypeError("Subtraction is only defined for integers and "
                                   "floating point, you gave me %s." % arguments[0].type)
 
@@ -155,11 +152,11 @@ def subtract(arguments):
     total = Atom(arguments[0].type, arguments[0].value)
 
     for argument in arguments.tail:
-        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+        if get_type(argument) not in ['INTEGER', 'FLOATING_POINT']:
             raise SchemeTypeError("Subtraction is only defined for integers and "
                                   "floating point, you gave me %s." % argument.type)
 
-        if total.type == "INTEGER" and argument.type == "FLOATING_POINT":
+        if get_type(total) == "INTEGER" and get_type(argument) == "FLOATING_POINT":
             total.type = "FLOATING_POINT"
 
         total.value -= argument.value
@@ -172,17 +169,17 @@ def multiply(arguments):
     if not arguments:
         return Atom('INTEGER', 1)
 
-    if arguments[0].type == "INTEGER":
+    if get_type(arguments[0]) == "INTEGER":
         product = Atom('INTEGER', 1)
-    elif arguments[0].type == "FLOATING_POINT":
+    elif get_type(arguments[0]) == "FLOATING_POINT":
         product = Atom('FLOATING_POINT', 1.0)
 
     for argument in safe_iter(arguments):
-        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+        if get_type(argument) not in ['INTEGER', 'FLOATING_POINT']:
             raise SchemeTypeError("Multiplication is only defined for integers and "
                                   "floating point, you gave me %s." % argument.type)
 
-        if product.type == "INTEGER" and argument.type == "FLOATING_POINT":
+        if get_type(product) == "INTEGER" and get_type(argument) == "FLOATING_POINT":
             product.type = "FLOATING_POINT"
 
         product.value *= argument.value
@@ -255,7 +252,7 @@ def is_char(arguments):
     if safe_len(arguments) != 1:
         raise SchemeTypeError("char? takes exactly one argument.")
 
-    if arguments[0].type == "CHARACTER":
+    if get_type(arguments[0]) == "CHARACTER":
         return Atom('BOOLEAN', True)
 
     return Atom('BOOLEAN', False)
@@ -266,7 +263,7 @@ def char_equal(arguments):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("char=? takes exactly two arguments.")
 
-    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char=? takes only character arguments, got a "
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
@@ -281,7 +278,7 @@ def char_less_than(arguments):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("char<? takes exactly two arguments.")
 
-    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char<? takes only character arguments, got a "
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
@@ -296,7 +293,7 @@ def char_greater_than(arguments):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("char>? takes exactly two arguments.")
 
-    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char>? takes only character arguments, got a "
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
@@ -311,7 +308,7 @@ def char_less_or_equal(arguments):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("char<=? takes exactly two arguments.")
 
-    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char<=? takes only character arguments, got a "
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
@@ -326,9 +323,9 @@ def char_greater_or_equal(arguments):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("char>=? takes exactly two arguments.")
 
-    if arguments[0].type != "CHARACTER" or arguments[1].type != "CHARACTER":
+    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char>=? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+                              "%s and a %s." % (get_type(arguments[0].type), get_type(arguments[1])))
 
     if arguments[0].value >= arguments[1].value:
         return Atom('BOOLEAN', True)

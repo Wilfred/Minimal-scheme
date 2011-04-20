@@ -269,6 +269,8 @@ class CharacterTest(InterpreterTest):
         program = "(char? 0)"
         self.assertEvaluatesTo(program, False)
 
+        program = "(char? (quote (x)))"
+        self.assertEvaluatesTo(program, False)
     def test_equality(self):
         program = "(char=? #\\  #\\space)"
         self.assertEvaluatesTo(program, True)
