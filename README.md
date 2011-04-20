@@ -37,3 +37,5 @@ Comments work too!
 * Type checking doesn't handle lists yet (so `(+ (quote x) (quote x))`
   and `(number? (quote x))` crash)
 * The environment isn't wiped after each test
+* Using None as the empty list means that we cannot call len() on any list
+* Cannot nest defines
