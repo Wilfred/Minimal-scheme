@@ -29,17 +29,14 @@ def load_standard_library():
 
 def eval_program(program):
     # a program is a linked list of s-expressions
-    parse_tree = parser.parse(program)
+    s_expressions = parser.parse(program)
 
-    if not parse_tree:
+    if not s_expressions:
         return
 
-    head, tail = parse_tree
-    result = eval_s_expression(head)
-
-    while tail:
-        head, tail = tail
-        result = eval_s_expression(head)
+    result = None
+    for s_expression in safe_iter(s_expressions):
+        result = eval_s_expression(s_expression)
 
     return result
 

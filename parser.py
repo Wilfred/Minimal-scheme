@@ -109,7 +109,7 @@ class LinkedListNode(Sequence):
 
 def p_program(p):
     "program : sexpression program"
-    p[0] = (p[1], p[2])
+    p[0] = LinkedListNode(head=p[1], tail=p[2])
 
 def p_program_empty(p):
     "program :"
