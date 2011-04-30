@@ -53,6 +53,10 @@ class LexerText(InterpreterTest):
 
 
 class EvaluatorTest(InterpreterTest):
+    def test_empty_program(self):
+        program = ""
+        self.assertEvaluatesTo(program, None)
+
     def test_variable_evaluation(self):
         program = "(define y 28) y"
 
