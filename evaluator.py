@@ -10,6 +10,7 @@ def load_built_ins(environment):
     # a built in differs from primitives: it always has all its arguments evaluated
     def arguments_evaluated(function):
         def decorated_function(arguments, _environment):
+            arguments = deepcopy(arguments)
             # evaluate the arguments, then pass them to the function
             for i in range(safe_len(arguments)):
                 (arguments[i], _environment) = eval_s_expression(arguments[i], _environment)
