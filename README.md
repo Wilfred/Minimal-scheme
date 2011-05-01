@@ -58,7 +58,6 @@ Comments work too!
 * Rename internal_result to actual_result in tests.py
 * Indent this file properly
 * Fix width of evaluator.py
-* Break up `define` into several functions
 * Put blank lines in consistenly in tests.py
 * Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
 * Since built-ins don't need access to global variables, don't pass them

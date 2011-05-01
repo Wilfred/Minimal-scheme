@@ -24,136 +24,177 @@ def define(arguments, environment):
                               "`define` (you passed %d)." % safe_len(arguments))
 
     if isinstance(arguments.head, Atom):
-        # variable assignment
-        if arguments.head.type != 'SYMBOL':
-            raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments.head.type)
-
-        if arguments.head.value in environment:
-            raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments.head.value)
-
-        variable_name = arguments.head.value
-        variable_value_expression = arguments.tail.head
-
-        result, environment = eval_s_expression(variable_value_expression, environment)
-        environment[variable_name] = result
-
-        return (None, environment)
-
+        return define_variable(arguments, environment)
     else:
-        # function definition
-        function_name_with_parameters = arguments.head
-        function_name = function_name_with_parameters.head
+        return define_function(arguments, environment)
 
-        if function_name.type != "SYMBOL":
-            raise SchemeTypeError("Function names must be symbols, not a %s." % function_name.type)
 
-        # check that all our arguments are symbols:
-        function_parameters = function_name_with_parameters.tail
+def define_variable(arguments, environment):
+    if arguments.head.type != 'SYMBOL':
+        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments.head.type)
 
-        for parameter in safe_iter(function_parameters):
-            if parameter.type != "SYMBOL":
-                raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
+    if arguments.head.value in environment:
+        raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments.head.value)
 
-        function_body = arguments.tail.head
+    variable_name = arguments.head.value
+    variable_value_expression = arguments.tail.head
 
-        # check if this function can take a variable number of arguments
-        is_variadic = False
+    result, environment = eval_s_expression(variable_value_expression, environment)
+    environment[variable_name] = result
 
-        for parameter in safe_iter(function_parameters):
-            if parameter.value == '.':
-                if is_variadic:
-                    raise SchemeSyntaxError("May not have . more than once in a parameter list.")
-                else:
-                    is_variadic = True
+    return (None, environment)
 
-        if is_variadic:
-            dot_position = function_parameters.index(Atom('SYMBOL', '.'))
 
-            if dot_position < len(function_parameters) - 2:
-                raise SchemeSyntaxError("You can only have one improper list "
-                                        "(you have %d parameters after the '.')." % (len(function_parameters) - 1 - dot_position))
-            if dot_position == len(function_parameters) - 1:
-                raise SchemeSyntaxError("Must name an improper list parameter after '.'.")
+def define_function(arguments, environment):
+    function_name_with_parameters = arguments[0]
+    function_name = function_name_with_parameters[0]
 
-        def named_variadic_function(arguments, _environment):
-            # a function that takes a variable number of arguments
-            if dot_position == 0:
-                explicit_parameters = None
+    if function_name.type != "SYMBOL":
+        raise SchemeTypeError("Function names must be symbols, not a %s." % function_name.type)
+
+    # check that all our arguments are symbols:
+    function_parameters = function_name_with_parameters.tail
+
+    for parameter in safe_iter(function_parameters):
+        if parameter.type != "SYMBOL":
+            raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
+
+    # check if this function can take a variable number of arguments
+    is_variadic = False
+
+    for parameter in safe_iter(function_parameters):
+        if parameter.value == '.':
+            if is_variadic:
+                raise SchemeSyntaxError("May not have . more than once in a parameter list.")
             else:
-                explicit_parameters = deepcopy(function_parameters)
+                is_variadic = True
 
-                # create a linked list holding all the parameters before the dot
-                current_head = explicit_parameters
+    if is_variadic:
+        return define_variadic_function(arguments, environment)
+    else:
+        return define_normal_function(arguments, environment)
 
-                # find the position in the list just before the dot
-                for i in range(dot_position - 2):
-                    current_head = current_head.tail
 
-                # then remove the rest of the list
-                current_head.tail = None
+def define_normal_function(arguments, environment):
+    function_name_with_parameters = arguments[0]
+    function_name = function_name_with_parameters.head
+    function_parameters = function_name_with_parameters.tail
 
-            improper_list_parameter = function_parameters[dot_position + 1]
+    function_body = arguments.tail[0]
+    
+    # a function with a fixed number of arguments
+    def named_function(_arguments, _environment):
+        if safe_len(_arguments) != safe_len(function_parameters):
+            raise SchemeTypeError("%s takes %d arguments, %d given." % \
+                                      (function_name, safe_len(function_parameters), safe_len(_arguments)))
 
-            # check we have been given sufficient arguments for our explicit parameters
-            if safe_len(arguments) < safe_len(explicit_parameters):
-                raise SchemeTypeError("%s takes at least %d arguments, you only provided %d." % \
-                                          (function_name.value, safe_len(explicit_parameters),
-                                           safe_len(arguments)))
+        local_environment = {}
 
-            local_environment = {}
+        # evaluate arguments
+        _arguments = deepcopy(_arguments)
+        for i in range(safe_len(_arguments)):
+            (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment)
 
-            for (parameter, parameter_expression) in zip(safe_iter(explicit_parameters),
-                                                         safe_iter(arguments)):
-                local_environment[parameter.value], _environment = eval_s_expression(parameter_expression, _environment)
+        # assign to parameters
+        for (parameter_name, parameter_value) in zip(safe_iter(function_parameters),
+                                                          safe_iter(_arguments)):
+            local_environment[parameter_name.value] = parameter_value
 
-            # put the remaining arguments in our improper parameter
-            if arguments:
-                local_environment[improper_list_parameter.value] = arguments[safe_len(explicit_parameters)]
+        # create new environment, where local variables mask globals
+        new_environment = dict(_environment, **local_environment)
 
-            new_environment = dict(_environment, **local_environment)
+        # evaluate the function block
+        result, final_environment = eval_s_expression(function_body, new_environment)
 
-            # evaluate our function_body in this environment
-            (result, final_environment) = eval_s_expression(function_body, new_environment)
+        # update any global variables that weren't masked
+        for variable_name in _environment:
+            if variable_name not in local_environment:
+                _environment[variable_name] = final_environment[variable_name]
 
-            # update global variables that weren't masked by locals
-            for variable_name in _environment:
-                if variable_name not in local_environment:
-                    _environment[variable_name] = final_environment[variable_name]
+        return (result, _environment)
 
-            return (result, _environment)
+    # assign this function to this name
+    environment[function_name.value] = named_function
 
-        def named_function(arguments, _environment):
-            if safe_len(arguments) != safe_len(function_parameters):
-                raise SchemeTypeError("%s takes %d arguments, %d given." % \
-                                          (function_name, safe_len(function_parameters), safe_len(arguments)))
+    return (None, environment)
 
-            local_environment = {}
 
-            # evaluate arguments in current environment
-            for (parameter_name, parameter_expression) in zip(safe_iter(function_parameters),
-                                                              safe_iter(arguments)):
-                local_environment[parameter_name.value], _environment = eval_s_expression(parameter_expression, _environment)
+def define_variadic_function(arguments, environment):
+    function_name_with_parameters = arguments[0]
+    function_name = function_name_with_parameters.head
+    function_parameters = function_name_with_parameters.tail
 
-            # create new environment, where local variables mask globals
-            new_environment = dict(_environment, **local_environment)
+    function_body = arguments.tail[0]
+    
+    dot_position = function_parameters.index(Atom('SYMBOL', '.'))
 
-            # evaluate the function block
-            result, final_environment = eval_s_expression(function_body, new_environment)
+    if dot_position < len(function_parameters) - 2:
+        raise SchemeSyntaxError("You can only have one improper list "
+                                "(you have %d parameters after the '.')." % (len(function_parameters) - 1 - dot_position))
+    if dot_position == len(function_parameters) - 1:
+        raise SchemeSyntaxError("Must name an improper list parameter after '.'.")
 
-            # update any global variables that weren't masked
-            for variable_name in _environment:
-                if variable_name not in local_environment:
-                    _environment[variable_name] = final_environment[variable_name]
-
-            return (result, _environment)
-
-        # assign this function to this name
-        if is_variadic:
-            environment[function_name.value] = named_variadic_function
+    def named_variadic_function(_arguments, _environment):
+        # a function that takes a variable number of arguments
+        if dot_position == 0:
+            explicit_parameters = None
         else:
-            environment[function_name.value] = named_function
+            explicit_parameters = deepcopy(function_parameters)
 
-        return (None, environment)
+            # create a linked list holding all the parameters before the dot
+            current_head = explicit_parameters
+
+            # find the position in the list just before the dot
+            for i in range(dot_position - 2):
+                current_head = current_head.tail
+
+            # then remove the rest of the list
+            current_head.tail = None
+
+        improper_list_parameter = function_parameters[dot_position + 1]
+
+        # check we have been given sufficient arguments for our explicit parameters
+        if safe_len(_arguments) < safe_len(explicit_parameters):
+            raise SchemeTypeError("%s takes at least %d arguments, you only provided %d." % \
+                                      (function_name.value, safe_len(explicit_parameters),
+                                       safe_len(_arguments)))
+
+        local_environment = {}
+
+        # evaluate arguments
+        _arguments = deepcopy(_arguments)
+        for i in range(safe_len(_arguments)):
+            (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment)
+
+        # assign parameters
+        for (parameter, parameter_value) in zip(safe_iter(explicit_parameters),
+                                                safe_iter(_arguments)):
+            local_environment[parameter] = parameter_value
+
+        # put the remaining arguments in our improper parameter
+        remaining_arguments = _arguments
+        for i in range(safe_len(explicit_parameters)):
+            remaining_arguments = remaining_arguments.tail
+
+        local_environment[improper_list_parameter.value] = remaining_arguments
+
+        new_environment = dict(_environment, **local_environment)
+
+        # evaluate our function_body in this environment
+        (result, final_environment) = eval_s_expression(function_body, new_environment)
+
+        # update global variables that weren't masked by locals
+        for variable_name in _environment:
+            if variable_name not in local_environment:
+                _environment[variable_name] = final_environment[variable_name]
+
+        return (result, _environment)
+
+    # assign this function to this name
+    environment[function_name.value] = named_variadic_function
+
+    return (None, environment)
+
 
 @name_function('set!')
 def set_variable(arguments, environment):
