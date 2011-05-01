@@ -93,9 +93,18 @@ class EvaluatorTest(InterpreterTest):
         self.assertEvaluatesTo(program, 1)
 
     def test_variadic_function_definition(self):
+        # test that we can put nothing in the impure list parameter
         program = "(define (foo . args) 1) (foo)"
 
         self.assertEvaluatesTo(program, 1)
+
+        # test that we can put multiple things in the impure list parameter
+        program = "(define (f . everything) everything) (f 1 2 3)"
+        self.assertEvaluatesTo(program, [1, 2, 3])
+
+        # test that the improper list parameter is evaluated
+        program = "(define (g . everything) everything) (g (+ 2 3))"
+        self.assertEvaluatesTo(program, [5])
 
     def test_lambda(self):
         program = "((lambda (x) (+ x x)) 4)"
