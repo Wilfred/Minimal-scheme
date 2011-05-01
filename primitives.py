@@ -18,7 +18,7 @@ def name_function(function_name):
 
 
 @name_function('define')
-def define(arguments, _environment):
+def define(arguments, environment):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("Need to pass exactly two arguments to "
                               "`define` (you passed %d)." % safe_len(arguments))
@@ -28,16 +28,16 @@ def define(arguments, _environment):
         if arguments.head.type != 'SYMBOL':
             raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments.head.type)
 
-        if arguments.head.value in _environment:
+        if arguments.head.value in environment:
             raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments.head.value)
 
         variable_name = arguments.head.value
         variable_value_expression = arguments.tail.head
 
-        result, _environment = eval_s_expression(variable_value_expression, _environment)
-        _environment[variable_name] = result
+        result, environment = eval_s_expression(variable_value_expression, environment)
+        environment[variable_name] = result
 
-        return (None, _environment)
+        return (None, environment)
 
     else:
         # function definition
@@ -149,14 +149,14 @@ def define(arguments, _environment):
 
         # assign this function to this name
         if is_variadic:
-            _environment[function_name.value] = named_variadic_function
+            environment[function_name.value] = named_variadic_function
         else:
-            _environment[function_name.value] = named_function
+            environment[function_name.value] = named_function
 
-        return (None, _environment)
+        return (None, environment)
 
 @name_function('set!')
-def set_variable(arguments, _environment):
+def set_variable(arguments, environment):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
 
@@ -165,34 +165,34 @@ def set_variable(arguments, _environment):
     if variable_name.type != 'SYMBOL':
         raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.type)
 
-    if variable_name.value not in _environment:
+    if variable_name.value not in environment:
         raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.value)
 
     variable_value_expression = arguments.tail.head
-    result, _environment = eval_s_expression(variable_value_expression, _environment)
-    _environment[variable_name.value] = result
+    result, environment = eval_s_expression(variable_value_expression, environment)
+    environment[variable_name.value] = result
 
-    return (None, _environment)
+    return (None, environment)
 
 @name_function('if')
-def if_function(arguments, _environment):
+def if_function(arguments, environment):
     if safe_len(arguments) not in [2,3]:
         raise SchemeTypeError("Need to pass either two or three arguments to `if`.")
 
-    condition, _environment = eval_s_expression(arguments.head, _environment)
+    condition, environment = eval_s_expression(arguments.head, environment)
 
     # everything except an explicit false boolean is true
     if not (condition.type == 'BOOLEAN' and condition.value == False):
         then_expression = arguments[1]
-        return eval_s_expression(then_expression, _environment)
+        return eval_s_expression(then_expression, environment)
     else:
         if safe_len(arguments) == 3:
             else_expression = arguments[2]
-            return eval_s_expression(else_expression, _environment)
+            return eval_s_expression(else_expression, environment)
 
 
 @name_function('lambda')
-def make_lambda_function(arguments, _environment):
+def make_lambda_function(arguments, environment):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("Need to pass exactly two arguments to `lambda`.")
 
@@ -206,7 +206,7 @@ def make_lambda_function(arguments, _environment):
         if parameter.type != "SYMBOL":
             raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
 
-    def lambda_function(_arguments, __environment):
+    def lambda_function(_arguments, _environment):
         if safe_len(_arguments) != safe_len(parameter_list):
             raise SchemeTypeError("Wrong number of arguments for this "
                                   "lambda function, was expecting %d, received %d" % (safe_len(parameter_list), safe_len(_arguments)))
@@ -215,36 +215,36 @@ def make_lambda_function(arguments, _environment):
 
         for (parameter_name, parameter_expression) in zip(safe_iter(parameter_list),
                                                           safe_iter(_arguments)):
-            local_environment[parameter_name.value], __environment = eval_s_expression(parameter_expression, __environment)
+            local_environment[parameter_name.value], _environment = eval_s_expression(parameter_expression, _environment)
 
-        new_environment = dict(__environment, **local_environment)
+        new_environment = dict(_environment, **local_environment)
 
         # now we have set up the correct scope, evaluate our function block
         (result, final_environment) = eval_s_expression(function_body, new_environment)
 
         # update any global variables that weren't masked
-        for variable_name in __environment:
+        for variable_name in _environment:
             if variable_name not in local_environment:
-                __environment[variable_name] = final_environment[variable_name]
+                _environment[variable_name] = final_environment[variable_name]
 
-        return (result, __environment)
+        return (result, _environment)
 
-    return (lambda_function, _environment)
+    return (lambda_function, environment)
 
 
 @name_function('quote')
-def return_argument_unevaluated(arguments, _environment):
+def return_argument_unevaluated(arguments, environment):
     if safe_len(arguments) != 1:
         raise SchemeTypeError("Quote takes exactly one argument, received %d" % safe_len(arguments))
 
-    return (arguments.head, _environment)
+    return (arguments.head, environment)
 
 
 @name_function('begin')
-def evaluate_sequence(arguments, _environment):
+def evaluate_sequence(arguments, environment):
     result = None
 
     for argument in arguments:
-        result, _environment = eval_s_expression(argument, _environment)
+        result, environment = eval_s_expression(argument, environment)
 
-    return (result, _environment)
+    return (result, environment)

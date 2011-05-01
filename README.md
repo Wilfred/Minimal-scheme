@@ -59,7 +59,6 @@ Comments work too!
 * Indent this file properly
 * Fix width of evaluator.py
 * Break up `define` into several functions
-* Replace _environment with environment in primitives.py
 * Put blank lines in consistenly in tests.py
 * Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
 * Since built-ins don't need access to global variables, don't pass them
