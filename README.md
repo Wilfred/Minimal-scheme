@@ -16,7 +16,8 @@ No support for `'` acting as `quote` yet though.
 ### Integers and floats
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
-`+`, `-`, `*`, `/`, `<`, `>`, `=`, `zero?`, `positive?`, `negative?`
+`+`, `-`, `*`, `/`, `<`, `>`, `=`, `zero?`, `positive?`, `negative?`,
+`abs`
 
 No support for exact fractions or complex numbers.
 

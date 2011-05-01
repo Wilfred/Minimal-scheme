@@ -279,6 +279,13 @@ class MathsTest(InterpreterTest):
         program = "(negative? 3)"
         self.assertEvaluatesTo(program, False)
 
+    def test_abs(self):
+        program = "(abs (- 5.1))"
+        self.assertEvaluatesTo(program, 5.1)
+
+        program = "(abs 0.2)"
+        self.assertEvaluatesTo(program, 0.2)
+
 
 class CharacterTest(InterpreterTest):
     def test_char_predicate(self):

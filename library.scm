@@ -13,3 +13,8 @@
   (if (< x 0)
       #t
       #f))
+
+(define (abs x)
+  (if (positive? x)
+      x
+      (- x)))
