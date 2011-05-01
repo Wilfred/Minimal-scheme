@@ -13,13 +13,17 @@ class Repl(cmd.Cmd):
     intro = "Welcome to Minimal Scheme 0.1 alpha."
     prompt = "scheme> "
 
+    def __init__(self, initial_environment):
+        self.environment = initial_environment
+        super().__init__()
+
     def onecmd(self, program):
         if program == 'EOF':
             print() # for tidyness' sake
             sys.exit(0)
 
         try:
-            result = eval_program(program)
+            result, self.environment = eval_program(program, self.environment)
 
             if not result is None:
                 if hasattr(result, "get_python_equivalent"):
@@ -34,8 +38,9 @@ class Repl(cmd.Cmd):
 
 
 if __name__ == '__main__':
-    load_built_ins()
-    load_standard_library()
+    environment = {}
+    environment = load_built_ins(environment)
+    environment = load_standard_library(environment)
 
     if len(sys.argv) > 1:
         # program file passed in
@@ -43,10 +48,10 @@ if __name__ == '__main__':
         program = open(path, 'r').read()
 
         try:
-            eval_program(program)
+            eval_program(program, environment)
         except InterpreterException as e:
             print("Error: %s" % e.message)
 
     else:
         # interactive mode
-        Repl().cmdloop()
+        Repl(environment).cmdloop()

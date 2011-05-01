@@ -2,18 +2,19 @@
 
 import sys
 import unittest
-from evaluator import eval_program, variables, load_standard_library, load_built_ins
+from evaluator import eval_program, load_standard_library, load_built_ins
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
 
 class InterpreterTest(unittest.TestCase):
     def setUp(self):
-        load_built_ins()
-        load_standard_library()
+        self.environment = {}
+        self.environment = load_built_ins(self.environment)
+        self.environment = load_standard_library(self.environment)
 
     def assertEvaluatesTo(self, program, expected_result):
-        internal_result = eval_program(program)
+        internal_result, final_environment = eval_program(program, self.environment)
 
         if internal_result:
             result = internal_result.get_python_equivalent()
@@ -22,24 +23,28 @@ class InterpreterTest(unittest.TestCase):
         
         self.assertEqual(result, expected_result)
 
+
 class LexerText(InterpreterTest):
     def test_integer(self):
         program = "3"
-        result = eval_program(program).get_python_equivalent()
+        (internal_result, environment) = eval_program(program)
+        result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, 3)
         self.assertEqual(type(result), int)
 
     def test_floating_point(self):
         program = "2.0"
-        result = eval_program(program).get_python_equivalent()
+        (internal_result, environment) = eval_program(program)
+        result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, 2.0)
         self.assertEqual(type(result), float)
 
     def test_boolean(self):
         program = "#t"
-        result = eval_program(program).get_python_equivalent()
+        (internal_result, environment) = eval_program(program)
+        result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, True)
         self.assertEqual(type(result), bool)

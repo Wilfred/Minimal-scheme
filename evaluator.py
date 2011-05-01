@@ -5,68 +5,79 @@ from built_ins import built_ins
 from utils import safe_len, safe_iter
 from copy import deepcopy
 
-variables = {}
+def load_built_ins(environment):
 
-def load_built_ins():
     # a built in differs from primitives: it always has all its arguments evaluated
     def arguments_evaluated(function):
-        def decorated_function(arguments):
+        def decorated_function(arguments, _environment):
+            # evaluate the arguments, then pass them to the function
             for i in range(safe_len(arguments)):
-                arguments[i] = eval_s_expression(arguments[i])
+                (arguments[i], _environment) = eval_s_expression(arguments[i], _environment)
 
-            return function(arguments)
+            return function(arguments, _environment)
 
         return decorated_function
 
     for (function_name, function) in built_ins.items():
-        variables[function_name] = arguments_evaluated(function)
+        environment[function_name] = arguments_evaluated(function)
 
-def load_standard_library():
+    return environment
+
+
+def load_standard_library(environment):
     with open('library.scm') as library_file:
         library_code = library_file.read()
-        eval_program(library_code)
+        eval_program(library_code, environment)
+
+    return environment
 
 
-def eval_program(program):
+def eval_program(program, initial_environment=None):
+    if initial_environment:
+        environment = initial_environment
+    else:
+        environment = {}
+
     # a program is a linked list of s-expressions
     s_expressions = parser.parse(program)
 
     if not s_expressions:
-        return
+        return (None, environment)
 
     result = None
+
     for s_expression in safe_iter(s_expressions):
-        result = eval_s_expression(s_expression)
+        result, environment = eval_s_expression(s_expression, environment)
 
-    return result
+    return (result, environment)
 
 
-def eval_s_expression(s_expression):
+def eval_s_expression(s_expression, environment):
     if isinstance(s_expression, LinkedListNode):
-        return eval_list(s_expression)
+        return eval_list(s_expression, environment)
     else:
-        return eval_atom(s_expression)
+        return eval_atom(s_expression, environment)
 
 
-def eval_list(linked_list):
-    # find the function we are calling
-    function = eval_s_expression(linked_list.head)
+def eval_list(linked_list, environment):
+    # find the function/primitive we are calling
+    function, environment = eval_s_expression(linked_list.head, environment)
 
-    # call it (we require the function to decide whether or not to
-    # evalue the arguments)
-    return function(linked_list.tail)
+    # call it (internally we require the function to decide whether or
+    # not to evalue the arguments)
+    return function(linked_list.tail, environment)
 
-def eval_atom(atom):
+def eval_atom(atom, environment):
     # with the exception of symbols, atoms evaluate to themselves
     if atom.type == 'SYMBOL':
-        return eval_symbol(atom.value)
+        return eval_symbol(atom.value, environment)
     else:
-        return atom
+        return (atom, environment)
 
-def eval_symbol(symbol_string):
+def eval_symbol(symbol_string, environment):
     if symbol_string == 'define':
 
-        def define(arguments):
+        def define(arguments, _environment):
             if safe_len(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to "
                                       "`define` (you passed %d)." % safe_len(arguments))
@@ -76,11 +87,16 @@ def eval_symbol(symbol_string):
                 if arguments.head.type != 'SYMBOL':
                     raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments.head.type)
 
-                if arguments.head.value in variables:
+                if arguments.head.value in environment:
                     raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments.head.value)
 
+                variable_name = arguments.head.value
                 variable_value_expression = arguments.tail.head
-                variables[arguments.head.value] = eval_s_expression(variable_value_expression)
+
+                result, _environment = eval_s_expression(variable_value_expression, _environment)
+                _environment[variable_name] = result
+
+                return (None, _environment)
 
             else:
                 # function definition
@@ -118,7 +134,8 @@ def eval_symbol(symbol_string):
                     if dot_position == len(function_parameters) - 1:
                         raise SchemeSyntaxError("Must name an improper list parameter after '.'.")
 
-                def named_variadic_function(arguments):
+                def named_variadic_function(arguments, _environment):
+                    # a function that takes a variable number of arguments
                     if dot_position == 0:
                         explicit_parameters = None
                     else:
@@ -139,59 +156,66 @@ def eval_symbol(symbol_string):
                                                   (function_name.value, safe_len(explicit_parameters),
                                                    safe_len(arguments)))
 
-                    # assign to all our parameters
-                    global variables
-                    global_variables = variables.copy()
+                    local_environment = {}
 
                     for (parameter, parameter_expression) in zip(safe_iter(explicit_parameters),
                                                                  safe_iter(arguments)):
-                        variables[parameter.value] = eval_s_expression(parameter_expression)
+                        local_environment[parameter.value], _environment = eval_s_expression(parameter_expression, _environment)
 
                     # put the remaining arguments in our improper parameter
                     if arguments:
-                        variables[improper_list_parameter.value] = arguments[safe_len(explicit_parameters)]
+                        local_environment[improper_list_parameter.value] = arguments[safe_len(explicit_parameters)]
+
+                    new_environment = dict(_environment, **local_environment)
 
                     # evaluate our function_body in this environment
-                    result = eval_s_expression(function_body)
+                    (result, final_environment) = eval_s_expression(function_body, new_environment)
 
-                    # reset the environment
-                    variables = global_variables
+                    # update global variables that weren't masked by locals
+                    for variable_name in _environment:
+                        if variable_name not in local_environment:
+                            _environment[variable_name] = final_environment[variable_name]
 
-                    return result
+                    return (result, _environment)
 
-                def named_function(arguments):
+                def named_function(arguments, _environment):
                     if safe_len(arguments) != safe_len(function_parameters):
                         raise SchemeTypeError("%s takes %d arguments, %d given." % \
                                                   (function_name, safe_len(function_parameters), safe_len(arguments)))
 
-                    # create function scope by saving old environment
-                    global variables
-                    global_variables = variables.copy()
+                    local_environment = {}
 
-                    # evaluate arguments
+                    # evaluate arguments in current environment
                     for (parameter_name, parameter_expression) in zip(safe_iter(function_parameters),
                                                                       safe_iter(arguments)):
-                            variables[parameter_name.value] = eval_s_expression(parameter_expression)
+                        local_environment[parameter_name.value], _environment = eval_s_expression(parameter_expression, _environment)
+
+                    # create new environment, where local variables mask globals
+                    new_environment = dict(_environment, **local_environment)
 
                     # evaluate the function block
-                    result = eval_s_expression(function_body)
+                    result, final_environment = eval_s_expression(function_body, new_environment)
 
-                    # restore old environment
-                    variables = global_variables
+                    # update any global variables that weren't masked
+                    for variable_name in _environment:
+                        if variable_name not in local_environment:
+                            _environment[variable_name] = final_environment[variable_name]
 
-                    return result
+                    return (result, _environment)
 
                 # assign this function to this name
                 if is_variadic:
-                    variables[function_name.value] = named_variadic_function
+                    _environment[function_name.value] = named_variadic_function
                 else:
-                    variables[function_name.value] = named_function
+                    _environment[function_name.value] = named_function
 
-        return define
+                return (None, _environment)
+
+        return (define, environment)
 
     elif symbol_string == 'set!':
 
-        def set_variable(arguments):
+        def set_variable(arguments, _environment):
             if safe_len(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
 
@@ -200,36 +224,39 @@ def eval_symbol(symbol_string):
             if variable_name.type != 'SYMBOL':
                 raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.type)
 
-            if variable_name.value not in variables:
+            if variable_name.value not in environment:
                 raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.value)
 
             variable_value_expression = arguments.tail.head
-            variables[variable_name.value] = eval_s_expression(variable_value_expression)
+            result, _environment = eval_s_expression(variable_value_expression, _environment)
+            _environment[variable_name.value] = result
 
-        return set_variable
+            return (None, _environment)
+
+        return (set_variable, environment)
 
     elif symbol_string == 'if':
 
-        def if_function(arguments):
+        def if_function(arguments, _environment):
             if safe_len(arguments) not in [2,3]:
                 raise SchemeTypeError("Need to pass either two or three arguments to `if`.")
 
-            condition = eval_s_expression(arguments.head)
+            condition, _environment = eval_s_expression(arguments.head, _environment)
 
             # everything except an explicit false boolean is true
             if not (condition.type == 'BOOLEAN' and condition.value == False):
                 then_expression = arguments[1]
-                return eval_s_expression(then_expression)
+                return eval_s_expression(then_expression, _environment)
             else:
                 if safe_len(arguments) == 3:
                     else_expression = arguments[2]
-                    return eval_s_expression(else_expression)
+                    return eval_s_expression(else_expression, _environment)
 
-        return if_function
+        return (if_function, environment)
 
     elif symbol_string == 'lambda':
 
-        def make_lambda_function(arguments):
+        def make_lambda_function(arguments, _environment):
             if safe_len(arguments) != 2:
                 raise SchemeTypeError("Need to pass exactly two arguments to `lambda`.")
 
@@ -243,56 +270,58 @@ def eval_symbol(symbol_string):
                 if parameter.type != "SYMBOL":
                     raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
 
-            def lambda_function(_arguments):
+            def lambda_function(_arguments, __environment):
                 if safe_len(_arguments) != safe_len(parameter_list):
                     raise SchemeTypeError("Wrong number of arguments for this "
                                           "lambda function, was expecting %d, received %d" % (safe_len(parameter_list), safe_len(_arguments)))
 
-                # save the global scope variables elsewhere so we can restore them
-                global variables
-                global_variables = variables.copy()
+                local_environment = {}
 
                 for (parameter_name, parameter_expression) in zip(safe_iter(parameter_list),
                                                                   safe_iter(_arguments)):
-                    variables[parameter_name.value] = eval_s_expression(parameter_expression)
+                    local_environment[parameter_name.value], __environment = eval_s_expression(parameter_expression, __environment)
+
+                new_environment = dict(__environment, **local_environment)
 
                 # now we have set up the correct scope, evaluate our function block
-                result = eval_s_expression(function_body)
+                (result, final_environment) = eval_s_expression(function_body, new_environment)
 
-                # now restore the original environment
-                variables = global_variables
+                # update any global variables that weren't masked
+                for variable_name in __environment:
+                    if variable_name not in local_environment:
+                        __environment[variable_name] = final_environment[variable_name]
 
-                return result
+                return (result, __environment)
 
-            return lambda_function
+            return (lambda_function, _environment)
 
-        return make_lambda_function
+        return (make_lambda_function, environment)
 
     elif symbol_string == 'quote':
 
-        def return_argument_unevaluated(arguments):
+        def return_argument_unevaluated(arguments, _environment):
             if safe_len(arguments) != 1:
                 raise SchemeTypeError("Quote takes exactly one argument, received %d" % safe_len(arguments))
 
-            return arguments.head
+            return (arguments.head, _environment)
 
-        return return_argument_unevaluated
+        return (return_argument_unevaluated, environment)
 
     elif symbol_string == 'begin':
 
-        def evaluate_sequence(arguments):
+        def evaluate_sequence(arguments, _environment):
             result = None
 
             for argument in arguments:
-                result = eval_s_expression(argument)
+                result, _environment = eval_s_expression(argument, _environment)
 
-            return result
+            return (result, _environment)
 
-        return evaluate_sequence
+        return (evaluate_sequence, environment)
 
-    elif symbol_string in variables:
+    elif symbol_string in environment:
 
-        return variables[symbol_string]
+        return (environment[symbol_string], environment)
 
     else:
 
