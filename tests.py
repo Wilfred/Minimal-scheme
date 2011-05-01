@@ -160,6 +160,7 @@ class ListTest(InterpreterTest):
         program = "(pair? (quote ()))"
         self.assertEvaluatesTo(program, False)
 
+
 class MathsTest(InterpreterTest):
     def test_addition(self):
         program = "(+ 1 2 3)"
@@ -217,8 +218,10 @@ class MathsTest(InterpreterTest):
 
     def test_equality(self):
         program = "(= 0 0)"
-
         self.assertEvaluatesTo(program, True)
+
+        program = "(= 0 1)"
+        self.assertEvaluatesTo(program, False)
 
     def test_number(self):
         program = "(number? 1)"
@@ -266,9 +269,16 @@ class MathsTest(InterpreterTest):
         program = "(positive? 1)"
         self.assertEvaluatesTo(program, True)
 
+        program = "(positive? (- 1))"
+        self.assertEvaluatesTo(program, False)
+
     def test_negative_predicate(self):
         program = "(negative? (- 1))"
         self.assertEvaluatesTo(program, True)
+
+        program = "(negative? 3)"
+        self.assertEvaluatesTo(program, False)
+
 
 class CharacterTest(InterpreterTest):
     def test_char_predicate(self):
@@ -299,6 +309,7 @@ class CharacterTest(InterpreterTest):
     def test_char_greater_or_equal(self):
         program = "(char>=? #\\( #\\()"
         self.assertEvaluatesTo(program, True)
+
 
 if __name__ == '__main__':
     unittest.main()
