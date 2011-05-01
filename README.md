@@ -65,5 +65,5 @@ Comments work too!
 ## Future ideas
 
 * Compare with other Scheme interpreters written in Python for
-  elegance of approach, error friendliness, perforamnce, test coverage
+  elegance of approach, error friendliness, performance, test coverage
   
