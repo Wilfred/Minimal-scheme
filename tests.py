@@ -56,6 +56,16 @@ class LexerText(InterpreterTest):
         program = "#\\newline"
         self.assertEvaluatesTo(program, '\n')
 
+    def test_string(self):
+        program = '""'
+        self.assertEvaluatesTo(program, "")
+
+        program = '" "'
+        self.assertEvaluatesTo(program, " ")
+
+        program = '" \\" "'
+        self.assertEvaluatesTo(program, ' " ')
+
 
 class EvaluatorTest(InterpreterTest):
     def test_empty_program(self):

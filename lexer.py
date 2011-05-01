@@ -1,10 +1,18 @@
 import ply.lex
 
-tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 'COMMENT', 'CHARACTER')
+tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 'COMMENT', 'CHARACTER', 'STRING')
 
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
-t_SYMBOL = r'[a-zA-Z*+/!?=<>.-]+'
+t_SYMBOL = r'[a-zA-Z*+/!?=<>.-]+' # TODO: check against R5RS docs
+
+def t_STRING(t):
+    r'"(\\"|[a-zA-Z*+/!?=<>. -])*"'
+    # strip leading and trailing doublequote from input
+    t.value = t.value[1:-1]
+
+    t.value = t.value.replace('\\"', '"')
+    return t
 
 def t_FLOATING_POINT(t):
     r"([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)"
