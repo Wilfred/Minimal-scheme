@@ -1,4 +1,4 @@
-from errors import SchemeTypeError
+from errors import SchemeTypeError, InvalidArgument
 from parser import Atom, LinkedListNode
 from utils import safe_len, safe_iter, get_type
 
@@ -332,3 +332,61 @@ def char_greater_or_equal(arguments, environment):
 
     return (Atom('BOOLEAN', False), environment)
 
+
+@name_function('string?')
+def is_string(arguments, environment):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("string? takes exactly one argument, "
+                              "got %d." % safe_len(arguments))
+
+    if get_type(arguments[0]) == 'STRING':
+        return (Atom('BOOLEAN', True), environment)
+
+    return (Atom('BOOLEAN', False), environment)
+
+
+@name_function('make-string')
+def make_string(arguments, environment):
+    if safe_len(arguments) not in [1, 2]:
+        raise SchemeTypeError("make-string takes exactly one or two arguments, "
+                              "got %d." % safe_len(arguments))
+
+    string_length_atom = arguments[0]
+
+    if get_type(string_length_atom) != "INTEGER":
+        raise SchemeTypeError("String length must be an integer, "
+                              "got %d." % get_type(string_length_atom))
+
+    string_length = string_length_atom.value
+
+    if string_length < 0:
+        raise InvalidArgument("String length must be non-negative, "
+                              "got %d." % string_length)
+
+    if safe_len(arguments) == 1:
+        return (Atom('STRING', ' ' * string_length), environment)
+
+    else:
+        repeated_character_atom = arguments[1]
+
+        if get_type(repeated_character_atom) != "CHARACTER":
+            raise SchemeTypeError("The second argument to make-string must be"
+                                  " a character, got a %s." % get_type(repeated_character_atom))
+
+        repeated_character = repeated_character_atom.value
+        return (Atom('STRING', repeated_character * string_length), environment)
+
+
+@name_function('string-length')
+def string_length(arguments, environment):
+    if safe_len(arguments) != 1:
+        raise SchemeTypeError("string-length takes exactly one argument, "
+                              "got %d." % safe_len(arguments))
+
+    string_atom = arguments[0]
+    if get_type(string_atom) != 'STRING':
+        raise SchemeTypeError("string-length takes a string as its argument, "
+                              "not a %s." % get_type(string_atom))
+
+    string_length = len(string_atom.value)
+    return (Atom('INTEGER', string_length), environment)

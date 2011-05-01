@@ -337,5 +337,31 @@ class CharacterTest(InterpreterTest):
         self.assertEvaluatesTo(program, True)
 
 
+class StringTest(InterpreterTest):
+    def test_string_predicate(self):
+        program = '(string? "foo")'
+        self.assertEvaluatesTo(program, True)
+
+        program = '(string? (quote ("foo")))'
+        self.assertEvaluatesTo(program, False)
+
+    def test_make_string(self):
+        program = '(make-string 2)'
+        self.assertEvaluatesTo(program, "  ")
+
+        program = '(make-string 2 #\\a)'
+        self.assertEvaluatesTo(program, "aa")
+
+        program = '(make-string 0 #\\a)'
+        self.assertEvaluatesTo(program, "")
+
+    def test_string_length(self):
+        program = '(string-length "")'
+        self.assertEvaluatesTo(program, 0)
+
+        program = '(string-length "abcdef")'
+        self.assertEvaluatesTo(program, 6)
+
+
 if __name__ == '__main__':
     unittest.main()

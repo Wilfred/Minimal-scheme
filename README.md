@@ -39,6 +39,10 @@ No support for exact fractions or complex numbers.
 
 `car`, `cdr`, `cons`, `pair?`
 
+### Strings
+
+`string?`, `make-string`, `string-length`
+
 ### Other
 
 Comments work too!
