@@ -144,9 +144,12 @@ def eval_symbol(symbol_string, environment):
 
                         # create a linked list holding all the parameters before the dot
                         current_head = explicit_parameters
+
+                        # find the position in the list just before the dot
                         for i in range(dot_position - 2):
                             current_head = current_head.tail
 
+                        # then remove the rest of the list
                         current_head.tail = None
 
                     improper_list_parameter = function_parameters[dot_position + 1]
