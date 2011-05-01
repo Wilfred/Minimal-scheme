@@ -329,4 +329,4 @@ def eval_symbol(symbol_string, environment):
 
     else:
 
-        raise UndefinedVariable('%s has not been defined (environment: %s).' % (symbol_string, variables))
+        raise UndefinedVariable('%s has not been defined (environment: %s).' % (symbol_string, sorted(environment.keys())))
