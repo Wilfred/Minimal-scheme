@@ -7,7 +7,8 @@ import cmd
 assert sys.version.startswith('3.'), "Python 3 required"
 
 from lexer import lexer
-from evaluator import eval_program, InterpreterException, load_standard_library, load_built_ins
+from evaluator import eval_program, load_standard_library, load_built_ins
+from errors import InterpreterException
 
 class Repl(cmd.Cmd):
     intro = "Welcome to Minimal Scheme 0.1 alpha."
