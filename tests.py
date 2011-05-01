@@ -63,7 +63,7 @@ class EvaluatorTest(InterpreterTest):
         self.assertEvaluatesTo(program, None)
 
     def test_variable_evaluation(self):
-        program = "(define y 28) y"
+        program = "(define x 28) x"
 
         self.assertEvaluatesTo(program, 28)
 
@@ -88,7 +88,7 @@ class EvaluatorTest(InterpreterTest):
         self.assertEvaluatesTo(program, 2)
 
     def test_function_definition(self):
-        program = "(define (z) 1) (z)"
+        program = "(define (x) 1) (x)"
 
         self.assertEvaluatesTo(program, 1)
 
@@ -106,7 +106,7 @@ class EvaluatorTest(InterpreterTest):
         self.assertEvaluatesTo(program, 1)
 
     def test_begin(self):
-        program = "(begin (define n 1) (+ n 3))"
+        program = "(begin (define x 1) (+ x 3))"
 
         self.assertEvaluatesTo(program, 4)
 

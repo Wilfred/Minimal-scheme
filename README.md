@@ -45,7 +45,6 @@ Comments work too!
 
 ## Known bugs
 
-* The environment isn't wiped after each test
 * Cannot nest defines
 * No variadic lambdas
 * No 'hello world' yet
