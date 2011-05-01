@@ -5,6 +5,16 @@ interesting subset of it.
 
 All functionality is implemented with corresponding tests. Functions are generally thorough with their error messages, and we strive to give informative error messages.
 
+### Terminology
+
+The terms `primitive`, `built-in` and `standard function` are used to refer to different things in minimal scheme.
+
+A `primitive` is written in Python and controls whether or not it evaluates its arguments.
+
+A `built-in` is written in Python but has all its arguments evaluated automatically.
+
+A `standard function` is written in Scheme.
+
 ## Functionality implemented
 
 ### Primitives
@@ -36,5 +46,26 @@ Comments work too!
 ## Known bugs
 
 * The environment isn't wiped after each test
-* Using None as the empty list means that we cannot call len() on any list
 * Cannot nest defines
+* No variadic lambdas
+* No 'hello world' yet
+* positive? returns false for 0
+
+## Cleanup tasks
+
+* Using None as the empty list means that we cannot call len() on any list -- create a Nil object
+* Write an immutable dict for environments -- clarity
+* Remove eval_program -- it's just map(eval_s_expression, s_expressions)
+* Rename internal_result to actual_result in tests.py
+* Indent this file properly
+* Fix width of evaluator.py
+* Move primitives to a separate file similar to builtins.py
+* Put blank lines in consistenly in tests.py
+* Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
+* Since built-ins don't need access to global variables, don't pass them
+
+## Future ideas
+
+* Compare with other Scheme interpreters written in Python for
+  elegance of approach, error friendliness, perforamnce, test coverage
+  
