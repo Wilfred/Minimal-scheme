@@ -53,6 +53,10 @@ Comments work too!
 * No variadic lambdas
 * No 'hello world' yet
 * positive? returns false for 0
+* External representation is Python literals rather than Scheme (e.g. 'a' instead of #\a)
+* String literals are mutable (so string-set! violates specification)
+* As are list literals
+* Using set-cdr! to make a circular list crashes
 
 ## Cleanup tasks
 
@@ -66,6 +70,7 @@ Comments work too!
 * Put blank lines in consistenly in tests.py
 * Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
 * Since built-ins don't need access to global variables, don't pass them
+* Need a check_type() function
 
 ## Future ideas
 
