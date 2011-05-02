@@ -58,8 +58,7 @@ def cons(arguments):
 def pair(arguments):
     check_argument_number('pair?', arguments, 1, 1)
 
-    if get_type(arguments[0]) and arguments[0]:
-        # non-empty list
+    if isinstance(arguments[0], Cons):
         return Atom('BOOLEAN', True)
 
     return Atom('BOOLEAN', False)

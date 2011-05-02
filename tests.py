@@ -186,6 +186,9 @@ class ListTest(InterpreterTest):
         program = "(pair? (quote ()))"
         self.assertEvaluatesTo(program, False)
 
+        program = "(pair? 1)"
+        self.assertEvaluatesTo(program, False)
+
 
 class MathsTest(InterpreterTest):
     def test_addition(self):
