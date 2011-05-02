@@ -315,6 +315,9 @@ class LibraryMathsTest(InterpreterTest):
         program = "(positive? (- 1))"
         self.assertEvaluatesTo(program, False)
 
+        program = "(positive? 0)"
+        self.assertEvaluatesTo(program, True)
+
     def test_negative_predicate(self):
         program = "(negative? (- 1))"
         self.assertEvaluatesTo(program, True)

@@ -5,7 +5,7 @@
       #f))
 
 (define (positive? x)
-  (if (> x 0)
+  (if (>= x 0)
       #t
       #f))
 

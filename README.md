@@ -52,7 +52,6 @@ Comments work too!
 * Cannot nest defines
 * No variadic lambdas
 * No 'hello world' yet
-* positive? returns false for 0
 * External representation is Python literals rather than Scheme (e.g. 'a' instead of #\a)
 * String literals are mutable (so string-set! violates specification)
 * As are list literals
