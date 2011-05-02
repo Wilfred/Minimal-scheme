@@ -232,12 +232,26 @@ class MathsTest(InterpreterTest):
         program = "(< 1 2 4)"
         self.assertEvaluatesTo(program, True)
 
+    def test_less_or_equal(self):
+        program = "(<= 1 1)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(<= 1 0)"
+        self.assertEvaluatesTo(program, False)
+
     def test_greater_than(self):
         program = "(> 1 1)"
         self.assertEvaluatesTo(program, False)
 
         program = "(> 11 10 0)"
         self.assertEvaluatesTo(program, True)
+
+    def test_greater_or_equal(self):
+        program = "(>= 1 1)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(>= 1 3 2)"
+        self.assertEvaluatesTo(program, False)
 
     def test_equality(self):
         program = "(=)"

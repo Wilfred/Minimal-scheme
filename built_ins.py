@@ -218,12 +218,34 @@ def less_than(arguments):
     return Atom('BOOLEAN', True)
 
 
+@name_function('<=')
+def less_or_equal(arguments):
+    check_argument_number('<=', arguments, 2)
+
+    for i in range(len(arguments) - 1):
+        if not arguments[i].value <= arguments[i+1].value:
+            return Atom('BOOLEAN', False)
+
+    return Atom('BOOLEAN', True)
+
+
 @name_function('>')
 def greater_than(arguments):
     check_argument_number('>', arguments, 2)
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value > arguments[i+1].value:
+            return Atom('BOOLEAN', False)
+
+    return Atom('BOOLEAN', True)
+
+
+@name_function('>=')
+def greater_or_equal(arguments):
+    check_argument_number('>=', arguments, 2)
+
+    for i in range(len(arguments) - 1):
+        if not arguments[i].value >= arguments[i+1].value:
             return Atom('BOOLEAN', False)
 
     return Atom('BOOLEAN', True)
