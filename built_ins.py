@@ -391,3 +391,67 @@ def string_length(arguments, environment):
 
     string_length = len(string_atom.value)
     return (Atom('INTEGER', string_length), environment)
+
+@name_function('string-ref')
+def string_ref(arguments, environment):
+    if safe_len(arguments) != 2:
+        raise SchemeTypeError("string-ref takes exactly two arguments, "
+                              "got %d." % safe_len(arguments))
+
+    string_atom = arguments[0]
+    if get_type(string_atom) != 'STRING':
+        raise SchemeTypeError("string-ref takes a string as its first argument, "
+                              "not a %s." % get_type(string_atom))
+
+    char_index_atom = arguments[1]
+    if get_type(char_index_atom) != 'INTEGER':
+        raise SchemeTypeError("string-ref takes an integer as its second argument, "
+                              "not a %s." % get_type(char_index_atom))
+
+    string = string_atom.value
+    char_index = char_index_atom.value
+
+    if char_index >= len(string):
+        # FIXME: this will say 0--1 if string is ""
+        raise InvalidArgument("String index out of bounds: index must be in"
+                              " the range 0-%d, got %d." % (len(string) - 1, char_index))
+
+    return (Atom('CHARACTER', string[char_index]), environment)
+
+
+@name_function('string-set!')
+def string_set(arguments, environment):
+    if safe_len(arguments) != 3:
+        raise SchemeTypeError("string-set! takes exactly three arguments, "
+                              "got %d." % safe_len(arguments))
+
+    string_atom = arguments[0]
+    if get_type(string_atom) != 'STRING':
+        raise SchemeTypeError("string-set! takes a string as its first argument, "
+                              "not a %s." % get_type(string_atom))
+
+    char_index_atom = arguments[1]
+    if get_type(char_index_atom) != 'INTEGER':
+        raise SchemeTypeError("string-set! takes an integer as its second argument, "
+                              "not a %s." % get_type(char_index_atom))
+
+    replacement_char_atom = arguments[2]
+    if get_type(replacement_char_atom) != 'CHARACTER':
+        raise SchemeTypeError("string-set! takes a character as its third argument, "
+                              "not a %s." % get_type(replacement_char_atom))
+
+    string = string_atom.value
+    char_index = char_index_atom.value
+
+    if char_index >= len(string):
+        # FIXME: this will say 0--1 if string is ""
+        raise InvalidArgument("String index out of bounds: index must be in"
+                              " the range 0-%d, got %d." % (len(string) - 1, char_index))
+
+    characters = list(string)
+    characters[char_index] = replacement_char_atom.value
+    new_string = "".join(characters)
+
+    string_atom.value = new_string
+
+    return (None, environment)

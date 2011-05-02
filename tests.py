@@ -362,6 +362,14 @@ class StringTest(InterpreterTest):
         program = '(string-length "abcdef")'
         self.assertEvaluatesTo(program, 6)
 
+    def test_string_ref(self):
+        program = '(string-ref "abc" 2)'
+        self.assertEvaluatesTo(program, 'c')
+
+    def test_string_set(self):
+        program = '(define s "abc") (string-set! s 0 #\z) s'
+        self.assertEvaluatesTo(program, 'zbc')
+
 
 if __name__ == '__main__':
     unittest.main()

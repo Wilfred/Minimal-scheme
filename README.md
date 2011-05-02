@@ -41,7 +41,7 @@ No support for exact fractions or complex numbers.
 
 ### Strings
 
-`string?`, `make-string`, `string-length`
+`string?`, `make-string`, `string-length`, `string-ref`, `string-set!`
 
 ### Other
 
