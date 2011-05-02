@@ -4,7 +4,7 @@ tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 
 
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
-t_SYMBOL = r'[a-zA-Z*+/!?=<>.-]+' # TODO: check against R5RS docs
+t_SYMBOL = r'[a-zA-Z!$%&*+./:<=>?"@^_~-][0-9a-zA-Z!$%&*+./:<=>?"@^_~-]*'
 
 def t_STRING(t):
     r'"(\\"|[a-zA-Z*+/!?=<>. -])*"'
