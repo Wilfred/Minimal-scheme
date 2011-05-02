@@ -19,8 +19,8 @@ def name_function(function_name):
 def test_equivalence(arguments):
     check_argument_number('eqv?', arguments, 2, 2)
 
-    # since we have defined __eq__ on Atom objects and == on
-    # LinkedListNodes compares addresses, we can just use a normal equality test
+    # __eq__ is defined on on Atom and Nil
+    # and == on Cons just compares references, so we can just use a normal equality test
     if arguments[0] == arguments[1]:
         return Atom('BOOLEAN', True)
     else:
