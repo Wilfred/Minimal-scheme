@@ -2,6 +2,7 @@ from evaluator import eval_s_expression
 from errors import SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable
 from parser import Atom, Nil
 from copy import deepcopy
+from utils import check_argument_number
 
 primitives = {}
 
@@ -18,9 +19,7 @@ def name_function(function_name):
 
 @name_function('define')
 def define(arguments, environment):
-    if len(arguments) != 2:
-        raise SchemeTypeError("Need to pass exactly two arguments to "
-                              "`define` (you passed %d)." % len(arguments))
+    check_argument_number('define', arguments, 2, 2)
 
     if isinstance(arguments.head, Atom):
         return define_variable(arguments, environment)
@@ -83,9 +82,8 @@ def define_normal_function(arguments, environment):
     
     # a function with a fixed number of arguments
     def named_function(_arguments, _environment):
-        if len(_arguments) != len(function_parameters):
-            raise SchemeTypeError("%s takes %d arguments, %d given." % \
-                                      (function_name, len(function_parameters), len(_arguments)))
+        check_argument_number(function_name.value, _arguments,
+                              len(function_parameters), len(function_parameters))
 
         local_environment = {}
 
@@ -153,10 +151,8 @@ def define_variadic_function(arguments, environment):
         improper_list_parameter = function_parameters[dot_position + 1]
 
         # check we have been given sufficient arguments for our explicit parameters
-        if len(_arguments) < len(explicit_parameters):
-            raise SchemeTypeError("%s takes at least %d arguments, you only provided %d." % \
-                                      (function_name.value, len(explicit_parameters),
-                                       len(_arguments)))
+        check_argument_number(function_name.value, _arguments,
+                              len(explicit_parameters))
 
         local_environment = {}
 
@@ -197,8 +193,7 @@ def define_variadic_function(arguments, environment):
 
 @name_function('set!')
 def set_variable(arguments, environment):
-    if len(arguments) != 2:
-        raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
+    check_argument_number('set!', arguments, 2, 2)
 
     variable_name = arguments.head
 
@@ -216,8 +211,7 @@ def set_variable(arguments, environment):
 
 @name_function('if')
 def if_function(arguments, environment):
-    if len(arguments) not in [2,3]:
-        raise SchemeTypeError("Need to pass either two or three arguments to `if`.")
+    check_argument_number('if', arguments, 2, 3)
 
     condition, environment = eval_s_expression(arguments.head, environment)
 
@@ -233,8 +227,7 @@ def if_function(arguments, environment):
 
 @name_function('lambda')
 def make_lambda_function(arguments, environment):
-    if len(arguments) != 2:
-        raise SchemeTypeError("Need to pass exactly two arguments to `lambda`.")
+    check_argument_number('lambda', arguments, 2, 2)
 
     parameter_list = arguments.head
     function_body = arguments.tail.head
@@ -247,9 +240,8 @@ def make_lambda_function(arguments, environment):
             raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
 
     def lambda_function(_arguments, _environment):
-        if len(_arguments) != len(parameter_list):
-            raise SchemeTypeError("Wrong number of arguments for this "
-                                  "lambda function, was expecting %d, received %d" % (len(parameter_list), len(_arguments)))
+        check_argument_number('(anonymous function)', _arguments,
+                              len(parameter_list), len(parameter_list))
 
         local_environment = {}
 
@@ -274,8 +266,7 @@ def make_lambda_function(arguments, environment):
 
 @name_function('quote')
 def return_argument_unevaluated(arguments, environment):
-    if len(arguments) != 1:
-        raise SchemeTypeError("Quote takes exactly one argument, received %d" % len(arguments))
+    check_argument_number('quote', arguments, 1, 1)
 
     return (arguments.head, environment)
 
