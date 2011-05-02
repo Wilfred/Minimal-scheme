@@ -134,6 +134,13 @@ class EvaluatorTest(InterpreterTest):
 
         self.assertEvaluatesTo(program, None)
 
+    def test_quote(self):
+        program = "(quote (1 2 3))"
+        self.assertEvaluatesTo(program, [1, 2, 3])
+
+        program = "(quote ())"
+        self.assertEvaluatesTo(program, [])
+
 
 class EquivalenceTest(InterpreterTest):
     def test_eqv(self):
