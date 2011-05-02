@@ -84,7 +84,10 @@ class Cons(Sequence):
             return 1 + self.tail.index(value)
 
     def get_python_equivalent(self):
-        python_list = [self.head.get_python_equivalent()]
+        if hasattr(self.head, "get_python_equivalent"):
+            python_list = [self.head.get_python_equivalent()]
+        else:
+            python_list = [self.head]
 
         if hasattr(self.tail, 'type'):
             # is an improper list, so self.tail is an Atom
