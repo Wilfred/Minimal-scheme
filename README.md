@@ -57,6 +57,7 @@ Comments work too!
 * String literals are mutable (so string-set! violates specification)
 * As are list literals
 * Using set-cdr! to make a circular list crashes
+* Crashes on `()` rather than throwing an error
 
 ## Cleanup tasks
 
