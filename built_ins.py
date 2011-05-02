@@ -207,9 +207,6 @@ def divide(arguments):
 
 @name_function('=')
 def equality(arguments):
-    if len(arguments) < 2:
-        raise SchemeTypeError("Equality test requires two arguments or more, "
-                              "you gave %d." % len(arguments))
 
     for argument in arguments:
         if argument.type not in ['INTEGER', 'FLOATING_POINT']:

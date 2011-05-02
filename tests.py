@@ -243,6 +243,12 @@ class MathsTest(InterpreterTest):
         self.assertEvaluatesTo(program, True)
 
     def test_equality(self):
+        program = "(=)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(= 0)"
+        self.assertEvaluatesTo(program, True)
+
         program = "(= 0 0)"
         self.assertEvaluatesTo(program, True)
 
