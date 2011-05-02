@@ -1,4 +1,4 @@
-from parser import parser, LinkedListNode
+from parser import parser, Atom
 from errors import UndefinedVariable
 from built_ins import built_ins
 from utils import safe_len, safe_iter
@@ -53,10 +53,11 @@ def eval_program(program, initial_environment=None):
 
 
 def eval_s_expression(s_expression, environment):
-    if isinstance(s_expression, LinkedListNode):
-        return eval_list(s_expression, environment)
-    else:
+    if isinstance(s_expression, Atom):
         return eval_atom(s_expression, environment)
+    else:
+        return eval_list(s_expression, environment)
+
 
 
 def eval_list(linked_list, environment):

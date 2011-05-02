@@ -42,42 +42,36 @@ class Atom(object):
         return self.value
 
 
-class LinkedListNode(Sequence):
+class Cons(Sequence):
     def __init__(self, head, tail=None):
         self.head = head
-        self.tail = tail
+
+        if tail:
+            self.tail = tail
+        else:
+            self.tail = Nil()
+            
 
     def __len__(self):
-        if self.tail is None:
-            return 1
-
         return 1 + self.tail.__len__()
 
     def __getitem__(self, index):
         if index == 0:
             return self.head
-
-        elif self.tail is None:
-            # specified an index greater than the length
-            raise IndexError()
         else:
             return self.tail.__getitem__(index - 1)
 
     def __setitem__(self, index, value):
         if index == 0:
             self.head = value
-
-        elif self.tail is None:
-            # specified an index greater than the length
-            raise IndexError()
         else:
             return self.tail.__setitem__(index - 1, value)
 
     def __repr__(self):
-        return "<LinkedList: %s>" % str(self.get_python_equivalent())
+        return "<Cons: %s>" % str(self.get_python_equivalent())
 
     def __bool__(self):
-        # an empty LinkedList is just None, so we always return True here
+        # a cons represents is a non-empty list, which we treat as true
         return True
 
     def index(self, value):
@@ -86,30 +80,47 @@ class LinkedListNode(Sequence):
         """
         if self.head == value:
             return 0
-
-        elif self.tail is None:
-            raise ValueError
-
         else:
             return 1 + self.tail.index(value)
 
+    def get_python_equivalent(self):
+        python_list = [self.head.get_python_equivalent()]
+
+        if hasattr(self.tail, 'type'):
+            # is an improper list, so self.tail is an Atom
+            return python_list + ['.', self.tail.get_python_equivalent()]
+        else:
+            # normal list
+            return python_list + self.tail.get_python_equivalent()
+
+
+class Nil(Sequence):
+    # the empty list for our linked list structure
+    def __len__(self):
+        return 0
+
+    def __getitem__(self, index):
+        raise IndexError
+
+    def __setitem__(self, index, value):
+        raise IndexError
+
+    def __repr__(self):
+        return "<Cons: %s>" % str(self.get_python_equivalent())
+
+    def __bool__(self):
+        return False
+
+    def index(self, value):
+        raise ValueError
 
     def get_python_equivalent(self):
-        if self.tail is None:
-            return [self.head.get_python_equivalent()]
-        else:
-            python_list = [self.head.get_python_equivalent()]
+        return []
 
-            if hasattr(self.tail, 'type'):
-                # is an improper list, so self.tail is an Atom
-                return python_list + ['.', self.tail.get_python_equivalent()]
-            else:
-                # normal list
-                return python_list + self.tail.get_python_equivalent()
 
 def p_program(p):
     "program : sexpression program"
-    p[0] = LinkedListNode(head=p[1], tail=p[2])
+    p[0] = Cons(head=p[1], tail=p[2])
 
 def p_program_empty(p):
     "program :"
@@ -130,7 +141,7 @@ def p_list(p):
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"
     # a list is therefore a nested tuple:
-    p[0] = LinkedListNode(head=p[1], tail=p[2])
+    p[0] = Cons(head=p[1], tail=p[2])
 
 def p_listargument_empty(p):
     "listarguments :"

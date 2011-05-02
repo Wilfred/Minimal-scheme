@@ -1,5 +1,5 @@
 from errors import SchemeTypeError, InvalidArgument
-from parser import Atom, LinkedListNode
+from parser import Atom, Cons
 from utils import safe_len, safe_iter, get_type
 
 built_ins = {}
@@ -54,7 +54,7 @@ def cons(arguments, environment):
     if safe_len(arguments) != 2:
         raise SchemeTypeError("cons takes exactly two arguments.")
 
-    return (LinkedListNode(arguments[0], arguments[1]), environment)
+    return (Cons(arguments[0], arguments[1]), environment)
 
 
 @name_function('pair?')
@@ -194,12 +194,12 @@ def divide(arguments, environment):
     if not arguments:
         raise SchemeTypeError("Division requires at least one argument.")
 
-    if arguments.tail is None:
+    if safe_len(arguments) == 1:
         return (Atom('FLOATING_POINT', 1 / arguments.head.value), environment)
     else:
         result = Atom('FLOATING_POINT', arguments.head.value)
 
-        for argument in arguments.tail:
+        for argument in safe_iter(arguments.tail):
             result.value /= argument.value
 
         return (result, environment)
