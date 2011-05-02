@@ -106,9 +106,15 @@ class Nil(Sequence):
         raise IndexError
 
     def __repr__(self):
-        return "<Cons: %s>" % str(self.get_python_equivalent())
+        return "<Nil>"
 
     def __bool__(self):
+        return False
+
+    def __eq__(self, other):
+        # a Nil is always equal to a Nil
+        if isinstance(other, Nil):
+            return True
         return False
 
     def index(self, value):
@@ -124,7 +130,7 @@ def p_program(p):
 
 def p_program_empty(p):
     "program :"
-    pass
+    p[0] = Nil()
 
 def p_sexpression_atom(p):
     "sexpression : atom"
@@ -145,7 +151,7 @@ def p_listarguments_one(p):
 
 def p_listargument_empty(p):
     "listarguments :"
-    pass
+    p[0] = Nil()
 
 def p_atom_symbol(p):
     "atom : SYMBOL"

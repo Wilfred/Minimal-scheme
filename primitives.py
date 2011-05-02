@@ -1,7 +1,6 @@
 from evaluator import eval_s_expression
 from errors import SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable
-from utils import safe_len, safe_iter
-from parser import Atom
+from parser import Atom, Nil
 from copy import deepcopy
 
 primitives = {}
@@ -19,9 +18,9 @@ def name_function(function_name):
 
 @name_function('define')
 def define(arguments, environment):
-    if safe_len(arguments) != 2:
+    if len(arguments) != 2:
         raise SchemeTypeError("Need to pass exactly two arguments to "
-                              "`define` (you passed %d)." % safe_len(arguments))
+                              "`define` (you passed %d)." % len(arguments))
 
     if isinstance(arguments.head, Atom):
         return define_variable(arguments, environment)
@@ -55,14 +54,14 @@ def define_function(arguments, environment):
     # check that all our arguments are symbols:
     function_parameters = function_name_with_parameters.tail
 
-    for parameter in safe_iter(function_parameters):
+    for parameter in function_parameters:
         if parameter.type != "SYMBOL":
             raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
 
     # check if this function can take a variable number of arguments
     is_variadic = False
 
-    for parameter in safe_iter(function_parameters):
+    for parameter in function_parameters:
         if parameter.value == '.':
             if is_variadic:
                 raise SchemeSyntaxError("May not have . more than once in a parameter list.")
@@ -84,20 +83,20 @@ def define_normal_function(arguments, environment):
     
     # a function with a fixed number of arguments
     def named_function(_arguments, _environment):
-        if safe_len(_arguments) != safe_len(function_parameters):
+        if len(_arguments) != len(function_parameters):
             raise SchemeTypeError("%s takes %d arguments, %d given." % \
-                                      (function_name, safe_len(function_parameters), safe_len(_arguments)))
+                                      (function_name, len(function_parameters), len(_arguments)))
 
         local_environment = {}
 
         # evaluate arguments
         _arguments = deepcopy(_arguments)
-        for i in range(safe_len(_arguments)):
+        for i in range(len(_arguments)):
             (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment)
 
         # assign to parameters
-        for (parameter_name, parameter_value) in zip(safe_iter(function_parameters),
-                                                          safe_iter(_arguments)):
+        for (parameter_name, parameter_value) in zip(function_parameters,
+                                                     _arguments):
             local_environment[parameter_name.value] = parameter_value
 
         # create new environment, where local variables mask globals
@@ -137,7 +136,7 @@ def define_variadic_function(arguments, environment):
     def named_variadic_function(_arguments, _environment):
         # a function that takes a variable number of arguments
         if dot_position == 0:
-            explicit_parameters = None
+            explicit_parameters = Nil()
         else:
             explicit_parameters = deepcopy(function_parameters)
 
@@ -149,31 +148,31 @@ def define_variadic_function(arguments, environment):
                 current_head = current_head.tail
 
             # then remove the rest of the list
-            current_head.tail = None
+            current_head.tail = Nil()
 
         improper_list_parameter = function_parameters[dot_position + 1]
 
         # check we have been given sufficient arguments for our explicit parameters
-        if safe_len(_arguments) < safe_len(explicit_parameters):
+        if len(_arguments) < len(explicit_parameters):
             raise SchemeTypeError("%s takes at least %d arguments, you only provided %d." % \
-                                      (function_name.value, safe_len(explicit_parameters),
-                                       safe_len(_arguments)))
+                                      (function_name.value, len(explicit_parameters),
+                                       len(_arguments)))
 
         local_environment = {}
 
         # evaluate arguments
         _arguments = deepcopy(_arguments)
-        for i in range(safe_len(_arguments)):
+        for i in range(len(_arguments)):
             (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment)
 
         # assign parameters
-        for (parameter, parameter_value) in zip(safe_iter(explicit_parameters),
-                                                safe_iter(_arguments)):
+        for (parameter, parameter_value) in zip(explicit_parameters,
+                                                _arguments):
             local_environment[parameter] = parameter_value
 
         # put the remaining arguments in our improper parameter
         remaining_arguments = _arguments
-        for i in range(safe_len(explicit_parameters)):
+        for i in range(len(explicit_parameters)):
             remaining_arguments = remaining_arguments.tail
 
         local_environment[improper_list_parameter.value] = remaining_arguments
@@ -198,7 +197,7 @@ def define_variadic_function(arguments, environment):
 
 @name_function('set!')
 def set_variable(arguments, environment):
-    if safe_len(arguments) != 2:
+    if len(arguments) != 2:
         raise SchemeTypeError("Need to pass exactly two arguments to `set!`.")
 
     variable_name = arguments.head
@@ -217,7 +216,7 @@ def set_variable(arguments, environment):
 
 @name_function('if')
 def if_function(arguments, environment):
-    if safe_len(arguments) not in [2,3]:
+    if len(arguments) not in [2,3]:
         raise SchemeTypeError("Need to pass either two or three arguments to `if`.")
 
     condition, environment = eval_s_expression(arguments.head, environment)
@@ -227,14 +226,14 @@ def if_function(arguments, environment):
         then_expression = arguments[1]
         return eval_s_expression(then_expression, environment)
     else:
-        if safe_len(arguments) == 3:
+        if len(arguments) == 3:
             else_expression = arguments[2]
             return eval_s_expression(else_expression, environment)
 
 
 @name_function('lambda')
 def make_lambda_function(arguments, environment):
-    if safe_len(arguments) != 2:
+    if len(arguments) != 2:
         raise SchemeTypeError("Need to pass exactly two arguments to `lambda`.")
 
     parameter_list = arguments.head
@@ -243,19 +242,19 @@ def make_lambda_function(arguments, environment):
     if isinstance(parameter_list, Atom):
         raise SchemeTypeError("The first argument to `lambda` must be a list of variables.")
 
-    for parameter in safe_iter(parameter_list):
+    for parameter in parameter_list:
         if parameter.type != "SYMBOL":
             raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
 
     def lambda_function(_arguments, _environment):
-        if safe_len(_arguments) != safe_len(parameter_list):
+        if len(_arguments) != len(parameter_list):
             raise SchemeTypeError("Wrong number of arguments for this "
-                                  "lambda function, was expecting %d, received %d" % (safe_len(parameter_list), safe_len(_arguments)))
+                                  "lambda function, was expecting %d, received %d" % (len(parameter_list), len(_arguments)))
 
         local_environment = {}
 
-        for (parameter_name, parameter_expression) in zip(safe_iter(parameter_list),
-                                                          safe_iter(_arguments)):
+        for (parameter_name, parameter_expression) in zip(parameter_list,
+                                                          _arguments):
             local_environment[parameter_name.value], _environment = eval_s_expression(parameter_expression, _environment)
 
         new_environment = dict(_environment, **local_environment)
@@ -275,8 +274,8 @@ def make_lambda_function(arguments, environment):
 
 @name_function('quote')
 def return_argument_unevaluated(arguments, environment):
-    if safe_len(arguments) != 1:
-        raise SchemeTypeError("Quote takes exactly one argument, received %d" % safe_len(arguments))
+    if len(arguments) != 1:
+        raise SchemeTypeError("Quote takes exactly one argument, received %d" % len(arguments))
 
     return (arguments.head, environment)
 

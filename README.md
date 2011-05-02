@@ -60,7 +60,6 @@ Comments work too!
 
 ## Cleanup tasks
 
-* Using None as the empty list means that we cannot call len() on any list -- create a Nil object
 * Add slice support for our linked list, then clean up variadic function stuff
 * Write an immutable dict for environments -- clarity
 * Remove eval_program -- it's just map(eval_s_expression, s_expressions)

@@ -16,10 +16,10 @@ class InterpreterTest(unittest.TestCase):
     def assertEvaluatesTo(self, program, expected_result):
         internal_result, final_environment = eval_program(program, self.environment)
 
-        if internal_result:
-            result = internal_result.get_python_equivalent()
-        else:
+        if internal_result is None:
             result = None
+        else:
+            result = internal_result.get_python_equivalent()
         
         self.assertEqual(result, expected_result)
 

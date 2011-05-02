@@ -1,7 +1,6 @@
 from parser import parser, Atom
 from errors import UndefinedVariable
 from built_ins import built_ins
-from utils import safe_len, safe_iter
 from copy import deepcopy
 
 def load_built_ins(environment):
@@ -11,7 +10,7 @@ def load_built_ins(environment):
         def decorated_function(arguments, _environment):
             arguments = deepcopy(arguments)
             # evaluate the arguments, then pass them to the function
-            for i in range(safe_len(arguments)):
+            for i in range(len(arguments)):
                 (arguments[i], _environment) = eval_s_expression(arguments[i], _environment)
 
             return function(arguments, _environment)
@@ -46,7 +45,7 @@ def eval_program(program, initial_environment=None):
 
     result = None
 
-    for s_expression in safe_iter(s_expressions):
+    for s_expression in s_expressions:
         result, environment = eval_s_expression(s_expression, environment)
 
     return (result, environment)
