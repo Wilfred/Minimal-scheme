@@ -321,7 +321,8 @@ def char_less_or_equal(arguments, environment):
 @name_function('char>=?')
 def char_greater_or_equal(arguments, environment):
     if safe_len(arguments) != 2:
-        raise SchemeTypeError("char>=? takes exactly two arguments.")
+        raise SchemeTypeError("char>=? takes exactly two arguments, "
+                              "got %d." % safe_len(arguments))
 
     if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char>=? takes only character arguments, got a "
