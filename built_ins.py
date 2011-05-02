@@ -1,6 +1,6 @@
 from errors import SchemeTypeError, InvalidArgument
 from parser import Atom, Cons
-from utils import get_type
+from utils import get_type, check_argument_number
 
 built_ins = {}
 
@@ -17,9 +17,7 @@ def name_function(function_name):
 @name_function('eq?')
 @name_function('eqv?')
 def test_equivalence(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("Equivalence predicate takes two "
-                              "arguments, received %d." % len(arguments))
+    check_argument_number('eqv?', arguments, 2, 2)
 
     # since we have defined __eq__ on Atom objects and == on
     # LinkedListNodes compares addresses, we can just use a normal equality test
@@ -31,8 +29,8 @@ def test_equivalence(arguments):
 
 @name_function('car')
 def car(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("car takes exactly one argument")
+    # TODO: check type as well as arity
+    check_argument_number('car', arguments, 1)
 
     list_given = arguments[0]
 
@@ -41,26 +39,24 @@ def car(arguments):
 
 @name_function('cdr')
 def cdr(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("cdr takes exactly one argument")
+    # TODO: check type as well as arity
+    check_argument_number('cdr', arguments, 1)
 
     list_given = arguments[0]
-
     return list_given.tail
 
 
 @name_function('cons')
 def cons(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("cons takes exactly two arguments.")
+    # TODO: check type as well as arity
+    check_argument_number('cons', arguments, 2, 2)
 
     return Cons(arguments[0], arguments[1])
 
 
 @name_function('pair?')
 def pair(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("pair? takes exactly one argument.")
+    check_argument_number('pair?', arguments, 1, 1)
 
     if get_type(arguments[0]) and arguments[0]:
         # non-empty list
@@ -74,9 +70,7 @@ def pair(arguments):
 @name_function('complex?')
 @name_function('number?')
 def number(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("number? takes exactly one argument, "
-                              "you gave me %d." % len(arguments))
+    check_argument_number('number?', arguments, 1, 1)
 
     if get_type(arguments[0]) in ['INTEGER', 'FLOATING_POINT']:
         return Atom('BOOLEAN', True)
@@ -86,9 +80,7 @@ def number(arguments):
 
 @name_function('exact?')
 def exact(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("exact? takes exactly one argument, "
-                              "you gave me %d." % len(arguments))
+    check_argument_number('exact?', arguments, 1, 1)
 
     if get_type(arguments[0]) == 'INTEGER':
         return Atom('BOOLEAN', True)
@@ -101,9 +93,7 @@ def exact(arguments):
 
 @name_function('inexact?')
 def inexact(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("inexact? takes exactly one argument, "
-                              "you gave me %d." % len(arguments))
+    check_argument_number('inexact?', arguments, 1, 1)
 
     if get_type(arguments[0]) == 'FLOATING_POINT':
         return Atom('BOOLEAN', True)
@@ -138,8 +128,7 @@ def add(arguments):
 
 @name_function('-')
 def subtract(arguments):
-    if not arguments:
-        raise SchemeTypeError("Subtract takes at least one argument.")
+    check_argument_number('-', arguments, 1)
 
     if len(arguments) == 1:
         if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
@@ -191,8 +180,7 @@ def multiply(arguments):
 def divide(arguments):
     # TODO: support exact fractions
     # TODO: return integer if all arguments were integers and result is whole number
-    if not arguments:
-        raise SchemeTypeError("Division requires at least one argument.")
+    check_argument_number('/', arguments, 1)
 
     if len(arguments) == 1:
         return Atom('FLOATING_POINT', 1 / arguments.head.value)
@@ -222,8 +210,7 @@ def equality(arguments):
 
 @name_function('<')
 def less_than(arguments):
-    if len(arguments) < 2:
-        raise SchemeTypeError("Less than test requires at least two arguments.")
+    check_argument_number('<', arguments, 2)
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value < arguments[i+1].value:
@@ -234,8 +221,7 @@ def less_than(arguments):
 
 @name_function('>')
 def greater_than(arguments):
-    if len(arguments) < 2:
-        raise SchemeTypeError("Greater than test requires at least two arguments.")
+    check_argument_number('>', arguments, 2)
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value > arguments[i+1].value:
@@ -246,8 +232,7 @@ def greater_than(arguments):
 
 @name_function('char?')
 def is_char(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("char? takes exactly one argument.")
+    check_argument_number('char?', arguments, 1, 1)
 
     if get_type(arguments[0]) == "CHARACTER":
         return Atom('BOOLEAN', True)
@@ -257,8 +242,7 @@ def is_char(arguments):
 
 @name_function('char=?')
 def char_equal(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("char=? takes exactly two arguments.")
+    check_argument_number('char=?', arguments, 2, 2)
 
     if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char=? takes only character arguments, got a "
@@ -272,8 +256,7 @@ def char_equal(arguments):
 
 @name_function('char<?')
 def char_less_than(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("char<? takes exactly two arguments.")
+    check_argument_number('char<?', arguments, 2, 2)
 
     if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char<? takes only character arguments, got a "
@@ -287,8 +270,7 @@ def char_less_than(arguments):
 
 @name_function('char>?')
 def char_greater_than(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("char>? takes exactly two arguments.")
+    check_argument_number('char>?', arguments, 2, 2)
 
     if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char>? takes only character arguments, got a "
@@ -302,8 +284,7 @@ def char_greater_than(arguments):
 
 @name_function('char<=?')
 def char_less_or_equal(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("char<=? takes exactly two arguments.")
+    check_argument_number('char<=?', arguments, 2, 2)
 
     if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char<=? takes only character arguments, got a "
@@ -317,9 +298,7 @@ def char_less_or_equal(arguments):
 
 @name_function('char>=?')
 def char_greater_or_equal(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("char>=? takes exactly two arguments, "
-                              "got %d." % len(arguments))
+    check_argument_number('char>=?', arguments, 2, 2)
 
     if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
         raise SchemeTypeError("char>=? takes only character arguments, got a "
@@ -333,9 +312,7 @@ def char_greater_or_equal(arguments):
 
 @name_function('string?')
 def is_string(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("string? takes exactly one argument, "
-                              "got %d." % len(arguments))
+    check_argument_number('string?', arguments, 1, 1)
 
     if get_type(arguments[0]) == 'STRING':
         return Atom('BOOLEAN', True)
@@ -345,9 +322,7 @@ def is_string(arguments):
 
 @name_function('make-string')
 def make_string(arguments):
-    if len(arguments) not in [1, 2]:
-        raise SchemeTypeError("make-string takes exactly one or two arguments, "
-                              "got %d." % len(arguments))
+    check_argument_number('make-string', arguments, 1, 2)
 
     string_length_atom = arguments[0]
 
@@ -377,9 +352,7 @@ def make_string(arguments):
 
 @name_function('string-length')
 def string_length(arguments):
-    if len(arguments) != 1:
-        raise SchemeTypeError("string-length takes exactly one argument, "
-                              "got %d." % len(arguments))
+    check_argument_number('string_length', arguments, 1, 1)
 
     string_atom = arguments[0]
     if get_type(string_atom) != 'STRING':
@@ -391,9 +364,7 @@ def string_length(arguments):
 
 @name_function('string-ref')
 def string_ref(arguments):
-    if len(arguments) != 2:
-        raise SchemeTypeError("string-ref takes exactly two arguments, "
-                              "got %d." % len(arguments))
+    check_argument_number('string_length', arguments, 2, 2)
 
     string_atom = arguments[0]
     if get_type(string_atom) != 'STRING':
@@ -418,9 +389,7 @@ def string_ref(arguments):
 
 @name_function('string-set!')
 def string_set(arguments):
-    if len(arguments) != 3:
-        raise SchemeTypeError("string-set! takes exactly three arguments, "
-                              "got %d." % len(arguments))
+    check_argument_number('string_length', arguments, 3, 3)
 
     string_atom = arguments[0]
     if get_type(string_atom) != 'STRING':
