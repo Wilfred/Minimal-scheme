@@ -67,7 +67,6 @@ Comments work too!
 * Rename internal_result to actual_result in tests.py
 * Indent this file properly
 * Fix width of evaluator.py
-* Put blank lines in consistenly in tests.py
 * Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
 * Need a check_type() function
 

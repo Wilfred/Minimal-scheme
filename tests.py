@@ -74,38 +74,31 @@ class EvaluatorTest(InterpreterTest):
 
     def test_variable_evaluation(self):
         program = "(define x 28) x"
-
         self.assertEvaluatesTo(program, 28)
 
     def test_procedure_call(self):
         program = "((if #f + *) 3 4)"
-
         self.assertEvaluatesTo(program, 12)
 
     def test_if_two_arguments(self):
         program = "(if #t 1)"
-
         self.assertEvaluatesTo(program, 1)
 
     def test_if_three_arguments(self):
         program = "(if #t 2 3)"
-
         self.assertEvaluatesTo(program, 2)
 
     def test_variable_assignment(self):
         program = "(define x 1) (set! x 2) x"
-
         self.assertEvaluatesTo(program, 2)
 
     def test_function_definition(self):
         program = "(define (x) 1) (x)"
-
         self.assertEvaluatesTo(program, 1)
 
     def test_variadic_function_definition(self):
         # test that we can put nothing in the impure list parameter
         program = "(define (foo . args) 1) (foo)"
-
         self.assertEvaluatesTo(program, 1)
 
         # test that we can put multiple things in the impure list parameter
@@ -118,7 +111,6 @@ class EvaluatorTest(InterpreterTest):
 
     def test_lambda(self):
         program = "((lambda (x) (+ x x)) 4)"
-
         self.assertEvaluatesTo(program, 8)
 
         program = "((lambda () 1))"
@@ -296,10 +288,10 @@ class MathsTest(InterpreterTest):
         program = "(inexact? 0.0)"
         self.assertEvaluatesTo(program, True)
 
-    # remaining tests in this class are library code:
+
+class LibraryMathsTest(InterpreterTest):
     def test_zero_predicate(self):
         program = "(zero? 0)"
-
         self.assertEvaluatesTo(program, True)
 
     def test_positive_predicate(self):
