@@ -69,7 +69,6 @@ Comments work too!
 * Fix width of evaluator.py
 * Put blank lines in consistenly in tests.py
 * Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
-* Since built-ins don't need access to global variables, don't pass them
 * Need a check_type() function
 
 ## Future ideas

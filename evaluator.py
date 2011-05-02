@@ -5,7 +5,8 @@ from copy import deepcopy
 
 def load_built_ins(environment):
 
-    # a built in differs from primitives: it always has all its arguments evaluated
+    # a built-in differs from primitives: it always has all its arguments evaluated
+    # it also doesn't need the global scope, so we don't pass it for code brevity
     def arguments_evaluated(function):
         def decorated_function(arguments, _environment):
             arguments = deepcopy(arguments)
@@ -13,7 +14,7 @@ def load_built_ins(environment):
             for i in range(len(arguments)):
                 (arguments[i], _environment) = eval_s_expression(arguments[i], _environment)
 
-            return function(arguments, _environment)
+            return (function(arguments), _environment)
 
         return decorated_function
 

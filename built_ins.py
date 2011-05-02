@@ -16,7 +16,7 @@ def name_function(function_name):
 
 @name_function('eq?')
 @name_function('eqv?')
-def test_equivalence(arguments, environment):
+def test_equivalence(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("Equivalence predicate takes two "
                               "arguments, received %d." % len(arguments))
@@ -24,100 +24,100 @@ def test_equivalence(arguments, environment):
     # since we have defined __eq__ on Atom objects and == on
     # LinkedListNodes compares addresses, we can just use a normal equality test
     if arguments[0] == arguments[1]:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
     else:
-        return (Atom('BOOLEAN', False), environment)
+        return Atom('BOOLEAN', False)
 
 
 @name_function('car')
-def car(arguments, environment):
+def car(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("car takes exactly one argument")
 
     list_given = arguments[0]
 
-    return (list_given.head, environment)
+    return list_given.head
 
 
 @name_function('cdr')
-def cdr(arguments, environment):
+def cdr(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("cdr takes exactly one argument")
 
     list_given = arguments[0]
 
-    return (list_given.tail, environment)
+    return list_given.tail
 
 
 @name_function('cons')
-def cons(arguments, environment):
+def cons(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("cons takes exactly two arguments.")
 
-    return (Cons(arguments[0], arguments[1]), environment)
+    return Cons(arguments[0], arguments[1])
 
 
 @name_function('pair?')
-def pair(arguments, environment):
+def pair(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("pair? takes exactly one argument.")
 
     if get_type(arguments[0]) and arguments[0]:
         # non-empty list
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('rational?')
 @name_function('real?')
 @name_function('complex?')
 @name_function('number?')
-def number(arguments, environment):
+def number(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("number? takes exactly one argument, "
                               "you gave me %d." % len(arguments))
 
     if get_type(arguments[0]) in ['INTEGER', 'FLOATING_POINT']:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('exact?')
-def exact(arguments, environment):
+def exact(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("exact? takes exactly one argument, "
                               "you gave me %d." % len(arguments))
 
     if get_type(arguments[0]) == 'INTEGER':
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
     elif get_type(arguments[0]) == 'FLOATING_POINT':
-        return (Atom('BOOLEAN', False), environment)
+        return Atom('BOOLEAN', False)
     else:
         raise SchemeTypeError("exact? only takes integers or floating point "
                               "numbers as arguments, you gave me ""%s." % \
                                   len(arguments))
 
 @name_function('inexact?')
-def inexact(arguments, environment):
+def inexact(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("inexact? takes exactly one argument, "
                               "you gave me %d." % len(arguments))
 
     if get_type(arguments[0]) == 'FLOATING_POINT':
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
     elif get_type(arguments[0]) == 'INTEGER':
-        return (Atom('BOOLEAN', False), environment)
+        return Atom('BOOLEAN', False)
     else:
         raise SchemeTypeError("exact? only takes integers or floating point "
                               "numbers as arguments, you gave me ""%s." % \
                                   len(arguments))
 
 @name_function('+')
-def add(arguments, environment):
+def add(arguments):
     if not arguments:
-        return (Atom('INTEGER', 0), environment)
+        return Atom('INTEGER', 0)
 
     if get_type(arguments[0]) == "INTEGER":
         total = Atom('INTEGER', 0)
@@ -133,11 +133,11 @@ def add(arguments, environment):
             total.type = "FLOATING_POINT"
 
         total.value += argument.value
-    return (total, environment)
+    return total
 
 
 @name_function('-')
-def subtract(arguments, environment):
+def subtract(arguments):
     if not arguments:
         raise SchemeTypeError("Subtract takes at least one argument.")
 
@@ -147,7 +147,7 @@ def subtract(arguments, environment):
                                   "floating point, you gave me %s." % arguments[0].type)
 
         # only one argument, we just negate it
-        return (Atom(arguments[0].type, -1 * arguments[0].value), environment)
+        return Atom(arguments[0].type, -1 * arguments[0].value)
 
     total = Atom(arguments[0].type, arguments[0].value)
 
@@ -161,13 +161,13 @@ def subtract(arguments, environment):
 
         total.value -= argument.value
 
-    return (total, environment)
+    return total
 
 
 @name_function('*')
-def multiply(arguments, environment):
+def multiply(arguments):
     if not arguments:
-        return (Atom('INTEGER', 1), environment)
+        return Atom('INTEGER', 1)
 
     if get_type(arguments[0]) == "INTEGER":
         product = Atom('INTEGER', 1)
@@ -184,29 +184,29 @@ def multiply(arguments, environment):
 
         product.value *= argument.value
 
-    return (product, environment)
+    return product
 
 
 @name_function('/')
-def divide(arguments, environment):
+def divide(arguments):
     # TODO: support exact fractions
     # TODO: return integer if all arguments were integers and result is whole number
     if not arguments:
         raise SchemeTypeError("Division requires at least one argument.")
 
     if len(arguments) == 1:
-        return (Atom('FLOATING_POINT', 1 / arguments.head.value), environment)
+        return Atom('FLOATING_POINT', 1 / arguments.head.value)
     else:
         result = Atom('FLOATING_POINT', arguments.head.value)
 
         for argument in arguments.tail:
             result.value /= argument.value
 
-        return (result, environment)
+        return result
 
 
 @name_function('=')
-def equality(arguments, environment):
+def equality(arguments):
     if len(arguments) < 2:
         raise SchemeTypeError("Equality test requires two arguments or more, "
                               "you gave %d." % len(arguments))
@@ -218,48 +218,48 @@ def equality(arguments, environment):
                                   "you gave me %s." % argument.type)
 
         if argument.value != arguments[0].value:
-            return (Atom('BOOLEAN', False), environment)
+            return Atom('BOOLEAN', False)
 
-    return (Atom('BOOLEAN', True), environment)
+    return Atom('BOOLEAN', True)
 
 
 @name_function('<')
-def less_than(arguments, environment):
+def less_than(arguments):
     if len(arguments) < 2:
         raise SchemeTypeError("Less than test requires at least two arguments.")
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value < arguments[i+1].value:
-            return (Atom('BOOLEAN', False), environment)
+            return Atom('BOOLEAN', False)
 
-    return (Atom('BOOLEAN', True), environment)
+    return Atom('BOOLEAN', True)
 
 
 @name_function('>')
-def greater_than(arguments, environment):
+def greater_than(arguments):
     if len(arguments) < 2:
         raise SchemeTypeError("Greater than test requires at least two arguments.")
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value > arguments[i+1].value:
-            return (Atom('BOOLEAN', False), environment)
+            return Atom('BOOLEAN', False)
 
-    return (Atom('BOOLEAN', True), environment)
+    return Atom('BOOLEAN', True)
 
 
 @name_function('char?')
-def is_char(arguments, environment):
+def is_char(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("char? takes exactly one argument.")
 
     if get_type(arguments[0]) == "CHARACTER":
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('char=?')
-def char_equal(arguments, environment):
+def char_equal(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("char=? takes exactly two arguments.")
 
@@ -268,13 +268,13 @@ def char_equal(arguments, environment):
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
     if arguments[0].value == arguments[1].value:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('char<?')
-def char_less_than(arguments, environment):
+def char_less_than(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("char<? takes exactly two arguments.")
 
@@ -283,13 +283,13 @@ def char_less_than(arguments, environment):
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
     if arguments[0].value < arguments[1].value:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('char>?')
-def char_greater_than(arguments, environment):
+def char_greater_than(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("char>? takes exactly two arguments.")
 
@@ -298,13 +298,13 @@ def char_greater_than(arguments, environment):
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
     if arguments[0].value > arguments[1].value:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('char<=?')
-def char_less_or_equal(arguments, environment):
+def char_less_or_equal(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("char<=? takes exactly two arguments.")
 
@@ -313,13 +313,13 @@ def char_less_or_equal(arguments, environment):
                               "%s and a %s." % (arguments[0].type, arguments[1].type))
 
     if arguments[0].value <= arguments[1].value:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('char>=?')
-def char_greater_or_equal(arguments, environment):
+def char_greater_or_equal(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("char>=? takes exactly two arguments, "
                               "got %d." % len(arguments))
@@ -329,25 +329,25 @@ def char_greater_or_equal(arguments, environment):
                               "%s and a %s." % (get_type(arguments[0].type), get_type(arguments[1])))
 
     if arguments[0].value >= arguments[1].value:
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('string?')
-def is_string(arguments, environment):
+def is_string(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("string? takes exactly one argument, "
                               "got %d." % len(arguments))
 
     if get_type(arguments[0]) == 'STRING':
-        return (Atom('BOOLEAN', True), environment)
+        return Atom('BOOLEAN', True)
 
-    return (Atom('BOOLEAN', False), environment)
+    return Atom('BOOLEAN', False)
 
 
 @name_function('make-string')
-def make_string(arguments, environment):
+def make_string(arguments):
     if len(arguments) not in [1, 2]:
         raise SchemeTypeError("make-string takes exactly one or two arguments, "
                               "got %d." % len(arguments))
@@ -365,7 +365,7 @@ def make_string(arguments, environment):
                               "got %d." % string_length)
 
     if len(arguments) == 1:
-        return (Atom('STRING', ' ' * string_length), environment)
+        return Atom('STRING', ' ' * string_length)
 
     else:
         repeated_character_atom = arguments[1]
@@ -375,11 +375,11 @@ def make_string(arguments, environment):
                                   " a character, got a %s." % get_type(repeated_character_atom))
 
         repeated_character = repeated_character_atom.value
-        return (Atom('STRING', repeated_character * string_length), environment)
+        return Atom('STRING', repeated_character * string_length)
 
 
 @name_function('string-length')
-def string_length(arguments, environment):
+def string_length(arguments):
     if len(arguments) != 1:
         raise SchemeTypeError("string-length takes exactly one argument, "
                               "got %d." % len(arguments))
@@ -390,10 +390,10 @@ def string_length(arguments, environment):
                               "not a %s." % get_type(string_atom))
 
     string_length = len(string_atom.value)
-    return (Atom('INTEGER', string_length), environment)
+    return Atom('INTEGER', string_length)
 
 @name_function('string-ref')
-def string_ref(arguments, environment):
+def string_ref(arguments):
     if len(arguments) != 2:
         raise SchemeTypeError("string-ref takes exactly two arguments, "
                               "got %d." % len(arguments))
@@ -416,11 +416,11 @@ def string_ref(arguments, environment):
         raise InvalidArgument("String index out of bounds: index must be in"
                               " the range 0-%d, got %d." % (len(string) - 1, char_index))
 
-    return (Atom('CHARACTER', string[char_index]), environment)
+    return Atom('CHARACTER', string[char_index])
 
 
 @name_function('string-set!')
-def string_set(arguments, environment):
+def string_set(arguments):
     if len(arguments) != 3:
         raise SchemeTypeError("string-set! takes exactly three arguments, "
                               "got %d." % len(arguments))
@@ -454,4 +454,4 @@ def string_set(arguments, environment):
 
     string_atom.value = new_string
 
-    return (None, environment)
+    return None
