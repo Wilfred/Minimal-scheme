@@ -125,8 +125,10 @@ class EvaluatorTest(InterpreterTest):
         self.assertEvaluatesTo(program, 1)
 
     def test_begin(self):
-        program = "(begin (define x 1) (+ x 3))"
+        program = "(begin)"
+        self.assertEvaluatesTo(program, None)
 
+        program = "(begin (define x 1) (+ x 3))"
         self.assertEvaluatesTo(program, 4)
 
     def test_comment(self):
