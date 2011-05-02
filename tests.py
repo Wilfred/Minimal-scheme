@@ -302,6 +302,39 @@ class MathsTest(InterpreterTest):
         program = "(inexact? 0.0)"
         self.assertEvaluatesTo(program, True)
 
+    def test_quotient(self):
+        program = "(quotient 3 2)"
+        self.assertEvaluatesTo(program, 1)
+
+        program = "(quotient 4 2)"
+        self.assertEvaluatesTo(program, 2)
+
+        program = "(quotient (- 13) 4)"
+        self.assertEvaluatesTo(program, -3)
+
+    def test_modulo(self):
+        program = "(modulo 4 2)"
+        self.assertEvaluatesTo(program, 0)
+
+        program = "(modulo 5 2)"
+        self.assertEvaluatesTo(program, 1)
+
+        program = "(modulo (- 13) 4)"
+        self.assertEvaluatesTo(program, 3)
+
+    def test_remainder(self):
+        program = "(remainder 4 2)"
+        self.assertEvaluatesTo(program, 0)
+
+        program = "(remainder 5 2)"
+        self.assertEvaluatesTo(program, 1)
+
+        program = "(remainder (- 13) 4)"
+        self.assertEvaluatesTo(program, -1)
+
+        program = "(remainder 13 (- 4))"
+        self.assertEvaluatesTo(program, 1)
+
 
 class LibraryMathsTest(InterpreterTest):
     def test_zero_predicate(self):

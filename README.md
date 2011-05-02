@@ -26,8 +26,8 @@ No support for `'` acting as `quote` yet though.
 ### Integers and floats
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
-`+`, `-`, `*`, `/`, `<`, `<=`, `>`, `>=`, `=`, `zero?`, `positive?`, `negative?`,
-`abs`
+`+`, `-`, `*`, `/`, `<`, `<=`, `>`, `>=`, `=`, `zero?`, `positive?`,
+`negative?`, `abs`, `quotient`, `modulo`, `remainder`
 
 No support for exact fractions or complex numbers.
 
@@ -57,6 +57,7 @@ Comments work too!
 * As are list literals
 * Using set-cdr! to make a circular list crashes
 * Crashes on `()` rather than throwing an error
+* Remainder is not defined for floating point numbers
 
 ## Cleanup tasks
 

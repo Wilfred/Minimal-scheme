@@ -1,3 +1,5 @@
+import math
+
 from errors import SchemeTypeError, InvalidArgument
 from parser import Atom, Cons
 from utils import get_type, check_argument_number
@@ -249,6 +251,50 @@ def greater_or_equal(arguments):
             return Atom('BOOLEAN', False)
 
     return Atom('BOOLEAN', True)
+
+
+@name_function('quotient')
+def quotient(arguments):
+    # integer division
+    check_argument_number('quotient', arguments, 2, 2)
+
+    if get_type(arguments[0]) != 'INTEGER' or get_type(arguments[1]) != 'INTEGER':
+        raise SchemeTypeError("quotient is only defined for integers, "
+                              "got %s and %s." % (get_type(arguments[0]), get_type(arguments[1])))
+
+    # Python's integer division floors, whereas Scheme rounds towards zero
+    x1 = arguments[0].value
+    x2 = arguments[1].value
+    result = math.trunc(x1 / x2)
+
+    return Atom('INTEGER', result)
+
+
+@name_function('modulo')
+def modulo(arguments):
+    check_argument_number('modulo', arguments, 2, 2)
+
+    if get_type(arguments[0]) != 'INTEGER' or get_type(arguments[1]) != 'INTEGER':
+        raise SchemeTypeError("modulo is only defined for integers, "
+                              "got %s and %s." % (get_type(arguments[0]), get_type(arguments[1])))
+
+    return Atom('INTEGER', arguments[0].value % arguments[1].value)
+
+
+@name_function('remainder')
+def remainder(arguments):
+    check_argument_number('remainder', arguments, 2, 2)
+
+    if get_type(arguments[0]) != 'INTEGER' or get_type(arguments[1]) != 'INTEGER':
+        raise SchemeTypeError("remainder is only defined for integers, "
+                              "got %s and %s." % (get_type(arguments[0]), get_type(arguments[1])))
+
+    # as with quotient, we can't use Python's integer division here because it floors rather than truncates
+    x1 = arguments[0].value
+    x2 = arguments[1].value
+    value = x1 - (math.trunc(x1 / x2) * x2)
+
+    return Atom('INTEGER', value)
 
 
 @name_function('char?')
