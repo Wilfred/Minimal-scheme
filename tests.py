@@ -309,7 +309,7 @@ class MathsTest(InterpreterTest):
         program = "(quotient 4 2)"
         self.assertEvaluatesTo(program, 2)
 
-        program = "(quotient (- 13) 4)"
+        program = "(quotient -13 4)"
         self.assertEvaluatesTo(program, -3)
 
     def test_modulo(self):
@@ -319,7 +319,7 @@ class MathsTest(InterpreterTest):
         program = "(modulo 5 2)"
         self.assertEvaluatesTo(program, 1)
 
-        program = "(modulo (- 13) 4)"
+        program = "(modulo -13 4)"
         self.assertEvaluatesTo(program, 3)
 
     def test_remainder(self):
@@ -329,10 +329,10 @@ class MathsTest(InterpreterTest):
         program = "(remainder 5 2)"
         self.assertEvaluatesTo(program, 1)
 
-        program = "(remainder (- 13) 4)"
+        program = "(remainder -13 4)"
         self.assertEvaluatesTo(program, -1)
 
-        program = "(remainder 13 (- 4))"
+        program = "(remainder 13 -4)"
         self.assertEvaluatesTo(program, 1)
 
 
@@ -345,21 +345,21 @@ class LibraryMathsTest(InterpreterTest):
         program = "(positive? 1)"
         self.assertEvaluatesTo(program, True)
 
-        program = "(positive? (- 1))"
+        program = "(positive? -1)"
         self.assertEvaluatesTo(program, False)
 
         program = "(positive? 0)"
         self.assertEvaluatesTo(program, True)
 
     def test_negative_predicate(self):
-        program = "(negative? (- 1))"
+        program = "(negative? -1)"
         self.assertEvaluatesTo(program, True)
 
         program = "(negative? 3)"
         self.assertEvaluatesTo(program, False)
 
     def test_abs(self):
-        program = "(abs (- 5.1))"
+        program = "(abs -5.1)"
         self.assertEvaluatesTo(program, 5.1)
 
         program = "(abs 0.2)"

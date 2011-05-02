@@ -15,12 +15,12 @@ def t_STRING(t):
     return t
 
 def t_FLOATING_POINT(t):
-    r"([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)"
+    r"-?([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)"
     t.value = float(t.value)
     return t
 
 def t_INTEGER(t):
-    r'[0-9]+'
+    r'-?[0-9]+'
     t.value = int(t.value)
     return t
 
