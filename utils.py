@@ -1,4 +1,4 @@
-from errors import SchemeTypeError
+from errors import SchemeArityError
 
 def get_type(internal_object):
     if hasattr(internal_object, "type"):
@@ -20,19 +20,19 @@ def check_argument_number(function_name, given_arguments,
 
     if not right_argument_number:
         if min_arguments == max_arguments:
-            raise SchemeTypeError("%s requires exactly %d argument(s), but "
+            raise SchemeArityError("%s requires exactly %d argument(s), but "
                                   "received %d." % (function_name,
                                                     min_arguments,
                                                     len(given_arguments)))
         else:
             if max_arguments:
-                raise SchemeTypeError("%s requires between %d and %d argument(s), but "
+                raise SchemeArityError("%s requires between %d and %d argument(s), but "
                                       "received %d." % (function_name,
                                                         min_arguments,
                                                         max_arguments,
                                                         len(given_arguments)))
             else:
-                raise SchemeTypeError("%s requires at least %d argument(s), but "
+                raise SchemeArityError("%s requires at least %d argument(s), but "
                                       "received %d." % (function_name,
                                                         min_arguments,
                                                         len(given_arguments)))

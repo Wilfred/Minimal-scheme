@@ -19,5 +19,8 @@ class SchemeSyntaxError(InterpreterException):
     # SyntaxError is also a built-in Python exception
     pass
 
+class SchemeArityError(InterpreterException):
+    pass
+
 class InvalidArgument(InterpreterException):
     pass
