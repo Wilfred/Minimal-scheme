@@ -119,7 +119,7 @@ class Nil(Sequence):
 
 def p_program(p):
     "program : sexpression program"
-    p[0] = Cons(head=p[1], tail=p[2])
+    p[0] = Cons(p[1], p[2])
 
 def p_program_empty(p):
     "program :"
@@ -140,12 +140,12 @@ def p_list(p):
 def p_list_quotesugar(p):
     "list : QUOTESUGAR sexpression"
     # convert 'foo to (quote foo)
-    p[0] = Cons(head=Atom('SYMBOL', "quote"), tail=Cons(head=p[2]))
+    p[0] = Cons(Atom('SYMBOL', "quote"), Cons(p[2]))
 
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"
     # a list is therefore a nested tuple:
-    p[0] = Cons(head=p[1], tail=p[2])
+    p[0] = Cons(p[1], p[2])
 
 def p_listargument_empty(p):
     "listarguments :"
