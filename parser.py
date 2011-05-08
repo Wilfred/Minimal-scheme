@@ -13,7 +13,9 @@ program : sexpression program
 sexpression : atom
             | list
 
+# unlike a normal list, using ' only permits one argument
 list : ( listarguments )
+     | QUOTESUGAR sexpression
 
 listarguments : sexp listarguments
               |
@@ -134,6 +136,11 @@ def p_sexpression_list(p):
 def p_list(p):
     "list : LPAREN listarguments RPAREN"
     p[0] = p[2]
+
+def p_list_quotesugar(p):
+    "list : QUOTESUGAR sexpression"
+    # convert 'foo to (quote foo)
+    p[0] = Cons(head=Atom('SYMBOL', "quote"), tail=Cons(head=p[2]))
 
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"

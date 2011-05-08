@@ -1,10 +1,11 @@
 import ply.lex
 
-tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 'COMMENT', 'CHARACTER', 'STRING')
+tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 'COMMENT', 'CHARACTER', 'STRING', 'QUOTESUGAR')
 
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
 t_SYMBOL = r'[a-zA-Z!$%&*+./:<=>?"@^_~-][0-9a-zA-Z!$%&*+./:<=>?"@^_~-]*'
+t_QUOTESUGAR = r"'"
 
 def t_STRING(t):
     r'"(\\"|[a-zA-Z*+/!?=<>. -])*"'

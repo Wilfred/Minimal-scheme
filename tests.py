@@ -135,6 +135,10 @@ class EvaluatorTest(InterpreterTest):
         program = "(quote ())"
         self.assertEvaluatesTo(program, [])
 
+    def test_quote_sugar(self):
+        program = "'(1 2 3)"
+        self.assertEvaluatesTo(program, [1, 2, 3])
+
 
 class EquivalenceTest(InterpreterTest):
     def test_eqv(self):

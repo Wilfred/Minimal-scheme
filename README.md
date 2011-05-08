@@ -30,8 +30,6 @@ A `standard function` is written in Scheme.
 
 `define`, `lambda`, `if`, `begin`, `quote`, `eqv?`, `eq?`
 
-No support for `'` acting as `quote` yet though.
-
 ### Integers and floats
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
