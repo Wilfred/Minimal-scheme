@@ -4,6 +4,9 @@ Targetting R5RS
 ([HTML copy of spec](http://people.csail.mit.edu/jaffer/r5rs_toc.html)),
 or at least an interesting subset of it.
 
+Currently working towards running all the
+[code in SICP](http://mitpress.mit.edu/sicp/code/index.html).
+
 All functionality is implemented with corresponding tests. Functions
 are generally thorough with their error messages, and we strive to
 give informative error messages.
