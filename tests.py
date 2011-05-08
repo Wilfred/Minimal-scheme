@@ -358,6 +358,20 @@ class LibraryMathsTest(InterpreterTest):
         program = "(negative? 3)"
         self.assertEvaluatesTo(program, False)
 
+    def test_odd_predicate(self):
+        program = "(odd? 1)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(odd? 0)"
+        self.assertEvaluatesTo(program, False)
+
+    def test_even_predicate(self):
+        program = "(even? 6)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(even? 7)"
+        self.assertEvaluatesTo(program, False)
+
     def test_abs(self):
         program = "(abs -5.1)"
         self.assertEvaluatesTo(program, 5.1)

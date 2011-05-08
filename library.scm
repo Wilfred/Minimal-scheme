@@ -14,6 +14,16 @@
       #t
       #f))
 
+(define (odd? x)
+  (if (= (modulo x 2) 1)
+      #t
+      #f))
+
+(define (even? x)
+  (if (= (modulo x 2) 0)
+      #t
+      #f))
+
 (define (abs x)
   (if (positive? x)
       x

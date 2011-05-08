@@ -27,7 +27,7 @@ No support for `'` acting as `quote` yet though.
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
 `+`, `-`, `*`, `/`, `<`, `<=`, `>`, `>=`, `=`, `zero?`, `positive?`,
-`negative?`, `abs`, `quotient`, `modulo`, `remainder`
+`negative?`, `odd?`, `even?`, `abs`, `quotient`, `modulo`, `remainder`
 
 No support for exact fractions or complex numbers.
 
