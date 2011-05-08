@@ -74,15 +74,6 @@ class Cons(Sequence):
         # a cons represents is a non-empty list, which we treat as true
         return True
 
-    def index(self, value):
-        """Find the first occurrence of value in the list, and return its index.
-
-        """
-        if self.head == value:
-            return 0
-        else:
-            return 1 + self.tail.index(value)
-
     def get_python_equivalent(self):
         if hasattr(self.head, "get_python_equivalent"):
             python_list = [self.head.get_python_equivalent()]
@@ -119,9 +110,6 @@ class Nil(Sequence):
         if isinstance(other, Nil):
             return True
         return False
-
-    def index(self, value):
-        raise ValueError
 
     def get_python_equivalent(self):
         return []
