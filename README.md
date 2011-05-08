@@ -1,17 +1,23 @@
 Minimal scheme: a toy scheme interpreter written in Python
 
-Targetting R5RS ([HTML copy of spec](http://people.csail.mit.edu/jaffer/r5rs_toc.html)), or at least an
-interesting subset of it.
+Targetting R5RS
+([HTML copy of spec](http://people.csail.mit.edu/jaffer/r5rs_toc.html)),
+or at least an interesting subset of it.
 
-All functionality is implemented with corresponding tests. Functions are generally thorough with their error messages, and we strive to give informative error messages.
+All functionality is implemented with corresponding tests. Functions
+are generally thorough with their error messages, and we strive to
+give informative error messages.
 
 ### Terminology
 
-The terms `primitive`, `built-in` and `standard function` are used to refer to different things in minimal scheme.
+The terms `primitive`, `built-in` and `standard function` are used to
+refer to different things in minimal scheme.
 
-A `primitive` is written in Python and controls whether or not it evaluates its arguments.
+A `primitive` is written in Python and controls whether or not it
+evaluates its arguments.
 
-A `built-in` is written in Python but has all its arguments evaluated automatically.
+A `built-in` is written in Python but has all its arguments evaluated
+automatically.
 
 A `standard function` is written in Scheme.
 
@@ -52,7 +58,8 @@ Comments work too!
 * Cannot nest defines
 * No variadic lambdas
 * No 'hello world' yet
-* External representation is Python literals rather than Scheme (e.g. 'a' instead of #\a)
+* External representation is Python literals rather than Scheme
+  (e.g. 'a' instead of #\a)
 * String literals are mutable (so string-set! violates specification)
 * As are list literals
 * Using set-cdr! to make a circular list crashes
@@ -61,13 +68,15 @@ Comments work too!
 
 ## Cleanup tasks
 
-* Add slice support for our linked list, then clean up variadic function stuff
+* Add slice support for our linked list, then clean up variadic
+  function stuff
 * Write an immutable dict for environments -- clarity
-* Remove eval_program -- it's just map(eval_s_expression, s_expressions)
+* Remove eval_program -- it's just map(eval_s_expression,
+  s_expressions)
 * Rename internal_result to actual_result in tests.py
-* Indent this file properly
 * Fix width of evaluator.py
-* Distinguish between incorrect type errors and incorrect arity errors, printing accordingly
+* Distinguish between incorrect type errors and incorrect arity
+  errors, printing accordingly
 * Need a check_type() function
 
 ## Future ideas
