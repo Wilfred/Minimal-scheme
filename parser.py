@@ -17,7 +17,7 @@ sexpression : atom
 list : ( listarguments )
      | QUOTESUGAR sexpression
 
-listarguments : sexp listarguments
+listarguments : sexpression listarguments
               |
 
 atom : SYMBOL | NUMBER | BOOLEAN | CHARACTER | STRING
