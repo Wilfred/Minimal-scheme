@@ -339,6 +339,19 @@ class MathsTest(InterpreterTest):
         program = "(remainder 13 -4)"
         self.assertEvaluatesTo(program, 1)
 
+    def test_exp(self):
+        program = "(exp 0)"
+        self.assertEvaluatesTo(program, 1.0)
+
+        program = "(exp 2)"
+        self.assertEvaluatesTo(program, 7.38905609893065)
+
+    def test_log(self):
+        program = "(log 1)"
+        self.assertEvaluatesTo(program, 0.0)
+
+        program = "(log 7.38905609893065)"
+        self.assertEvaluatesTo(program, 2.0)
 
 class LibraryMathsTest(InterpreterTest):
     def test_zero_predicate(self):

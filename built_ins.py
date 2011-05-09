@@ -297,6 +297,30 @@ def remainder(arguments):
     return Atom('INTEGER', value)
 
 
+@name_function('exp')
+def exp(arguments):
+    check_argument_number('exp', arguments, 1, 1)
+
+    if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
+        raise SchemeTypeError("exp only takes integers or floats, "
+                              "got %s" % get_type(arguments[0]))
+
+    x1 = arguments[0].value
+    return Atom('FLOATING_POINT', math.exp(x1))
+
+
+@name_function('log')
+def log(arguments):
+    check_argument_number('log', arguments, 1, 1)
+
+    if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
+        raise SchemeTypeError("log only takes integers or floats, "
+                              "got %s" % get_type(arguments[0]))
+
+    x1 = arguments[0].value
+    return Atom('FLOATING_POINT', math.log(x1))
+
+
 @name_function('char?')
 def is_char(arguments):
     check_argument_number('char?', arguments, 1, 1)

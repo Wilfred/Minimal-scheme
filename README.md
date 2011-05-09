@@ -34,7 +34,8 @@ A `standard function` is written in Scheme.
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
 `+`, `-`, `*`, `/`, `<`, `<=`, `>`, `>=`, `=`, `zero?`, `positive?`,
-`negative?`, `odd?`, `even?`, `abs`, `quotient`, `modulo`, `remainder`
+`negative?`, `odd?`, `even?`, `abs`, `quotient`, `modulo`,
+`remainder`, `exp`, `log`
 
 No support for exact fractions or complex numbers.
 
