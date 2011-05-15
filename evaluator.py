@@ -1,5 +1,6 @@
 from parser import parser, Atom
-from errors import UndefinedVariable, SchemeTypeError, SchemeStackOverflow
+from errors import (UndefinedVariable, SchemeTypeError, SchemeStackOverflow,
+                    SchemeSyntaxError)
 from built_ins import built_ins
 from copy import deepcopy
 
@@ -66,6 +67,9 @@ def eval_s_expression(s_expression, environment):
 
 
 def eval_list(linked_list, environment):
+    if not linked_list:
+        raise SchemeSyntaxError("() is not syntactically valid.")
+
     # find the function/primitive we are calling
     function, environment = eval_s_expression(linked_list[0], environment)
 

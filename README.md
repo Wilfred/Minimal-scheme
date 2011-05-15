@@ -72,7 +72,6 @@ Comments work too!
 * String literals are mutable (so string-set! violates specification)
 * List literals are mutable (so set-car! would violate specification)
 * Using set-cdr! to make a circular list crashes
-* Crashes on `()` rather than throwing an error
 * Remainder is not defined for floating point numbers
 
 ### Cleanup tasks
