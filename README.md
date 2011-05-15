@@ -78,7 +78,6 @@ Comments work too!
 
 * Add slice support for our linked list, then clean up variadic
   function stuff
-* Write an immutable dict for environments -- clarity
 * Remove eval_program -- it's just map(eval_s_expression,
   s_expressions)
 * Rename internal_result to actual_result in tests.py
