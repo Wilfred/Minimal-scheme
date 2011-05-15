@@ -1,5 +1,6 @@
 import ply.yacc
 from collections import Sequence
+from copy import deepcopy
 
 from lexer import tokens
 
@@ -58,6 +59,23 @@ class Cons(Sequence):
         return 1 + self.tail.__len__()
 
     def __getitem__(self, index):
+        if isinstance(index, slice):
+            if index.start or index.step:
+                raise NotImplemented('Slices are supported in the form [:x]')
+
+            # to create a slice, we first create a copy
+            cons_copy = deepcopy(self)
+
+            # iterate past the parts of the list we're keeping
+            last_cons = cons_copy
+            for i in range(index):
+                last_cons = last_cons.tail
+
+            # then remove the rest of the list
+            last_cons.tail = Nil()
+
+            return cons_copy
+        
         if index == 0:
             return self.head
         else:
@@ -96,7 +114,11 @@ class Nil(Sequence):
         return 0
 
     def __getitem__(self, index):
-        raise IndexError
+        if isinstance(index, slice):
+            return Nil()
+
+        elif isinstance(index, int):
+            raise IndexError
 
     def __setitem__(self, index, value):
         raise IndexError
