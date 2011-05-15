@@ -3,7 +3,7 @@
 import sys
 import unittest
 from evaluator import eval_program, load_standard_library, load_built_ins
-from errors import SchemeTypeError
+from errors import SchemeTypeError, SchemeStackOverflow
 
 assert sys.version.startswith('3.'), "Python 3 required"
 
@@ -143,6 +143,10 @@ class EvaluatorTest(InterpreterTest):
     def test_type_error(self):
         program = "(2 2)"
         self.assertRaises(SchemeTypeError, eval_program, program)
+
+    def test_stack_overflow(self):
+        program = "(define (f) (f)) (f)"
+        self.assertRaises(SchemeStackOverflow, eval_program, program)
 
 
 class EquivalenceTest(InterpreterTest):

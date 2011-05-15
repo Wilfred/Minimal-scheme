@@ -24,3 +24,8 @@ class SchemeArityError(InterpreterException):
 
 class InvalidArgument(InterpreterException):
     pass
+
+class SchemeStackOverflow(InterpreterException):
+    def __init__(self):
+        super().__init__("Stack overflown")
+

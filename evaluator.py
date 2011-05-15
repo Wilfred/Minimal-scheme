@@ -1,5 +1,5 @@
 from parser import parser, Atom
-from errors import UndefinedVariable, SchemeTypeError
+from errors import UndefinedVariable, SchemeTypeError, SchemeStackOverflow
 from built_ins import built_ins
 from copy import deepcopy
 
@@ -56,8 +56,13 @@ def eval_s_expression(s_expression, environment):
     if isinstance(s_expression, Atom):
         return eval_atom(s_expression, environment)
     else:
-        return eval_list(s_expression, environment)
-
+        try:
+            return eval_list(s_expression, environment)
+        except RuntimeError as e:
+            if e.args[0] == "maximum recursion depth exceeded":
+                raise SchemeStackOverflow()
+            else:
+                raise e
 
 
 def eval_list(linked_list, environment):
