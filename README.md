@@ -64,6 +64,7 @@ Comments work too!
 * Variadic lambdas
 * Nested define statements
 * I/O (so no hello world yet)
+* Closures
 
 ### Known bugs
 
