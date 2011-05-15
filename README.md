@@ -74,6 +74,7 @@ Comments work too!
 * List literals are mutable (so set-car! would violate specification)
 * Using set-cdr! to make a circular list crashes
 * Remainder is not defined for floating point numbers
+* Interpreter is case sensitive
 
 ### Cleanup tasks
 
