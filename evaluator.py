@@ -67,7 +67,7 @@ def eval_s_expression(s_expression, environment):
 
 def eval_list(linked_list, environment):
     # find the function/primitive we are calling
-    function, environment = eval_s_expression(linked_list.head, environment)
+    function, environment = eval_s_expression(linked_list[0], environment)
 
     if isinstance(function, Atom):
         raise SchemeTypeError("You can only call functions, but "

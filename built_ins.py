@@ -36,7 +36,7 @@ def car(arguments):
 
     list_given = arguments[0]
 
-    return list_given.head
+    return list_given[0]
 
 
 @name_function('cdr')
@@ -184,9 +184,9 @@ def divide(arguments):
     check_argument_number('/', arguments, 1)
 
     if len(arguments) == 1:
-        return Atom('FLOATING_POINT', 1 / arguments.head.value)
+        return Atom('FLOATING_POINT', 1 / arguments[0].value)
     else:
-        result = Atom('FLOATING_POINT', arguments.head.value)
+        result = Atom('FLOATING_POINT', arguments[0].value)
 
         for argument in arguments.tail:
             result.value /= argument.value

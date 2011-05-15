@@ -21,21 +21,21 @@ def name_function(function_name):
 def define(arguments, environment):
     check_argument_number('define', arguments, 2, 2)
 
-    if isinstance(arguments.head, Atom):
+    if isinstance(arguments[0], Atom):
         return define_variable(arguments, environment)
     else:
         return define_function(arguments, environment)
 
 
 def define_variable(arguments, environment):
-    if arguments.head.type != 'SYMBOL':
-        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments.head.type)
+    if arguments[0].type != 'SYMBOL':
+        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments[0].type)
 
-    if arguments.head.value in environment:
-        raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments.head.value)
+    if arguments[0].value in environment:
+        raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments[0].value)
 
-    variable_name = arguments.head.value
-    variable_value_expression = arguments.tail.head
+    variable_name = arguments[0].value
+    variable_value_expression = arguments[1]
 
     result, environment = eval_s_expression(variable_value_expression, environment)
     environment[variable_name] = result
@@ -75,10 +75,10 @@ def define_function(arguments, environment):
 
 def define_normal_function(arguments, environment):
     function_name_with_parameters = arguments[0]
-    function_name = function_name_with_parameters.head
+    function_name = function_name_with_parameters[0]
     function_parameters = function_name_with_parameters.tail
 
-    function_body = arguments.tail[0]
+    function_body = arguments[1]
     
     # a function with a fixed number of arguments
     def named_function(_arguments, _environment):
@@ -118,7 +118,7 @@ def define_normal_function(arguments, environment):
 
 def define_variadic_function(arguments, environment):
     function_name_with_parameters = arguments[0]
-    function_name = function_name_with_parameters.head
+    function_name = arguments[0][0]
     function_parameters = function_name_with_parameters.tail
 
     function_body = arguments.tail[0]
@@ -195,7 +195,7 @@ def define_variadic_function(arguments, environment):
 def set_variable(arguments, environment):
     check_argument_number('set!', arguments, 2, 2)
 
-    variable_name = arguments.head
+    variable_name = arguments[0]
 
     if variable_name.type != 'SYMBOL':
         raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.type)
@@ -203,7 +203,7 @@ def set_variable(arguments, environment):
     if variable_name.value not in environment:
         raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.value)
 
-    variable_value_expression = arguments.tail.head
+    variable_value_expression = arguments[1]
     result, environment = eval_s_expression(variable_value_expression, environment)
     environment[variable_name.value] = result
 
@@ -213,7 +213,7 @@ def set_variable(arguments, environment):
 def if_function(arguments, environment):
     check_argument_number('if', arguments, 2, 3)
 
-    condition, environment = eval_s_expression(arguments.head, environment)
+    condition, environment = eval_s_expression(arguments[0], environment)
 
     # everything except an explicit false boolean is true
     if not (condition.type == 'BOOLEAN' and condition.value == False):
@@ -229,8 +229,8 @@ def if_function(arguments, environment):
 def make_lambda_function(arguments, environment):
     check_argument_number('lambda', arguments, 2, 2)
 
-    parameter_list = arguments.head
-    function_body = arguments.tail.head
+    parameter_list = arguments[0]
+    function_body = arguments[1]
 
     if isinstance(parameter_list, Atom):
         raise SchemeTypeError("The first argument to `lambda` must be a list of variables.")
@@ -268,7 +268,7 @@ def make_lambda_function(arguments, environment):
 def return_argument_unevaluated(arguments, environment):
     check_argument_number('quote', arguments, 1, 1)
 
-    return (arguments.head, environment)
+    return (arguments[0], environment)
 
 
 @name_function('begin')
