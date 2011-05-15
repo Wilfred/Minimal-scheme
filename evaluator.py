@@ -1,5 +1,5 @@
 from parser import parser, Atom
-from errors import UndefinedVariable
+from errors import UndefinedVariable, SchemeTypeError
 from built_ins import built_ins
 from copy import deepcopy
 
@@ -63,6 +63,10 @@ def eval_s_expression(s_expression, environment):
 def eval_list(linked_list, environment):
     # find the function/primitive we are calling
     function, environment = eval_s_expression(linked_list.head, environment)
+
+    if isinstance(function, Atom):
+        raise SchemeTypeError("You can only call functions, but "
+                              "you gave me a %s." % function.type)
 
     # call it (internally we require the function to decide whether or
     # not to evalue the arguments)
