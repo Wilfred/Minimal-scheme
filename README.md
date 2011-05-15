@@ -55,20 +55,27 @@ No support for exact fractions or complex numbers.
 
 Comments work too!
 
-## Known bugs
+## Bugs and tasks
 
-* Cannot nest defines
-* No variadic lambdas
-* No 'hello world' yet
+### Unimplemented features
+
+* Macros
+* Tail call optimisation
+* Variadic lambdas
+* Nested define statements
+* I/O (so no hello world yet)
+
+### Known bugs
+
 * External representation is Python literals rather than Scheme
   (e.g. 'a' instead of #\a)
 * String literals are mutable (so string-set! violates specification)
-* As are list literals
+* List literals are mutable (so set-car! would violate specification)
 * Using set-cdr! to make a circular list crashes
 * Crashes on `()` rather than throwing an error
 * Remainder is not defined for floating point numbers
 
-## Cleanup tasks
+### Cleanup tasks
 
 * Add slice support for our linked list, then clean up variadic
   function stuff
@@ -81,7 +88,7 @@ Comments work too!
   errors, printing accordingly
 * Need a check_type() function
 
-## Future ideas
+### Future ideas
 
 * Compare with other Scheme interpreters written in Python for
   elegance of approach, error friendliness, performance, test coverage
