@@ -1,6 +1,7 @@
 import ply.lex
 
-tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT', 'COMMENT', 'CHARACTER', 'STRING', 'QUOTESUGAR')
+tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT',
+          'COMMENT', 'CHARACTER', 'STRING', 'QUOTESUGAR')
 
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
