@@ -197,6 +197,19 @@ class ListTest(InterpreterTest):
         program = "(cdr (quote (1 2 3)))"
         self.assertEvaluatesTo(program, [2, 3])
 
+    def test_car_cdr_compositions(self):
+        program = "(caar '((1 3) 2))"
+        self.assertEvaluatesTo(program, 1)
+
+        program = "(cadr '((1 3) 2))"
+        self.assertEvaluatesTo(program, 2)
+
+        program = "(cdar '((1 3) 2))"
+        self.assertEvaluatesTo(program, [3])
+
+        program = "(cddr '((1 3) 2))"
+        self.assertEvaluatesTo(program, [])
+
     def test_cons(self):
         program = "(cons 1 (quote (2 3)))"
         self.assertEvaluatesTo(program, [1, 2, 3])

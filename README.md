@@ -46,7 +46,7 @@ No support for exact fractions or complex numbers.
 
 ### Lists
 
-`car`, `cdr`, `cons`, `null?`, `pair?`
+`car`, `cdr`, `caar`, `cadr`, `cdar`, `cddr`, `cons`, `null?`, `pair?`
 
 ### Strings
 
