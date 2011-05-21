@@ -16,6 +16,8 @@ sexpression : atom
 # unlike a normal list, using ' only permits one argument
 list : ( listarguments )
      | QUOTESUGAR sexpression
+     | QUASIQUOTESUGAR sexpression
+     | UNQUOTESUGAR sexpression
 
 listarguments : sexpression listarguments
               |
@@ -151,6 +153,16 @@ def p_list_quotesugar(p):
     "list : QUOTESUGAR sexpression"
     # convert 'foo to (quote foo)
     p[0] = Cons(Atom('SYMBOL', "quote"), Cons(p[2]))
+
+def p_list_quasiquotesugar(p):
+    "list : QUASIQUOTESUGAR sexpression"
+    # convert `foo to (quasiquote foo)
+    p[0] = Cons(Atom('SYMBOL', "quasiquote"), Cons(p[2]))
+
+def p_list_unquotesugar(p):
+    "list : UNQUOTESUGAR sexpression"
+    # convert ,foo to (unquote foo)
+    p[0] = Cons(Atom('SYMBOL', "unquote"), Cons(p[2]))
 
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"

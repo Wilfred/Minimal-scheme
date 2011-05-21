@@ -31,8 +31,6 @@ A `standard function` is written in Scheme.
 `define`, `lambda`, `if`, `begin`, `quote`, `eqv?`, `eq?`,
 `quasiquote`, `unquote`
 
-No support for ` and , syntactic sugar yet.
-
 ### Integers and floats
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
