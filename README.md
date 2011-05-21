@@ -94,3 +94,4 @@ Comments work too!
   elegance of approach, error friendliness, performance, test coverage
 * Stack traces on error with line numbers
 * Add documentation via [docco](https://github.com/jashkenas/docco)
+* Remove PLY dependency
