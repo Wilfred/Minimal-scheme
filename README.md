@@ -88,6 +88,7 @@ Comments work too!
 * Distinguish between incorrect type errors and incorrect arity
   errors, printing accordingly
 * Need a check_type() function
+* Change atoms to use a class hierarchy
 
 ### Future ideas
 
