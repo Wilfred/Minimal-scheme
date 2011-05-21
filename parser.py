@@ -35,8 +35,9 @@ class Atom(object):
         return "<Atom: %s (%s)>" % (str(self.value), self.type)
 
     def __eq__(self, other):
-        if other.type == self.type and other.value == self.value:
-            return True
+        if isinstance(other, Atom):
+            if other.type == self.type and other.value == self.value:
+                return True
 
         return False
 
