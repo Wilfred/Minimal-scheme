@@ -1,6 +1,6 @@
 from evaluator import eval_s_expression
 from errors import SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable
-from parser import Atom, Nil
+from parser import Atom, Nil, Cons
 from copy import deepcopy
 from utils import check_argument_number
 
@@ -279,3 +279,40 @@ def evaluate_sequence(arguments, environment):
         result, environment = eval_s_expression(argument, environment)
 
     return (result, environment)
+
+
+@name_function('quasiquote')
+def quasiquote(arguments, environment):
+    """Returns the arguments unevaluated, except for any occurrences
+    of unquote.
+
+    """
+    def recursive_eval_unquote(s_expression, _environment):
+        """Return a copy of s_expression, with all occurrences of
+        unquoted s-expressions replaced by their evaluated values.
+
+        """
+        if isinstance(s_expression, Atom):
+            return (s_expression, _environment)
+
+        elif isinstance(s_expression, Nil):
+            return (s_expression, _environment)
+
+        elif s_expression[0] == Atom("SYMBOL", "unquote"):
+            check_argument_number('unquote', arguments, 1, 1)
+            return eval_s_expression(s_expression[1], _environment)
+
+        else:
+            # return a list of s_expressions that have been
+            # recursively checked for unquote
+            list_elements = []
+
+            for element in s_expression:
+                (result, _environment) = recursive_eval_unquote(element, _environment)
+                list_elements.append(result)
+
+            return (Cons.from_list(list_elements), _environment)
+
+    check_argument_number('quasiquote', arguments, 1, 1)
+
+    return recursive_eval_unquote(arguments[0], environment)

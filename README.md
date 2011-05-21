@@ -28,7 +28,10 @@ A `standard function` is written in Scheme.
 
 ### Primitives
 
-`define`, `lambda`, `if`, `begin`, `quote`, `eqv?`, `eq?`
+`define`, `lambda`, `if`, `begin`, `quote`, `eqv?`, `eq?`,
+`quasiquote`, `unquote`
+
+No support for ` and , syntactic sugar yet.
 
 ### Integers and floats
 

@@ -152,6 +152,16 @@ class EvaluatorTest(InterpreterTest):
         program = "()"
         self.assertRaises(SchemeSyntaxError, eval_program, program)
 
+    def test_quasiquote(self):
+        program = "(quasiquote (1 1))"
+        self.assertEvaluatesTo(program, [1, 1])
+
+        program = "(quasiquote (unquote 1))"
+        self.assertEvaluatesTo(program, 1)
+
+        program = "(quasiquote (1 (unquote (+ 2 2))))"
+        self.assertEvaluatesTo(program, [1, 4])
+
 
 class EquivalenceTest(InterpreterTest):
     def test_eqv(self):

@@ -46,6 +46,15 @@ class Atom(object):
 
 
 class Cons(Sequence):
+    @staticmethod
+    def from_list(python_list):
+        if not python_list:
+            return Nil()
+        else:
+            head = python_list[0]
+            tail = Cons.from_list(python_list[1:])
+            return Cons(head, tail)
+
     def __init__(self, head, tail=None):
         self.head = head
 
