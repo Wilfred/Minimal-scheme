@@ -1,7 +1,7 @@
 import math
 
 from errors import SchemeTypeError, InvalidArgument
-from parser import Atom, Cons
+from parser import Atom, Cons, Nil
 from utils import get_type, check_argument_number
 
 built_ins = {}
@@ -55,6 +55,15 @@ def cons(arguments):
 
     return Cons(arguments[0], arguments[1])
 
+
+@name_function('null?')
+def is_null(arguments):
+    check_argument_number('null?', arguments, 1, 1)
+
+    if isinstance(arguments[0], Nil):
+        return Atom('BOOLEAN', True)
+
+    return Atom('BOOLEAN', False)
 
 @name_function('pair?')
 def pair(arguments):

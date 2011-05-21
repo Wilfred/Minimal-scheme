@@ -204,6 +204,16 @@ class ListTest(InterpreterTest):
         program = "(cons 1 2)"
         self.assertEvaluatesTo(program, [1, '.', 2])
 
+    def test_null(self):
+        program = "(null? 1)"
+        self.assertEvaluatesTo(program, False)
+
+        program = "(null? '())"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(null? '(1 2))"
+        self.assertEvaluatesTo(program, False)
+
     def test_pair(self):
         program = "(pair? (quote (a b)))"
         self.assertEvaluatesTo(program, True)
