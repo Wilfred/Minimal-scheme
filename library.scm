@@ -41,3 +41,9 @@
 
 (define (cddr x)
   (cdr (cdr x)))
+
+(define (map function list)
+  (if (null? list)
+      '()
+      (cons (function (car list))
+            (map function (cdr list)))))

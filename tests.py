@@ -237,6 +237,10 @@ class ListTest(InterpreterTest):
         program = "(pair? 1)"
         self.assertEvaluatesTo(program, False)
 
+    def test_map(self):
+        program = "(map (lambda (x) (+ x 1)) '(2 3))"
+        self.assertEvaluatesTo(program, [3, 4])
+
 
 class MathsTest(InterpreterTest):
     def test_addition(self):
