@@ -523,10 +523,18 @@ class StringTest(InterpreterTest):
 
 
 class MacroTest(InterpreterTest):
+    """Test macro definition, but also test syntax defined in the
+    standard library using macros.
+    
+    """
     def test_defmacro(self):
         program = '(defmacro inc (argument) `(+ 1 ,argument)) (inc 5)'
         self.assertEvaluatesTo(program, 6)
 
+    def test_let(self):
+        program = "(let ((x 1)) x)"
+        self.assertEvaluatesTo(program, 1)
+    
 
 if __name__ == '__main__':
     unittest.main()

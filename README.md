@@ -31,6 +31,10 @@ A `standard function` is written in Scheme.
 `define`, `lambda`, `if`, `begin`, `quote`, `eqv?`, `eq?`,
 `quasiquote`, `unquote`, `unquote-splicing`
 
+### Binding
+
+`let`
+
 ### Integers and floats
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,
@@ -55,7 +59,7 @@ No support for exact fractions or complex numbers.
 
 ### Macros
 
-
+`defmacro`
 
 ### Other
 

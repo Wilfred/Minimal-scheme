@@ -47,3 +47,8 @@
       '()
       (cons (function (car list))
             (map function (cdr list)))))
+
+; scoping macros
+(defmacro let (assignments body)
+  `((lambda ,(map car assignments) ,body)
+    (unquote-splicing (map cadr assignments))))
