@@ -90,6 +90,7 @@ Comments work too!
   errors, printing accordingly
 * Need a check_type() function
 * Change atoms to use a class hierarchy
+* Move the more complex maths operations (`exp`, `log` etc) to library.scm
 
 ### Future ideas
 
