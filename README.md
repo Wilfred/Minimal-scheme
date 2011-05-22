@@ -53,6 +53,10 @@ No support for exact fractions or complex numbers.
 
 `string?`, `make-string`, `string-length`, `string-ref`, `string-set!`
 
+### Macros
+
+
+
 ### Other
 
 Comments work too!
@@ -61,7 +65,7 @@ Comments work too!
 
 ### Unimplemented features
 
-* Macros
+* Hygenic R5RS Macros
 * Tail call optimisation
 * Variadic lambdas
 * Nested define statements

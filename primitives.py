@@ -333,3 +333,44 @@ def quasiquote(arguments, environment):
     check_argument_number('quasiquote', arguments, 1, 1)
 
     return recursive_eval_unquote(arguments[0], environment)
+
+
+@name_function('defmacro')
+def defmacro(arguments, environment):
+    """defmacro is a restricted version of Common Lisp's defmacro:
+    http://www.ai.mit.edu/projects/iiip/doc/CommonLISP/HyperSpec/Body/mac_defmacro.html
+
+    Syntax:
+    defmacro <name> <argument-list> <replacement>
+
+    """
+    check_argument_number('defmacro', arguments, 3, 3)
+
+    macro_name = arguments[0].value
+    macro_arguments = [arg.value for arg in arguments[1]]
+    replacement_body = arguments[2]
+
+    def expand_then_eval(arguments, _environment):
+        """Expand this macro once, then continue evaluation."""
+        if len(arguments) != len(macro_arguments):
+            raise SchemeArityError("Macro %s takes %d arguments, but got %d."
+                                   % (macro_name, len(macro_arguments),
+                                      len(arguments)))
+
+        new_environment = dict(_environment)
+        for (variable_name, variable_value) in zip(macro_arguments, arguments):
+            new_environment[variable_name] = variable_value
+
+        (s_expression_after_expansion, new_environment) = eval_s_expression(replacement_body, new_environment)
+
+        # restore old environment, ignoring variables hidden by scope
+        for variable_name in _environment:
+            if variable_name not in macro_arguments:
+                _environment[variable_name] = new_environment[variable_name]
+
+        # continue evaluation where we left off
+        return eval_s_expression(s_expression_after_expansion, _environment)
+
+    environment[macro_name] = expand_then_eval
+
+    return (None, environment)

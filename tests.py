@@ -522,5 +522,11 @@ class StringTest(InterpreterTest):
         self.assertEvaluatesTo(program, 'zbc')
 
 
+class MacroTest(InterpreterTest):
+    def test_defmacro(self):
+        program = '(defmacro inc (argument) `(+ 1 ,argument)) (inc 5)'
+        self.assertEvaluatesTo(program, 6)
+
+
 if __name__ == '__main__':
     unittest.main()
