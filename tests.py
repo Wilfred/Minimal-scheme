@@ -162,9 +162,15 @@ class EvaluatorTest(InterpreterTest):
         program = "(quasiquote (1 (unquote (+ 2 2))))"
         self.assertEvaluatesTo(program, [1, 4])
 
+        program = "(quasiquote (1 (unquote-splicing '(2 2))))"
+        self.assertEvaluatesTo(program, [1, 2, 2])
+
     def test_quasiquote_sugar(self):
         program = "`,1"
         self.assertEvaluatesTo(program, 1)
+
+        program = "`(1 ,@'(2 2))"
+        self.assertEvaluatesTo(program, [1, 2, 2])
 
 
 class EquivalenceTest(InterpreterTest):

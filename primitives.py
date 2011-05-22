@@ -1,5 +1,6 @@
 from evaluator import eval_s_expression
-from errors import SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable
+from errors import (SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable,
+                    SchemeArityError)
 from parser import Atom, Nil, Cons
 from copy import deepcopy
 from utils import check_argument_number
@@ -291,6 +292,9 @@ def quasiquote(arguments, environment):
         """Return a copy of s_expression, with all occurrences of
         unquoted s-expressions replaced by their evaluated values.
 
+        Note that we can only have unquote-splicing in a sublist,
+        since we can only return one value, e.g `,@(1 2 3).
+
         """
         if isinstance(s_expression, Atom):
             return (s_expression, _environment)
@@ -308,8 +312,21 @@ def quasiquote(arguments, environment):
             list_elements = []
 
             for element in s_expression:
-                (result, _environment) = recursive_eval_unquote(element, _environment)
-                list_elements.append(result)
+                if isinstance(element, Cons) and \
+                        element[0] == Atom('SYMBOL', 'unquote-splicing'):
+                    check_argument_number('unquote-splicing', element.tail, 1, 1)
+
+                    (result, _environment) = eval_s_expression(element[1], _environment)
+
+                    if not isinstance(result, Cons) and not isinstance(result, Nil):
+                        raise SchemeArityError("unquote-splicing requires a list.")
+
+                    for item in result:
+                        list_elements.append(item)
+                        
+                else:
+                    (result, _environment) = recursive_eval_unquote(element, _environment)
+                    list_elements.append(result)
 
             return (Cons.from_list(list_elements), _environment)
 

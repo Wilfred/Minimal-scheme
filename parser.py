@@ -18,6 +18,7 @@ list : ( listarguments )
      | QUOTESUGAR sexpression
      | QUASIQUOTESUGAR sexpression
      | UNQUOTESUGAR sexpression
+     | UNQUOTESPLICINGSUGAR sexpression
 
 listarguments : sexpression listarguments
               |
@@ -163,6 +164,11 @@ def p_list_unquotesugar(p):
     "list : UNQUOTESUGAR sexpression"
     # convert ,foo to (unquote foo)
     p[0] = Cons(Atom('SYMBOL', "unquote"), Cons(p[2]))
+
+def p_list_unquotesplicingsugar(p):
+    "list : UNQUOTESPLICINGSUGAR sexpression"
+    # convert ,foo to (unquote foo)
+    p[0] = Cons(Atom('SYMBOL', "unquote-splicing"), Cons(p[2]))
 
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"
