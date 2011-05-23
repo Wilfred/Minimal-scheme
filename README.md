@@ -78,6 +78,8 @@ Comments work too!
 
 ### Known bugs
 
+* Error checking in `exact` and `inexact`
+* `/` doesn't check type of arguments
 * External representation is Python literals rather than Scheme
   (e.g. 'a' instead of #\a)
 * String literals are mutable (so string-set! violates specification)
@@ -85,6 +87,7 @@ Comments work too!
 * Using set-cdr! to make a circular list crashes
 * Remainder is not defined for floating point numbers
 * Interpreter is case sensitive
+* Complex returns true on real numbers
 
 ### Cleanup tasks
 
@@ -98,6 +101,11 @@ Comments work too!
   errors, printing accordingly
 * Need a check_type() function
 * Move the more complex maths operations (`exp`, `log` etc) to library.scm
+* Add a number base class to atoms
+* Add a base class for Nil and Cons
+* Add assertions to atoms to make sure they only hold the correct type
+* Add tests for type checking on built-ins and primitives
+* Test type coercion for arithmetic (e.g. `(+ 1 2.0)`)
 
 ### Future ideas
 
