@@ -1,23 +1,46 @@
 from collections import Sequence
 
 class Atom(object):
-    def __init__(self, item_type, value):
-        self.type = item_type # type is a reserved word
+    """An abstract class for every base type in Scheme."""
+    def __init__(self, value):
         self.value = value
 
     def __repr__(self):
-        return "<Atom: %s (%s)>" % (str(self.value), self.type)
+        return "<Atom: %s (%s)>" % (str(self.value), self.__class__.__name__)
 
     def __eq__(self, other):
-        if isinstance(other, Atom):
-            if other.type == self.type and other.value == self.value:
-                return True
+        if isinstance(other, self.__class__) and other.value == self.value:
+            return True
 
         return False
 
     def get_python_equivalent(self):
         return self.value
 
+
+"""Atom classes. Although most Scheme data types map neatly to Python
+equivalents, there are some exceptions (such as symbols and exact
+fractions). Therefore we wrap all atoms in a class so we can treat
+them uniformly.
+
+"""
+class Symbol(Atom):
+    pass
+
+class Integer(Atom):
+    pass
+
+class FloatingPoint(Atom):
+    pass
+
+class Boolean(Atom):
+    pass
+
+class Character(Atom):
+    pass
+
+class String(Atom):
+    pass
 
 class Cons(Sequence):
     @staticmethod
@@ -66,8 +89,8 @@ class Cons(Sequence):
         else:
             python_list = [self.head]
 
-        if hasattr(self.tail, 'type'):
-            # is an improper list, so self.tail is an Atom
+        if isinstance(self.tail, Atom):
+            # an improper list has an atom as a tail rather than a list
             return python_list + ['.', self.tail.get_python_equivalent()]
         else:
             # normal list

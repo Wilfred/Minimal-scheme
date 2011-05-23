@@ -1,5 +1,5 @@
 from parser import parser
-from data_types import Atom
+from data_types import Atom, Symbol
 from errors import (UndefinedVariable, SchemeTypeError, SchemeStackOverflow,
                     SchemeSyntaxError)
 from built_ins import built_ins
@@ -76,7 +76,7 @@ def eval_list(linked_list, environment):
 
     if isinstance(function, Atom):
         raise SchemeTypeError("You can only call functions, but "
-                              "you gave me a %s." % function.type)
+                              "you gave me a %s." % function.__class__)
 
     # call it (internally we require the function to decide whether or
     # not to evalue the arguments)
@@ -84,7 +84,7 @@ def eval_list(linked_list, environment):
 
 def eval_atom(atom, environment):
     # with the exception of symbols, atoms evaluate to themselves
-    if atom.type == 'SYMBOL':
+    if isinstance(atom, Symbol):
         return eval_symbol(atom.value, environment)
     else:
         return (atom, environment)

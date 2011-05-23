@@ -1,7 +1,8 @@
 import ply.yacc
 
 from lexer import tokens
-from data_types import Cons, Nil, Atom
+from data_types import (Cons, Nil, Symbol, Integer, FloatingPoint, Boolean,
+                        Character, String)
 
 """Grammar for our minimal scheme:
 
@@ -52,22 +53,22 @@ def p_list(p):
 def p_list_quotesugar(p):
     "list : QUOTESUGAR sexpression"
     # convert 'foo to (quote foo)
-    p[0] = Cons(Atom('SYMBOL', "quote"), Cons(p[2]))
+    p[0] = Cons(Symbol("quote"), Cons(p[2]))
 
 def p_list_quasiquotesugar(p):
     "list : QUASIQUOTESUGAR sexpression"
     # convert `foo to (quasiquote foo)
-    p[0] = Cons(Atom('SYMBOL', "quasiquote"), Cons(p[2]))
+    p[0] = Cons(Symbol("quasiquote"), Cons(p[2]))
 
 def p_list_unquotesugar(p):
     "list : UNQUOTESUGAR sexpression"
     # convert ,foo to (unquote foo)
-    p[0] = Cons(Atom('SYMBOL', "unquote"), Cons(p[2]))
+    p[0] = Cons(Symbol("unquote"), Cons(p[2]))
 
 def p_list_unquotesplicingsugar(p):
     "list : UNQUOTESPLICINGSUGAR sexpression"
     # convert ,foo to (unquote foo)
-    p[0] = Cons(Atom('SYMBOL', "unquote-splicing"), Cons(p[2]))
+    p[0] = Cons(Symbol("unquote-splicing"), Cons(p[2]))
 
 def p_listarguments_one(p):
     "listarguments : sexpression listarguments"
@@ -80,27 +81,27 @@ def p_listargument_empty(p):
 
 def p_atom_symbol(p):
     "atom : SYMBOL"
-    p[0] = Atom('SYMBOL', p[1])
+    p[0] = Symbol(p[1])
 
 def p_atom_number(p):
     "atom : INTEGER"
-    p[0] = Atom('INTEGER', p[1])
+    p[0] = Integer(p[1])
 
 def p_atom_floating_point(p):
     "atom : FLOATING_POINT"
-    p[0] = Atom('FLOATING_POINT', p[1])
+    p[0] = FloatingPoint(p[1])
 
 def p_atom_boolean(p):
     "atom : BOOLEAN"
-    p[0] = Atom('BOOLEAN', p[1])
+    p[0] = Boolean(p[1])
 
 def p_atom_character(p):
     "atom : CHARACTER"
-    p[0] = Atom('CHARACTER', p[1])
+    p[0] = Character(p[1])
 
 def p_atom_string(p):
     "atom : STRING"
-    p[0] = Atom('STRING', p[1])
+    p[0] = String(p[1])
 
 
 parser = ply.yacc.yacc()

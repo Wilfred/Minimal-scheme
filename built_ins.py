@@ -1,8 +1,10 @@
 import math
+from copy import copy
 
 from errors import SchemeTypeError, InvalidArgument
-from data_types import Atom, Cons, Nil
-from utils import get_type, check_argument_number
+from data_types import (Cons, Nil, String, Integer, Character, Boolean,
+                        FloatingPoint)
+from utils import check_argument_number
 
 built_ins = {}
 
@@ -24,9 +26,9 @@ def test_equivalence(arguments):
     # __eq__ is defined on on Atom and Nil
     # and == on Cons just compares references, so we can just use a normal equality test
     if arguments[0] == arguments[1]:
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
     else:
-        return Atom('BOOLEAN', False)
+        return Boolean(False)
 
 
 @name_function('car')
@@ -61,18 +63,18 @@ def is_null(arguments):
     check_argument_number('null?', arguments, 1, 1)
 
     if isinstance(arguments[0], Nil):
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 @name_function('pair?')
 def pair(arguments):
     check_argument_number('pair?', arguments, 1, 1)
 
     if isinstance(arguments[0], Cons):
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('rational?')
@@ -82,20 +84,20 @@ def pair(arguments):
 def number(arguments):
     check_argument_number('number?', arguments, 1, 1)
 
-    if get_type(arguments[0]) in ['INTEGER', 'FLOATING_POINT']:
-        return Atom('BOOLEAN', True)
+    if arguments[0].__class__ in [Integer, FloatingPoint]:
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('exact?')
 def exact(arguments):
     check_argument_number('exact?', arguments, 1, 1)
 
-    if get_type(arguments[0]) == 'INTEGER':
-        return Atom('BOOLEAN', True)
-    elif get_type(arguments[0]) == 'FLOATING_POINT':
-        return Atom('BOOLEAN', False)
+    if isinstance(arguments[0], Integer):
+        return Boolean(True)
+    elif isinstance(arguments[0], FloatingPoint):
+        return Boolean(False)
     else:
         raise SchemeTypeError("exact? only takes integers or floating point "
                               "numbers as arguments, you gave me ""%s." % \
@@ -105,10 +107,10 @@ def exact(arguments):
 def inexact(arguments):
     check_argument_number('inexact?', arguments, 1, 1)
 
-    if get_type(arguments[0]) == 'FLOATING_POINT':
-        return Atom('BOOLEAN', True)
-    elif get_type(arguments[0]) == 'INTEGER':
-        return Atom('BOOLEAN', False)
+    if isinstance(arguments[0], FloatingPoint):
+        return Boolean(True)
+    elif isinstance(arguments[0], Integer):
+        return Boolean(False)
     else:
         raise SchemeTypeError("exact? only takes integers or floating point "
                               "numbers as arguments, you gave me ""%s." % \
@@ -117,20 +119,21 @@ def inexact(arguments):
 @name_function('+')
 def add(arguments):
     if not arguments:
-        return Atom('INTEGER', 0)
+        return Integer(0)
 
-    if get_type(arguments[0]) == "INTEGER":
-        total = Atom('INTEGER', 0)
-    elif get_type(arguments[0]) == "FLOATING_POINT":
-        total = Atom('FLOATING_POINT', 0.0)
+    if isinstance(arguments[0], Integer):
+        total = Integer(0)
+    elif isinstance(arguments[0], FloatingPoint):
+        total = FloatingPoint(0.0)
 
     for argument in arguments:
-        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+        if argument.__class__ not in [Integer, FloatingPoint]:
             raise SchemeTypeError("Addition is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.type)
+                                  "floating point, you gave me %s." % argument.__class__)
 
-        if get_type(total) == "INTEGER" and get_type(argument) == "FLOATING_POINT":
-            total.type = "FLOATING_POINT"
+        # adding a float to an integer gives us a float
+        if isinstance(total, Integer) and isinstance(argument, FloatingPoint):
+            total = FloatingPoint(float(total.value))
 
         total.value += argument.value
     return total
@@ -141,22 +144,25 @@ def subtract(arguments):
     check_argument_number('-', arguments, 1)
 
     if len(arguments) == 1:
-        if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
+        # we just negate a single argument
+        if isinstance(arguments[0], Integer):
+            return Integer(-1 * arguments[0].value)
+        elif isinstance(arguments[0], FloatingPoint):
+            return FloatingPoint(-1 * arguments[0].value)
+        else:
             raise SchemeTypeError("Subtraction is only defined for integers and "
-                                  "floating point, you gave me %s." % arguments[0].type)
+                                  "floating point, you gave me %s." % arguments[0].__class__)
 
-        # only one argument, we just negate it
-        return Atom(arguments[0].type, -1 * arguments[0].value)
-
-    total = Atom(arguments[0].type, arguments[0].value)
+    total = copy(arguments[0])
 
     for argument in arguments.tail:
-        if get_type(argument) not in ['INTEGER', 'FLOATING_POINT']:
+        if argument.__class__ not in [Integer, FloatingPoint]:
             raise SchemeTypeError("Subtraction is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.type)
+                                  "floating point, you gave me %s." % argument.__class__)
 
-        if get_type(total) == "INTEGER" and get_type(argument) == "FLOATING_POINT":
-            total.type = "FLOATING_POINT"
+        # subtracting a float from an integer gives us a float
+        if isinstance(total, Integer) and isinstance(argument, FloatingPoint):
+            total = FloatingPoint(float(total.value))
 
         total.value -= argument.value
 
@@ -166,20 +172,21 @@ def subtract(arguments):
 @name_function('*')
 def multiply(arguments):
     if not arguments:
-        return Atom('INTEGER', 1)
+        return Integer(1)
 
-    if get_type(arguments[0]) == "INTEGER":
-        product = Atom('INTEGER', 1)
-    elif get_type(arguments[0]) == "FLOATING_POINT":
-        product = Atom('FLOATING_POINT', 1.0)
+    if isinstance(arguments[0], Integer):
+        product = Integer(1)
+
+    elif isinstance(arguments[0], FloatingPoint):
+        product = FloatingPoint(1.0)
 
     for argument in arguments:
-        if get_type(argument) not in ['INTEGER', 'FLOATING_POINT']:
+        if not argument.__class__ in [Integer, FloatingPoint]:
             raise SchemeTypeError("Multiplication is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.type)
+                                  "floating point, you gave me %s." % argument.__class__)
 
-        if get_type(product) == "INTEGER" and get_type(argument) == "FLOATING_POINT":
-            product.type = "FLOATING_POINT"
+        if isinstance(product, Integer) and isinstance(argument, FloatingPoint):
+            product = FloatingPoint(float(product.value))
 
         product.value *= argument.value
 
@@ -193,9 +200,9 @@ def divide(arguments):
     check_argument_number('/', arguments, 1)
 
     if len(arguments) == 1:
-        return Atom('FLOATING_POINT', 1 / arguments[0].value)
+        return FloatingPoint(1 / arguments[0].value)
     else:
-        result = Atom('FLOATING_POINT', arguments[0].value)
+        result = FloatingPoint(arguments[0].value)
 
         for argument in arguments.tail:
             result.value /= argument.value
@@ -207,15 +214,15 @@ def divide(arguments):
 def equality(arguments):
 
     for argument in arguments:
-        if argument.type not in ['INTEGER', 'FLOATING_POINT']:
+        if argument.__class__ not in [Integer, FloatingPoint]:
             raise SchemeTypeError("Numerical equality test is only defined "
                                   "for integers and floating point numbers, "
-                                  "you gave me %s." % argument.type)
+                                  "you gave me %s." % argument.__class__)
 
         if argument.value != arguments[0].value:
-            return Atom('BOOLEAN', False)
+            return Boolean(False)
 
-    return Atom('BOOLEAN', True)
+    return Boolean(True)
 
 
 @name_function('<')
@@ -224,9 +231,9 @@ def less_than(arguments):
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value < arguments[i+1].value:
-            return Atom('BOOLEAN', False)
+            return Boolean(False)
 
-    return Atom('BOOLEAN', True)
+    return Boolean(True)
 
 
 @name_function('<=')
@@ -235,9 +242,9 @@ def less_or_equal(arguments):
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value <= arguments[i+1].value:
-            return Atom('BOOLEAN', False)
+            return Boolean(False)
 
-    return Atom('BOOLEAN', True)
+    return Boolean(True)
 
 
 @name_function('>')
@@ -246,9 +253,9 @@ def greater_than(arguments):
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value > arguments[i+1].value:
-            return Atom('BOOLEAN', False)
+            return Boolean(False)
 
-    return Atom('BOOLEAN', True)
+    return Boolean(True)
 
 
 @name_function('>=')
@@ -257,9 +264,9 @@ def greater_or_equal(arguments):
 
     for i in range(len(arguments) - 1):
         if not arguments[i].value >= arguments[i+1].value:
-            return Atom('BOOLEAN', False)
+            return Boolean(False)
 
-    return Atom('BOOLEAN', True)
+    return Boolean(True)
 
 
 @name_function('quotient')
@@ -267,157 +274,165 @@ def quotient(arguments):
     # integer division
     check_argument_number('quotient', arguments, 2, 2)
 
-    if get_type(arguments[0]) != 'INTEGER' or get_type(arguments[1]) != 'INTEGER':
+    if not isinstance(arguments[0], Integer) or not isinstance(arguments[1], Integer):
         raise SchemeTypeError("quotient is only defined for integers, "
-                              "got %s and %s." % (get_type(arguments[0]), get_type(arguments[1])))
+                              "got %s and %s." % (arguments[0].__class__,
+                                                  arguments[1].__class__))
 
     # Python's integer division floors, whereas Scheme rounds towards zero
     x1 = arguments[0].value
     x2 = arguments[1].value
     result = math.trunc(x1 / x2)
 
-    return Atom('INTEGER', result)
+    return Integer(result)
 
 
 @name_function('modulo')
 def modulo(arguments):
     check_argument_number('modulo', arguments, 2, 2)
 
-    if get_type(arguments[0]) != 'INTEGER' or get_type(arguments[1]) != 'INTEGER':
+    if not isinstance(arguments[0], Integer) or not isinstance(arguments[1], Integer):
         raise SchemeTypeError("modulo is only defined for integers, "
-                              "got %s and %s." % (get_type(arguments[0]), get_type(arguments[1])))
+                              "got %s and %s." % (arguments[0].__class__,
+                                                  arguments[1].__class__))
 
-    return Atom('INTEGER', arguments[0].value % arguments[1].value)
+    return Integer(arguments[0].value % arguments[1].value)
 
 
 @name_function('remainder')
 def remainder(arguments):
     check_argument_number('remainder', arguments, 2, 2)
 
-    if get_type(arguments[0]) != 'INTEGER' or get_type(arguments[1]) != 'INTEGER':
+    if not isinstance(arguments[0], Integer) or not isinstance(arguments[1], Integer):
         raise SchemeTypeError("remainder is only defined for integers, "
-                              "got %s and %s." % (get_type(arguments[0]), get_type(arguments[1])))
+                              "got %s and %s." % (arguments[0].__class__,
+                                                  arguments[1].__class__))
 
     # as with quotient, we can't use Python's integer division here because it floors rather than truncates
     x1 = arguments[0].value
     x2 = arguments[1].value
     value = x1 - (math.trunc(x1 / x2) * x2)
 
-    return Atom('INTEGER', value)
+    return Integer(value)
 
 
 @name_function('exp')
 def exp(arguments):
     check_argument_number('exp', arguments, 1, 1)
 
-    if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
+    if arguments[0].__class__ not in [Integer, FloatingPoint]:
         raise SchemeTypeError("exp only takes integers or floats, "
-                              "got %s" % get_type(arguments[0]))
+                              "got %s" % arguments[0].__class__)
 
     x1 = arguments[0].value
-    return Atom('FLOATING_POINT', math.exp(x1))
+    return FloatingPoint(math.exp(x1))
 
 
 @name_function('log')
 def log(arguments):
     check_argument_number('log', arguments, 1, 1)
 
-    if get_type(arguments[0]) not in ['INTEGER', 'FLOATING_POINT']:
+    if arguments[0].__class__ not in [Integer, FloatingPoint]:
         raise SchemeTypeError("log only takes integers or floats, "
-                              "got %s" % get_type(arguments[0]))
+                              "got %s" % arguments[0].__class__)
 
     x1 = arguments[0].value
-    return Atom('FLOATING_POINT', math.log(x1))
+    return FloatingPoint(math.log(x1))
 
 
 @name_function('char?')
 def is_char(arguments):
     check_argument_number('char?', arguments, 1, 1)
 
-    if get_type(arguments[0]) == "CHARACTER":
-        return Atom('BOOLEAN', True)
+    if isinstance(arguments[0], Character):
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('char=?')
 def char_equal(arguments):
     check_argument_number('char=?', arguments, 2, 2)
 
-    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
+    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
         raise SchemeTypeError("char=? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+                              "%s and a %s." % (arguments[0].__class__,
+                                                arguments[1].__class__))
 
     if arguments[0].value == arguments[1].value:
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('char<?')
 def char_less_than(arguments):
     check_argument_number('char<?', arguments, 2, 2)
 
-    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
+    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
         raise SchemeTypeError("char<? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+                              "%s and a %s." % (arguments[0].__class__,
+                                                arguments[1].__class__))
 
     if arguments[0].value < arguments[1].value:
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('char>?')
 def char_greater_than(arguments):
     check_argument_number('char>?', arguments, 2, 2)
 
-    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
+    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
         raise SchemeTypeError("char>? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+                              "%s and a %s." % (arguments[0].__class__,
+                                                arguments[1].__class__))
 
     if arguments[0].value > arguments[1].value:
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('char<=?')
 def char_less_or_equal(arguments):
     check_argument_number('char<=?', arguments, 2, 2)
 
-    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
+    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
         raise SchemeTypeError("char<=? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].type, arguments[1].type))
+                              "%s and a %s." % (arguments[0].__class__,
+                                                arguments[1].__class__))
 
     if arguments[0].value <= arguments[1].value:
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('char>=?')
 def char_greater_or_equal(arguments):
     check_argument_number('char>=?', arguments, 2, 2)
 
-    if get_type(arguments[0]) != "CHARACTER" or get_type(arguments[1]) != "CHARACTER":
+    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
         raise SchemeTypeError("char>=? takes only character arguments, got a "
-                              "%s and a %s." % (get_type(arguments[0].type), get_type(arguments[1])))
+                              "%s and a %s." % (arguments[0].__class__,
+                                                arguments[1].__class__))
 
     if arguments[0].value >= arguments[1].value:
-        return Atom('BOOLEAN', True)
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('string?')
 def is_string(arguments):
     check_argument_number('string?', arguments, 1, 1)
 
-    if get_type(arguments[0]) == 'STRING':
-        return Atom('BOOLEAN', True)
+    if isinstance(arguments[0], String):
+        return Boolean(True)
 
-    return Atom('BOOLEAN', False)
+    return Boolean(False)
 
 
 @name_function('make-string')
@@ -426,9 +441,9 @@ def make_string(arguments):
 
     string_length_atom = arguments[0]
 
-    if get_type(string_length_atom) != "INTEGER":
+    if not isinstance(string_length_atom, Integer):
         raise SchemeTypeError("String length must be an integer, "
-                              "got %d." % get_type(string_length_atom))
+                              "got %d." % string_length_atom.__class__)
 
     string_length = string_length_atom.value
 
@@ -437,17 +452,17 @@ def make_string(arguments):
                               "got %d." % string_length)
 
     if len(arguments) == 1:
-        return Atom('STRING', ' ' * string_length)
+        return String(' ' * string_length)
 
     else:
         repeated_character_atom = arguments[1]
 
-        if get_type(repeated_character_atom) != "CHARACTER":
+        if not isinstance(repeated_character_atom, Character):
             raise SchemeTypeError("The second argument to make-string must be"
-                                  " a character, got a %s." % get_type(repeated_character_atom))
+                                  " a character, got a %s." % repeated_character_atom.__class__)
 
         repeated_character = repeated_character_atom.value
-        return Atom('STRING', repeated_character * string_length)
+        return String(repeated_character * string_length)
 
 
 @name_function('string-length')
@@ -455,26 +470,26 @@ def string_length(arguments):
     check_argument_number('string_length', arguments, 1, 1)
 
     string_atom = arguments[0]
-    if get_type(string_atom) != 'STRING':
+    if not isinstance(string_atom, String):
         raise SchemeTypeError("string-length takes a string as its argument, "
-                              "not a %s." % get_type(string_atom))
+                              "not a %s." % string_atom.__class__)
 
     string_length = len(string_atom.value)
-    return Atom('INTEGER', string_length)
+    return Integer(string_length)
 
 @name_function('string-ref')
 def string_ref(arguments):
     check_argument_number('string_length', arguments, 2, 2)
 
     string_atom = arguments[0]
-    if get_type(string_atom) != 'STRING':
+    if not isinstance(string_atom, String):
         raise SchemeTypeError("string-ref takes a string as its first argument, "
-                              "not a %s." % get_type(string_atom))
+                              "not a %s." % string_atom.__class__)
 
     char_index_atom = arguments[1]
-    if get_type(char_index_atom) != 'INTEGER':
+    if not isinstance(char_index_atom, Integer):
         raise SchemeTypeError("string-ref takes an integer as its second argument, "
-                              "not a %s." % get_type(char_index_atom))
+                              "not a %s." % char_index_atom.__class__)
 
     string = string_atom.value
     char_index = char_index_atom.value
@@ -484,7 +499,7 @@ def string_ref(arguments):
         raise InvalidArgument("String index out of bounds: index must be in"
                               " the range 0-%d, got %d." % (len(string) - 1, char_index))
 
-    return Atom('CHARACTER', string[char_index])
+    return Character(string[char_index])
 
 
 @name_function('string-set!')
@@ -492,19 +507,19 @@ def string_set(arguments):
     check_argument_number('string_length', arguments, 3, 3)
 
     string_atom = arguments[0]
-    if get_type(string_atom) != 'STRING':
+    if not isinstance(string_atom, String):
         raise SchemeTypeError("string-set! takes a string as its first argument, "
-                              "not a %s." % get_type(string_atom))
+                              "not a %s." % string_atom.__class__)
 
     char_index_atom = arguments[1]
-    if get_type(char_index_atom) != 'INTEGER':
+    if not isinstance(char_index_atom, Integer):
         raise SchemeTypeError("string-set! takes an integer as its second argument, "
-                              "not a %s." % get_type(char_index_atom))
+                              "not a %s." % char_index_atom.__class__)
 
     replacement_char_atom = arguments[2]
-    if get_type(replacement_char_atom) != 'CHARACTER':
+    if not isinstance(replacement_char_atom, Character):
         raise SchemeTypeError("string-set! takes a character as its third argument, "
-                              "not a %s." % get_type(replacement_char_atom))
+                              "not a %s." % replacement_char_atom.__class__)
 
     string = string_atom.value
     char_index = char_index_atom.value

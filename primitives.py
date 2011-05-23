@@ -1,7 +1,7 @@
 from evaluator import eval_s_expression
 from errors import (SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable,
                     SchemeArityError)
-from data_types import Atom, Nil, Cons
+from data_types import Nil, Cons, Atom, Symbol, Boolean
 from copy import deepcopy
 from utils import check_argument_number
 
@@ -29,8 +29,8 @@ def define(arguments, environment):
 
 
 def define_variable(arguments, environment):
-    if arguments[0].type != 'SYMBOL':
-        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments[0].type)
+    if not isinstance(arguments[0], Symbol):
+        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % arguments[0].__class__)
 
     if arguments[0].value in environment:
         raise RedefinedVariable("Cannot define %s, as it has already been defined." % arguments[0].value)
@@ -48,15 +48,15 @@ def define_function(arguments, environment):
     function_name_with_parameters = arguments[0]
     function_name = function_name_with_parameters[0]
 
-    if function_name.type != "SYMBOL":
-        raise SchemeTypeError("Function names must be symbols, not a %s." % function_name.type)
+    if not isinstance(function_name, Symbol):
+        raise SchemeTypeError("Function names must be symbols, not a %s." % function_name.__class__)
 
     # check that all our arguments are symbols:
     function_parameters = function_name_with_parameters.tail
 
     for parameter in function_parameters:
-        if parameter.type != "SYMBOL":
-            raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.type)
+        if not isinstance(parameter, Symbol):
+            raise SchemeTypeError("Function arguments must be symbols, not a %s." % parameter.__class__)
 
     # check if this function can take a variable number of arguments
     is_variadic = False
@@ -124,7 +124,7 @@ def define_variadic_function(arguments, environment):
 
     function_body = arguments.tail[0]
     
-    dot_position = function_parameters.index(Atom('SYMBOL', '.'))
+    dot_position = function_parameters.index(Symbol('.'))
 
     if dot_position < len(function_parameters) - 2:
         raise SchemeSyntaxError("You can only have one improper list "
@@ -198,8 +198,8 @@ def set_variable(arguments, environment):
 
     variable_name = arguments[0]
 
-    if variable_name.type != 'SYMBOL':
-        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.type)
+    if not isinstance(variable_name, Symbol):
+        raise SchemeTypeError("Tried to assign to a %s, which isn't a symbol." % variable_name.__class__)
 
     if variable_name.value not in environment:
         raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.value)
@@ -217,7 +217,7 @@ def if_function(arguments, environment):
     condition, environment = eval_s_expression(arguments[0], environment)
 
     # everything except an explicit false boolean is true
-    if not (condition.type == 'BOOLEAN' and condition.value == False):
+    if not condition == Boolean(False):
         then_expression = arguments[1]
         return eval_s_expression(then_expression, environment)
     else:
@@ -237,8 +237,8 @@ def make_lambda_function(arguments, environment):
         raise SchemeTypeError("The first argument to `lambda` must be a list of variables.")
 
     for parameter in parameter_list:
-        if parameter.type != "SYMBOL":
-            raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.type)
+        if not isinstance(parameter, Symbol):
+            raise SchemeTypeError("Parameters of lambda functions must be symbols, not %s." % parameter.__class__)
 
     def lambda_function(_arguments, _environment):
         check_argument_number('(anonymous function)', _arguments,
@@ -302,7 +302,7 @@ def quasiquote(arguments, environment):
         elif isinstance(s_expression, Nil):
             return (s_expression, _environment)
 
-        elif s_expression[0] == Atom("SYMBOL", "unquote"):
+        elif s_expression[0] == Symbol("unquote"):
             check_argument_number('unquote', arguments, 1, 1)
             return eval_s_expression(s_expression[1], _environment)
 
@@ -313,7 +313,7 @@ def quasiquote(arguments, environment):
 
             for element in s_expression:
                 if isinstance(element, Cons) and \
-                        element[0] == Atom('SYMBOL', 'unquote-splicing'):
+                        element[0] == Symbol('unquote-splicing'):
                     check_argument_number('unquote-splicing', element.tail, 1, 1)
 
                     (result, _environment) = eval_s_expression(element[1], _environment)
