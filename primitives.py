@@ -1,7 +1,7 @@
 from evaluator import eval_s_expression
 from errors import (SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable,
                     SchemeArityError)
-from parser import Atom, Nil, Cons
+from data_types import Atom, Nil, Cons
 from copy import deepcopy
 from utils import check_argument_number
 

@@ -1,7 +1,7 @@
 import math
 
 from errors import SchemeTypeError, InvalidArgument
-from parser import Atom, Cons, Nil
+from data_types import Atom, Cons, Nil
 from utils import get_type, check_argument_number
 
 built_ins = {}

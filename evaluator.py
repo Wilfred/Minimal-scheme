@@ -1,4 +1,5 @@
-from parser import parser, Atom
+from parser import parser
+from data_types import Atom
 from errors import (UndefinedVariable, SchemeTypeError, SchemeStackOverflow,
                     SchemeSyntaxError)
 from built_ins import built_ins
