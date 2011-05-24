@@ -82,8 +82,10 @@ Comments work too!
 
 ### Known bugs
 
+* `(eq? 1 1.0)`
 * Error checking in `exact` and `inexact`
 * `/` doesn't check type of arguments
+* `car` crashes on non-lists
 * External representation is Python literals rather than Scheme
   (e.g. 'a' instead of #\a)
 * String literals are mutable (so string-set! violates specification)
