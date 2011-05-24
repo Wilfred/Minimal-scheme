@@ -52,3 +52,14 @@
 (defmacro let (assignments body)
   `((lambda ,(map car assignments) ,body)
     (unquote-splicing (map cadr assignments))))
+
+(defmacro cond (clauses)
+  (let ((first-clause (car clauses)))
+    ; if we reach an else statment we evaluate it unconditionally
+    (if (eqv? (car first-clause) 'else)
+        (cadr first-clause)
+        ; if this condition is true, evaluate the body of that condition
+        `(if ,(car first-clause)
+             ,(cadr first-clause)
+             ; otherwise recurse on the rest of the clauses
+             (cond ,(cdr clauses))))))

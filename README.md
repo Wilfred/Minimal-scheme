@@ -35,6 +35,10 @@ A `standard function` is written in Scheme.
 
 `let`
 
+### Conditionals
+
+`cond`
+
 ### Integers and floats
 
 `number?`, `complex?`, `rational?`, `real?`, `exact?`, `inexact?`,

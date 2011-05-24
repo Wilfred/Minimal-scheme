@@ -534,6 +534,16 @@ class MacroTest(InterpreterTest):
     def test_let(self):
         program = "(let ((x 1)) x)"
         self.assertEvaluatesTo(program, 1)
+
+    def test_cond(self):
+        program = "(cond ((else 1)))"
+        self.assertEvaluatesTo(program, 1)
+    
+        program = "(define x 1) (cond (((> x 0) 3) (else 1)))"
+        self.assertEvaluatesTo(program, 3)
+    
+        program = "(define y 1) (cond (((< y 0) 3) (else 1)))"
+        self.assertEvaluatesTo(program, 1)
     
 
 if __name__ == '__main__':
