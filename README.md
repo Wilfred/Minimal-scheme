@@ -118,3 +118,4 @@ Comments work too!
 * Stack traces on error with line numbers
 * Add documentation via [docco](https://github.com/jashkenas/docco)
 * Remove PLY dependency
+* Explore R5RS compliance with http://sisc-scheme.org/r5rs_pitfall.php
