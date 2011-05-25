@@ -27,10 +27,13 @@ them uniformly.
 class Symbol(Atom):
     pass
 
-class Integer(Atom):
+class Number(Atom):
     pass
 
-class FloatingPoint(Atom):
+class Integer(Number):
+    pass
+
+class FloatingPoint(Number):
     pass
 
 class Boolean(Atom):

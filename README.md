@@ -107,7 +107,6 @@ Comments work too!
   errors, printing accordingly
 * Need a check_type() function
 * Move the more complex maths operations (`exp`, `log` etc) to library.scm
-* Add a number base class to atoms
 * Add a base class for Nil and Cons
 * Add assertions to atoms to make sure they only hold the correct type
 * Add tests for type checking on built-ins and primitives

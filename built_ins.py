@@ -3,7 +3,7 @@ from copy import copy
 
 from errors import SchemeTypeError, InvalidArgument
 from data_types import (Cons, Nil, String, Integer, Character, Boolean,
-                        FloatingPoint)
+                        FloatingPoint, Number)
 from utils import check_argument_number
 
 built_ins = {}
@@ -84,7 +84,7 @@ def pair(arguments):
 def number(arguments):
     check_argument_number('number?', arguments, 1, 1)
 
-    if arguments[0].__class__ in [Integer, FloatingPoint]:
+    if isinstance(arguments[0], Number):
         return Boolean(True)
 
     return Boolean(False)
@@ -127,9 +127,9 @@ def add(arguments):
         total = FloatingPoint(0.0)
 
     for argument in arguments:
-        if argument.__class__ not in [Integer, FloatingPoint]:
-            raise SchemeTypeError("Addition is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.__class__)
+        if not isinstance(argument, Number):
+            raise SchemeTypeError("Addition is only defined for numbers, "
+                                  "you gave me %s." % argument.__class__)
 
         # adding a float to an integer gives us a float
         if isinstance(total, Integer) and isinstance(argument, FloatingPoint):
@@ -156,9 +156,9 @@ def subtract(arguments):
     total = copy(arguments[0])
 
     for argument in arguments.tail:
-        if argument.__class__ not in [Integer, FloatingPoint]:
-            raise SchemeTypeError("Subtraction is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.__class__)
+        if not isinstance(argument, Number):
+            raise SchemeTypeError("Subtraction is only defined for numbers, "
+                                  "you gave me %s." % argument.__class__)
 
         # subtracting a float from an integer gives us a float
         if isinstance(total, Integer) and isinstance(argument, FloatingPoint):
@@ -181,9 +181,9 @@ def multiply(arguments):
         product = FloatingPoint(1.0)
 
     for argument in arguments:
-        if not argument.__class__ in [Integer, FloatingPoint]:
-            raise SchemeTypeError("Multiplication is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.__class__)
+        if not isinstance(argument, Number):
+            raise SchemeTypeError("Multiplication is only defined for numbers, "
+                                  "you gave me %s." % argument.__class__)
 
         if isinstance(product, Integer) and isinstance(argument, FloatingPoint):
             product = FloatingPoint(float(product.value))
@@ -214,10 +214,9 @@ def divide(arguments):
 def equality(arguments):
 
     for argument in arguments:
-        if argument.__class__ not in [Integer, FloatingPoint]:
-            raise SchemeTypeError("Numerical equality test is only defined "
-                                  "for integers and floating point numbers, "
-                                  "you gave me %s." % argument.__class__)
+        if not argument.__class__ in [Integer, FloatingPoint]:
+            raise SchemeTypeError("Numerical equality test is only defined for integers and "
+                                  "floating point, you gave me %s." % argument.__class__)
 
         if argument.value != arguments[0].value:
             return Boolean(False)
@@ -332,9 +331,9 @@ def exp(arguments):
 def log(arguments):
     check_argument_number('log', arguments, 1, 1)
 
-    if arguments[0].__class__ not in [Integer, FloatingPoint]:
-        raise SchemeTypeError("log only takes integers or floats, "
-                              "got %s" % arguments[0].__class__)
+    if not isinstance(arguments[0], Number):
+        raise SchemeTypeError("Log is only defined for numbers, "
+                              "you gave me %s." % argument.__class__)
 
     x1 = arguments[0].value
     return FloatingPoint(math.log(x1))
