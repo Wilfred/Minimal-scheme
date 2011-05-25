@@ -61,7 +61,7 @@ def eval_s_expression(s_expression, environment):
         try:
             return eval_list(s_expression, environment)
         except RuntimeError as e:
-            if e.args[0] == "maximum recursion depth exceeded":
+            if e.args[0].startswith("maximum recursion depth exceeded"):
                 raise SchemeStackOverflow()
             else:
                 raise e
