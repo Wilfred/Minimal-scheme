@@ -25,7 +25,8 @@ them uniformly.
 
 """
 class Symbol(Atom):
-    pass
+    def get_external_representation(self):
+        return self.value
 
 class Number(Atom):
     def __eq__(self, other):
@@ -35,6 +36,9 @@ class Number(Atom):
 
         return False
 
+    def get_external_representation(self):
+        return str(self.value)
+
 
 class Integer(Number):
     pass
@@ -43,13 +47,22 @@ class FloatingPoint(Number):
     pass
 
 class Boolean(Atom):
-    pass
+    def get_external_representation(self):
+        if self.value:
+            return "#t"
+        else:
+            return "#f"
+
 
 class Character(Atom):
-    pass
+    def get_external_representation(self):
+        return "#\%s" % self.value
+
 
 class String(Atom):
-    pass
+    def get_external_representation(self):
+        return '"%s"' % self.value
+
 
 class Cons(Sequence):
     @staticmethod
@@ -105,6 +118,10 @@ class Cons(Sequence):
             # normal list
             return python_list + self.tail.get_python_equivalent()
 
+    def get_external_representation(self):
+        items = [item.get_external_representation() for item in self]
+        return "(%s)" % ' '.join(items)
+
 
 class Nil(Sequence):
     # the empty list for our linked list structure
@@ -131,3 +148,6 @@ class Nil(Sequence):
 
     def get_python_equivalent(self):
         return []
+
+    def get_external_representation(self):
+        return "()"

@@ -86,8 +86,7 @@ Comments work too!
 * Error checking in `exact` and `inexact`
 * `/` doesn't check type of arguments
 * `car` crashes on non-lists
-* External representation is Python literals rather than Scheme
-  (e.g. 'a' instead of #\a)
+* No external representations for functions
 * String literals are mutable (so string-set! violates specification)
 * List literals are mutable (so set-car! would violate specification)
 * Using set-cdr! to make a circular list crashes

@@ -25,9 +25,9 @@ class Repl(cmd.Cmd):
             result, self.environment = eval_program(program, self.environment)
 
             if not result is None:
-                if hasattr(result, "get_python_equivalent"):
+                if hasattr(result, "get_external_representation"):
                     # is an atom or list
-                    print(result.get_python_equivalent())
+                    print(result.get_external_representation())
                 else:
                     # function object
                     print(result)
