@@ -328,6 +328,9 @@ class MathsTest(InterpreterTest):
         program = "(= 0 1)"
         self.assertEvaluatesTo(program, False)
 
+        program = "(= 1.0 1)"
+        self.assertEvaluatesTo(program, True)
+
     def test_number(self):
         program = "(number? 1)"
         self.assertEvaluatesTo(program, True)

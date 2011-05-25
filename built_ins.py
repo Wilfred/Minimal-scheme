@@ -214,11 +214,11 @@ def divide(arguments):
 def equality(arguments):
 
     for argument in arguments:
-        if not argument.__class__ in [Integer, FloatingPoint]:
-            raise SchemeTypeError("Numerical equality test is only defined for integers and "
-                                  "floating point, you gave me %s." % argument.__class__)
+        if not isinstance(argument, Number):
+            raise SchemeTypeError("Numerical equality test is only defined for numbers, "
+                                  "you gave me %s." % argument.__class__)
 
-        if argument.value != arguments[0].value:
+        if argument != arguments[0]:
             return Boolean(False)
 
     return Boolean(True)

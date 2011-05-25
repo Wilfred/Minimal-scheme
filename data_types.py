@@ -28,7 +28,13 @@ class Symbol(Atom):
     pass
 
 class Number(Atom):
-    pass
+    def __eq__(self, other):
+        # we allow different types to be equal only for numbers
+        if isinstance(other, Number) and self.value == other.value:
+            return True
+
+        return False
+
 
 class Integer(Number):
     pass
