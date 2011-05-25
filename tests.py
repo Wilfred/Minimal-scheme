@@ -1,11 +1,9 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import unittest
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError
-
-assert sys.version.startswith('3.'), "Python 3 required"
 
 
 class InterpreterTest(unittest.TestCase):

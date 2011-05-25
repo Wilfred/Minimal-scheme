@@ -1,10 +1,8 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import os
 import cmd
-
-assert sys.version.startswith('3.'), "Python 3 required"
 
 from lexer import lexer
 from evaluator import eval_program, load_standard_library, load_built_ins
