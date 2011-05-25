@@ -109,6 +109,7 @@ Comments work too!
 * Add assertions to atoms to make sure they only hold the correct type
 * Add tests for type checking on built-ins and primitives
 * Test type coercion for arithmetic (e.g. `(+ 1 2.0)`)
+* Test external representations
 
 ### Future ideas
 
