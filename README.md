@@ -86,7 +86,7 @@ Comments work too!
 * Error checking in `exact` and `inexact`
 * `/` doesn't check type of arguments
 * `car` crashes on non-lists
-* No external representations for functions
+* No external representations for defmacro
 * String literals are mutable (so string-set! violates specification)
 * List literals are mutable (so set-car! would violate specification)
 * Using set-cdr! to make a circular list crashes

@@ -1,13 +1,13 @@
 from evaluator import eval_s_expression
 from errors import (SchemeTypeError, RedefinedVariable, SchemeSyntaxError, UndefinedVariable,
                     SchemeArityError)
-from data_types import Nil, Cons, Atom, Symbol, Boolean
+from data_types import Nil, Cons, Atom, Symbol, Boolean, UserFunction, LambdaFunction
 from copy import deepcopy
 from utils import check_argument_number
 
 primitives = {}
 
-# a decorator for giving a name to built-in
+# a decorator for creating a primitive function object and giving it a name
 def name_function(function_name):
     def name_function_decorator(function):
         primitives[function_name] = function
@@ -112,7 +112,8 @@ def define_normal_function(arguments, environment):
         return (result, _environment)
 
     # assign this function to this name
-    environment[function_name.value] = named_function
+    environment[function_name.value] = UserFunction(named_function,
+                                                    function_name.value)
 
     return (None, environment)
 
@@ -187,7 +188,8 @@ def define_variadic_function(arguments, environment):
         return (result, _environment)
 
     # assign this function to this name
-    environment[function_name.value] = named_variadic_function
+    environment[function_name.value] = UserFunction(named_variadic_function,
+                                                    function_name.value)
 
     return (None, environment)
 
@@ -262,7 +264,7 @@ def make_lambda_function(arguments, environment):
 
         return (result, _environment)
 
-    return (lambda_function, environment)
+    return (LambdaFunction(lambda_function), environment)
 
 
 @name_function('quote')

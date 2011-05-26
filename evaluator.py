@@ -1,5 +1,5 @@
 from parser import parser
-from data_types import Atom, Symbol
+from data_types import Atom, Symbol, BuiltInFunction
 from errors import (UndefinedVariable, SchemeTypeError, SchemeStackOverflow,
                     SchemeSyntaxError)
 from built_ins import built_ins
@@ -21,7 +21,10 @@ def load_built_ins(environment):
         return decorated_function
 
     for (function_name, function) in built_ins.items():
-        environment[function_name] = arguments_evaluated(function)
+        built_in_function = BuiltInFunction(arguments_evaluated(function),
+                                            function_name)
+        
+        environment[function_name] = built_in_function
 
     return environment
 

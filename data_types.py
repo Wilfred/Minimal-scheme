@@ -151,3 +151,40 @@ class Nil(Sequence):
 
     def get_external_representation(self):
         return "()"
+
+"""Function classes. These are currently only used in order to add an
+external representation.
+
+"""
+
+class Function(object):
+    def __init__(self, func, name):
+        self.function = func
+        self.name = name
+
+    def __call__(self, *args, **kwargs):
+        return self.function(*args, **kwargs)
+
+
+class BuiltInFunction(Function):
+    def get_external_representation(self):
+        return "#<built-in function %s>" % self.name
+
+
+class PrimitiveFunction(Function):
+    def get_external_representation(self):
+        return "#<primitive function %s>" % self.name
+
+
+class UserFunction(Function):
+    def get_external_representation(self):
+        return "#<user function %s>" % self.name
+    
+
+class LambdaFunction(Function):
+    def __init__(self, func):
+        self.function = func
+
+    def get_external_representation(self):
+        return "#<anonymous function>"
+        
