@@ -26,7 +26,8 @@ give informative error messages.
     
 ### Script usage
 
-    (scheme)$ python interpreter/main.py some_program.scm
+    (scheme)$ python interpreter/main.py examples/hello-world.scm
+    hello world
 
 ## Terminology
 
