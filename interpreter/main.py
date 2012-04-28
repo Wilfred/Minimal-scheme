@@ -5,7 +5,7 @@ import os
 import cmd
 
 from evaluator import eval_program, load_standard_library, load_built_ins
-from errors import InterpreterException
+from errors import InterpreterException, SchemeSyntaxError, SchemeTypeError
 
 class Repl(cmd.Cmd):
     intro = "Welcome to Minimal Scheme 0.1 alpha."
@@ -31,6 +31,10 @@ class Repl(cmd.Cmd):
                     # function object
                     print(result)
 
+        except SchemeSyntaxError as e:
+            print("Syntax error: %s" % e.message)
+        except SchemeTypeError as e:
+            print("Type error: %s" % e.message)
         except InterpreterException as e:
             print("Error: %s" % e.message)
 
@@ -47,6 +51,10 @@ if __name__ == '__main__':
 
         try:
             eval_program(program, environment)
+        except SchemeSyntaxError as e:
+            print("Syntax error: %s" % e.message)
+        except SchemeTypeError as e:
+            print("Type error: %s" % e.message)
         except InterpreterException as e:
             print("Error: %s" % e.message)
 
