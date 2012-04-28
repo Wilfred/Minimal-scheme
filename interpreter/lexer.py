@@ -2,7 +2,7 @@ import ply.lex
 from errors import SchemeSyntaxError
 
 tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT',
-          'COMMENT', 'CHARACTER', 'STRING', 'QUOTESUGAR', 'QUASIQUOTESUGAR',
+          'CHARACTER', 'STRING', 'QUOTESUGAR', 'QUASIQUOTESUGAR',
           'UNQUOTESUGAR', 'UNQUOTESPLICINGSUGAR')
 
 t_LPAREN = r'\('
@@ -54,11 +54,9 @@ def t_CHARACTER(t):
 
     return t
 
-def t_COMMENT(t):
-    r";[^\n]*"
-    # throw away all comments during lexing
-    pass
+t_ignore_COMMENT = r";[^\n]*"
 
+# whitespace
 t_ignore = ' \t\n'
 
 def t_error(t):
