@@ -3,6 +3,7 @@ import ply.yacc
 from lexer import tokens
 from data_types import (Cons, Nil, Symbol, Integer, FloatingPoint, Boolean,
                         Character, String)
+from errors import SchemeSyntaxError
 
 """Grammar for our minimal scheme:
 
@@ -102,6 +103,9 @@ def p_atom_character(p):
 def p_atom_string(p):
     "atom : STRING"
     p[0] = String(p[1])
+
+def p_error(p):
+    raise SchemeSyntaxError("Parse error.")
 
 
 parser = ply.yacc.yacc()

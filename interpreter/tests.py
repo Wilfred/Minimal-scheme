@@ -75,6 +75,12 @@ class LexerText(InterpreterTest):
         self.assertRaises(SchemeSyntaxError, eval_program, program)
 
 
+class ParserTest(InterpreterTest):
+    def test_mismatched_parens(self):
+        program = "("
+        self.assertRaises(SchemeSyntaxError, eval_program, program)
+
+
 class EvaluatorTest(InterpreterTest):
     def test_empty_program(self):
         program = ""
