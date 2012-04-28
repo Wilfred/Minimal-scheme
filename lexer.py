@@ -13,11 +13,13 @@ t_UNQUOTESUGAR = r","
 t_UNQUOTESPLICINGSUGAR = r",@"
 
 def t_STRING(t):
-    r'"(\\"|[a-zA-Z*+/!?=<>. -])*"'
+    r'"(\\"|\\n|[a-zA-Z*+/!?=<>. -])*"'
     # strip leading and trailing doublequote from input
     t.value = t.value[1:-1]
 
+    # replace escaped characters with their Python representation
     t.value = t.value.replace('\\"', '"')
+    t.value = t.value.replace('\\n', '\n')
     return t
 
 def t_FLOATING_POINT(t):
