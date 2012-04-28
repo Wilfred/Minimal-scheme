@@ -11,14 +11,24 @@ All functionality is implemented with corresponding tests. Functions
 are generally thorough with their error messages, and we strive to
 give informative error messages.
 
-### Installation and usage
+### Installation
 
     $ virtualenv ~/.py_envs/scheme -p python3
     $ . ~/.py_envs/scheme/bin/activate
     (scheme)$ pip install -r requirements.txt
+    
+### Interactive usage
+    
     (scheme)$ python main.py
+    Welcome to Minimal Scheme 0.1 alpha.
+    scheme> (+ 1 1)
+    2
+    
+### Script usage
 
-### Terminology
+    (scheme)$ python main.py some_program.scm
+
+## Terminology
 
 The terms `primitive`, `built-in` and `standard function` are used to
 refer to different things in minimal scheme.
