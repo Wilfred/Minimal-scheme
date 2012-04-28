@@ -85,6 +85,10 @@ No support for exact fractions or complex numbers.
 
 `defmacro`
 
+### I/O
+
+`display`, `newline` (both stdout only)
+
 ### Other
 
 Comments work too!
@@ -97,7 +101,7 @@ Comments work too!
 * Tail call optimisation
 * Variadic lambdas
 * Nested define statements
-* I/O (so no hello world yet)
+* File I/O
 * Closures
 
 ### Known bugs

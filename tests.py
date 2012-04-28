@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 
 import unittest
+import sys
+from io import StringIO
+
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError
 
@@ -524,6 +527,30 @@ class StringTest(InterpreterTest):
         program = '(define s "abc") (string-set! s 0 #\z) s'
         self.assertEvaluatesTo(program, 'zbc')
 
+
+class IOTest(InterpreterTest):
+    def setUp(self):
+        super().setUp()
+        self.saved_stdout = sys.stdout
+
+        self.fake_stdout = StringIO()
+        sys.stdout = self.fake_stdout
+
+    def tearDown(self):
+        sys.stdout = self.saved_stdout
+
+    def test_display(self):
+        program = '(display "hello")'
+        eval_program(program, self.environment)
+
+        self.assertEqual(sys.stdout.getvalue(), "hello")
+        
+    def test_newline(self):
+        program = '(newline)'
+        eval_program(program, self.environment)
+
+        self.assertEqual(sys.stdout.getvalue(), "\n")
+        
 
 class MacroTest(InterpreterTest):
     """Test macro definition, but also test syntax defined in the

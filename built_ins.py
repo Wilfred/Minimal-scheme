@@ -535,3 +535,18 @@ def string_set(arguments):
     string_atom.value = new_string
 
     return None
+
+@name_function('display')
+def display(arguments):
+    check_argument_number('display', arguments, 1, 1)
+
+    atom = arguments[0]
+    print(atom.get_python_equivalent(), end='')
+
+    return None
+
+@name_function('newline')
+def newline(arguments):
+    check_argument_number('newline', arguments, 0, 0)
+
+    print("\n", end='')
