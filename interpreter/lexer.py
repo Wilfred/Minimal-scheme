@@ -1,4 +1,5 @@
 import ply.lex
+from errors import SchemeSyntaxError
 
 tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT',
           'COMMENT', 'CHARACTER', 'STRING', 'QUOTESUGAR', 'QUASIQUOTESUGAR',
@@ -59,6 +60,9 @@ def t_COMMENT(t):
     pass
 
 t_ignore = ' \t\n'
+
+def t_error(t):
+    raise SchemeSyntaxError('Could not lex the remainder of input: "%s"' % t.value)
 
 lexer = ply.lex.lex()
 

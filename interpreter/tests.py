@@ -70,6 +70,10 @@ class LexerText(InterpreterTest):
         program = '" \\n "'
         self.assertEvaluatesTo(program, ' \n ')
 
+    def test_invalid(self):
+        program = '\\y'
+        self.assertRaises(SchemeSyntaxError, eval_program, program)
+
 
 class EvaluatorTest(InterpreterTest):
     def test_empty_program(self):
