@@ -63,3 +63,7 @@
              ,(cadr first-clause)
              ; otherwise recurse on the rest of the clauses
              (cond ,(cdr clauses))))))
+
+; I/O
+(define (newline)
+  (display "\n"))
