@@ -61,7 +61,7 @@ class Character(Atom):
 
 class String(Atom):
     def get_external_representation(self):
-        return '"%s"' % self.value
+        return "%r" % self.value
 
 
 class Cons(Sequence):
