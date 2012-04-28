@@ -19,14 +19,14 @@ give informative error messages.
     
 ### Interactive usage
     
-    (scheme)$ python main.py
+    (scheme)$ python interpreter/main.py
     Welcome to Minimal Scheme 0.1 alpha.
     scheme> (+ 1 1)
     2
     
 ### Script usage
 
-    (scheme)$ python main.py some_program.scm
+    (scheme)$ python interpreter/main.py some_program.scm
 
 ## Terminology
 
