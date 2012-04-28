@@ -11,6 +11,13 @@ All functionality is implemented with corresponding tests. Functions
 are generally thorough with their error messages, and we strive to
 give informative error messages.
 
+### Installation and usage
+
+    $ virtualenv ~/.py_envs/scheme -p python3
+    $ . ~/.py_envs/scheme/bin/activate
+    (scheme)$ pip install -r requirements.txt
+    (scheme)$ python main.py
+
 ### Terminology
 
 The terms `primitive`, `built-in` and `standard function` are used to
