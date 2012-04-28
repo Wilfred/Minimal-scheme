@@ -466,7 +466,7 @@ def make_string(arguments):
 
 @name_function('string-length')
 def string_length(arguments):
-    check_argument_number('string_length', arguments, 1, 1)
+    check_argument_number('string-length', arguments, 1, 1)
 
     string_atom = arguments[0]
     if not isinstance(string_atom, String):
@@ -478,7 +478,7 @@ def string_length(arguments):
 
 @name_function('string-ref')
 def string_ref(arguments):
-    check_argument_number('string_length', arguments, 2, 2)
+    check_argument_number('string-ref', arguments, 2, 2)
 
     string_atom = arguments[0]
     if not isinstance(string_atom, String):
@@ -503,7 +503,7 @@ def string_ref(arguments):
 
 @name_function('string-set!')
 def string_set(arguments):
-    check_argument_number('string_length', arguments, 3, 3)
+    check_argument_number('string-set!', arguments, 3, 3)
 
     string_atom = arguments[0]
     if not isinstance(string_atom, String):
