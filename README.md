@@ -92,6 +92,8 @@ Comments work too!
 * Using set-cdr! to make a circular list crashes
 * Remainder is not defined for floating point numbers
 * Interpreter is case sensitive
+* Complex returns true on real numbers
+* `cond` doesn't allow multiple statements after a conditional
 
 ### Cleanup tasks
 
