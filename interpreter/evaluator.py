@@ -37,7 +37,7 @@ def load_standard_library(environment):
     return environment
 
 
-def eval_program(program, initial_environment=None):
+def eval_program(program, initial_environment):
     if initial_environment:
         environment = initial_environment
     else:

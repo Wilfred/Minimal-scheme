@@ -28,7 +28,7 @@ class InterpreterTest(unittest.TestCase):
 class LexerText(InterpreterTest):
     def test_integer(self):
         program = "3"
-        (internal_result, environment) = eval_program(program)
+        (internal_result, environment) = eval_program(program, None)
         result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, 3)
@@ -36,7 +36,7 @@ class LexerText(InterpreterTest):
 
     def test_floating_point(self):
         program = "2.0"
-        (internal_result, environment) = eval_program(program)
+        (internal_result, environment) = eval_program(program, None)
         result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, 2.0)
@@ -44,7 +44,7 @@ class LexerText(InterpreterTest):
 
     def test_boolean(self):
         program = "#t"
-        (internal_result, environment) = eval_program(program)
+        (internal_result, environment) = eval_program(program, None)
         result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, True)
@@ -72,13 +72,13 @@ class LexerText(InterpreterTest):
 
     def test_invalid(self):
         program = '\\y'
-        self.assertRaises(SchemeSyntaxError, eval_program, program)
+        self.assertRaises(SchemeSyntaxError, eval_program, program, None)
 
 
 class ParserTest(InterpreterTest):
     def test_mismatched_parens(self):
         program = "("
-        self.assertRaises(SchemeSyntaxError, eval_program, program)
+        self.assertRaises(SchemeSyntaxError, eval_program, program, None)
 
 
 class EvaluatorTest(InterpreterTest):
@@ -155,15 +155,15 @@ class EvaluatorTest(InterpreterTest):
 
     def test_type_error(self):
         program = "(2 2)"
-        self.assertRaises(SchemeTypeError, eval_program, program)
+        self.assertRaises(SchemeTypeError, eval_program, program, None)
 
     def test_stack_overflow(self):
         program = "(define (f) (f)) (f)"
-        self.assertRaises(SchemeStackOverflow, eval_program, program)
+        self.assertRaises(SchemeStackOverflow, eval_program, program, None)
 
     def test_call_empty_list(self):
         program = "()"
-        self.assertRaises(SchemeSyntaxError, eval_program, program)
+        self.assertRaises(SchemeSyntaxError, eval_program, program, None)
 
     def test_quasiquote(self):
         program = "(quasiquote (1 1))"
