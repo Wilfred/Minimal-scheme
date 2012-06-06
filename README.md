@@ -62,7 +62,7 @@ Travis CI is running the unit tests:
 
 ### Conditionals
 
-`cond`, `not`
+`cond`, `not`, `and` (binary only)
 
 ### Integers and floats
 

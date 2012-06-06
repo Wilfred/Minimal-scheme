@@ -71,3 +71,7 @@
 ; booleans
 (define (not x)
   (eqv? x #f))
+
+; note that R5RS requires 'and to take a variable number of arguments
+(defmacro and (x y)
+  `(if ,x (if ,y ,y #f) #f))

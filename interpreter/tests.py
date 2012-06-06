@@ -495,6 +495,12 @@ class CharacterTest(InterpreterTest):
         program = "(char>? #\\1 #\\0)"
         self.assertEvaluatesTo(program, True)
 
+        program = "(char>? #\\0 #\\0)"
+        self.assertEvaluatesTo(program, False)
+
+        program = "(char>? #\\0 #\\1)"
+        self.assertEvaluatesTo(program, False)
+
     def test_char_less_or_equal(self):
         program = "(char<=? #\\z #\\z)"
         self.assertEvaluatesTo(program, True)
@@ -545,6 +551,13 @@ class BooleanTest(InterpreterTest):
 
         program = '(not \'())'
         self.assertEvaluatesTo(program, False)
+
+    def test_and(self):
+        program = "(and (= 2 2) (> 2 1))"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(and \"foo\" \"bar\")"
+        self.assertEvaluatesTo(program, "bar")
 
 
 class IOTest(InterpreterTest):
