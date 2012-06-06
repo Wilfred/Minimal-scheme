@@ -67,3 +67,7 @@
 ; I/O
 (define (newline)
   (display "\n"))
+
+; booleans
+(define (not x)
+  (eqv? x #f))

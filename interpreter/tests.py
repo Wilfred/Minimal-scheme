@@ -538,6 +538,15 @@ class StringTest(InterpreterTest):
         self.assertEvaluatesTo(program, 'zbc')
 
 
+class BooleanTest(InterpreterTest):
+    def test_not(self):
+        program = '(not #f)'
+        self.assertEvaluatesTo(program, True)
+
+        program = '(not \'())'
+        self.assertEvaluatesTo(program, False)
+
+
 class IOTest(InterpreterTest):
     def setUp(self):
         super().setUp()
