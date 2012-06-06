@@ -78,3 +78,15 @@
 
 (defmacro or (x y)
   `(if ,x ,x ,y))
+
+; characters
+(define (char>? x y)
+  (and (not (char=? x y))
+       (not (char<? x y))))
+
+(define (char<=? x y)
+  (or (char=? x y)
+      (char<? x y)))
+
+(define (char>=? x y)
+  (not (char<? x y)))

@@ -379,51 +379,6 @@ def char_less_than(arguments):
     return Boolean(False)
 
 
-@name_function('char>?')
-def char_greater_than(arguments):
-    check_argument_number('char>?', arguments, 2, 2)
-
-    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
-        raise SchemeTypeError("char>? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].__class__,
-                                                arguments[1].__class__))
-
-    if arguments[0].value > arguments[1].value:
-        return Boolean(True)
-
-    return Boolean(False)
-
-
-@name_function('char<=?')
-def char_less_or_equal(arguments):
-    check_argument_number('char<=?', arguments, 2, 2)
-
-    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
-        raise SchemeTypeError("char<=? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].__class__,
-                                                arguments[1].__class__))
-
-    if arguments[0].value <= arguments[1].value:
-        return Boolean(True)
-
-    return Boolean(False)
-
-
-@name_function('char>=?')
-def char_greater_or_equal(arguments):
-    check_argument_number('char>=?', arguments, 2, 2)
-
-    if not isinstance(arguments[0], Character) or not isinstance(arguments[1], Character):
-        raise SchemeTypeError("char>=? takes only character arguments, got a "
-                              "%s and a %s." % (arguments[0].__class__,
-                                                arguments[1].__class__))
-
-    if arguments[0].value >= arguments[1].value:
-        return Boolean(True)
-
-    return Boolean(False)
-
-
 @name_function('string?')
 def is_string(arguments):
     check_argument_number('string?', arguments, 1, 1)

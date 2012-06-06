@@ -502,11 +502,23 @@ class CharacterTest(InterpreterTest):
         self.assertEvaluatesTo(program, False)
 
     def test_char_less_or_equal(self):
+        program = "(char<=? #\\y #\\z)"
+        self.assertEvaluatesTo(program, True)
+
         program = "(char<=? #\\z #\\z)"
         self.assertEvaluatesTo(program, True)
 
+        program = "(char<=? #\\z #\\y)"
+        self.assertEvaluatesTo(program, False)
+
     def test_char_greater_or_equal(self):
+        program = "(char>=? #\\y #\\z)"
+        self.assertEvaluatesTo(program, False)
+
         program = "(char>=? #\\( #\\()"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(char>=? #\\z #\\y)"
         self.assertEvaluatesTo(program, True)
 
 
