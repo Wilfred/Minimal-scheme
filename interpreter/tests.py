@@ -57,6 +57,9 @@ class LexerText(InterpreterTest):
         program = "#\\newline"
         self.assertEvaluatesTo(program, '\n')
 
+        program = "#\\space"
+        self.assertEvaluatesTo(program, ' ')
+
     def test_string(self):
         program = '""'
         self.assertEvaluatesTo(program, "")
