@@ -559,6 +559,16 @@ class BooleanTest(InterpreterTest):
         program = "(and \"foo\" \"bar\")"
         self.assertEvaluatesTo(program, "bar")
 
+    def test_or(self):
+        program = "(or (= 2 3) (> 2 1))"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(or (= 2 3) (> 1 2))"
+        self.assertEvaluatesTo(program, False)
+
+        program = "(or \"foo\" \"bar\")"
+        self.assertEvaluatesTo(program, "foo")
+
 
 class IOTest(InterpreterTest):
     def setUp(self):
