@@ -29,6 +29,10 @@ give informative error messages.
     (scheme)$ python interpreter/main.py examples/hello-world.scm
     hello world
 
+### Running the tests
+
+    (scheme)$ python interpreter/tests.py
+
 ## Terminology
 
 The terms `primitive`, `built-in` and `standard function` are used to
