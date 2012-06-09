@@ -32,7 +32,7 @@ def load_built_ins(environment):
 def load_standard_library(environment):
     with open('standard_library/library.scm') as library_file:
         library_code = library_file.read()
-        eval_program(library_code, environment)
+        _, environment = eval_program(library_code, environment)
 
     return environment
 
