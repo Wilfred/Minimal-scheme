@@ -4,6 +4,7 @@ import unittest
 import sys
 from io import StringIO
 
+from utils import identity
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError
 
@@ -15,7 +16,7 @@ class InterpreterTest(unittest.TestCase):
         self.environment = load_standard_library(self.environment)
 
     def assertEvaluatesTo(self, program, expected_result):
-        internal_result, final_environment = eval_program(program, self.environment)
+        internal_result, final_environment = eval_program(program, self.environment, identity)
 
         if internal_result is None:
             result = None
@@ -28,7 +29,7 @@ class InterpreterTest(unittest.TestCase):
 class LexerText(InterpreterTest):
     def test_integer(self):
         program = "3"
-        (internal_result, environment) = eval_program(program, None)
+        (internal_result, environment) = eval_program(program, None, identity)
         result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, 3)
@@ -36,7 +37,7 @@ class LexerText(InterpreterTest):
 
     def test_floating_point(self):
         program = "2.0"
-        (internal_result, environment) = eval_program(program, None)
+        (internal_result, environment) = eval_program(program, None, identity)
         result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, 2.0)
@@ -44,7 +45,7 @@ class LexerText(InterpreterTest):
 
     def test_boolean(self):
         program = "#t"
-        (internal_result, environment) = eval_program(program, None)
+        (internal_result, environment) = eval_program(program, None, identity)
         result = internal_result.get_python_equivalent()
 
         self.assertEqual(result, True)
@@ -75,13 +76,13 @@ class LexerText(InterpreterTest):
 
     def test_invalid(self):
         program = '\\y'
-        self.assertRaises(SchemeSyntaxError, eval_program, program, None)
+        self.assertRaises(SchemeSyntaxError, eval_program, program, None, identity)
 
 
 class ParserTest(InterpreterTest):
     def test_mismatched_parens(self):
         program = "("
-        self.assertRaises(SchemeSyntaxError, eval_program, program, None)
+        self.assertRaises(SchemeSyntaxError, eval_program, program, None, identity)
 
 
 class EvaluatorTest(InterpreterTest):
@@ -158,15 +159,15 @@ class EvaluatorTest(InterpreterTest):
 
     def test_type_error(self):
         program = "(2 2)"
-        self.assertRaises(SchemeTypeError, eval_program, program, None)
+        self.assertRaises(SchemeTypeError, eval_program, program, None, identity)
 
     def test_stack_overflow(self):
         program = "(define (f) (f)) (f)"
-        self.assertRaises(SchemeStackOverflow, eval_program, program, None)
+        self.assertRaises(SchemeStackOverflow, eval_program, program, None, identity)
 
     def test_call_empty_list(self):
         program = "()"
-        self.assertRaises(SchemeSyntaxError, eval_program, program, None)
+        self.assertRaises(SchemeSyntaxError, eval_program, program, None, identity)
 
     def test_quasiquote(self):
         program = "(quasiquote (1 1))"
@@ -598,13 +599,13 @@ class IOTest(InterpreterTest):
 
     def test_display(self):
         program = '(display "hello")'
-        eval_program(program, self.environment)
+        eval_program(program, self.environment, identity)
 
         self.assertEqual(sys.stdout.getvalue(), "hello")
         
     def test_newline(self):
         program = '(newline)'
-        eval_program(program, self.environment)
+        eval_program(program, self.environment, identity)
 
         self.assertEqual(sys.stdout.getvalue(), "\n")
         

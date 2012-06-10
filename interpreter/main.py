@@ -4,6 +4,7 @@ import sys
 import os
 import cmd
 
+from utils import identity
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import InterpreterException, SchemeSyntaxError, SchemeTypeError
 
@@ -21,7 +22,7 @@ class Repl(cmd.Cmd):
             sys.exit(0)
 
         try:
-            result, self.environment = eval_program(program, self.environment)
+            result, self.environment = eval_program(program, self.environment, identity)
 
             if not result is None:
                 if hasattr(result, "get_external_representation"):
@@ -50,7 +51,7 @@ if __name__ == '__main__':
         program = open(path, 'r').read()
 
         try:
-            eval_program(program, environment)
+            eval_program(program, environment, identity)
         except SchemeSyntaxError as e:
             print("Syntax error: %s" % e.message)
         except SchemeTypeError as e:

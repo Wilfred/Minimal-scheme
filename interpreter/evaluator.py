@@ -3,6 +3,8 @@ from data_types import Atom, Symbol, BuiltInFunction
 from errors import (UndefinedVariable, SchemeTypeError, SchemeStackOverflow,
                     SchemeSyntaxError)
 from built_ins import built_ins
+from utils import identity
+
 from copy import deepcopy
 
 def load_built_ins(environment):
@@ -32,12 +34,12 @@ def load_built_ins(environment):
 def load_standard_library(environment):
     with open('standard_library/library.scm') as library_file:
         library_code = library_file.read()
-        _, environment = eval_program(library_code, environment)
+        _, environment = eval_program(library_code, environment, identity)
 
     return environment
 
 
-def eval_program(program, initial_environment):
+def eval_program(program, initial_environment, continuation):
     if initial_environment:
         environment = initial_environment
     else:
@@ -54,7 +56,7 @@ def eval_program(program, initial_environment):
     for s_expression in s_expressions:
         result, environment = eval_s_expression(s_expression, environment)
 
-    return (result, environment)
+    return continuation(result, environment)
 
 
 def eval_s_expression(s_expression, environment):
