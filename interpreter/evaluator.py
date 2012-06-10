@@ -48,15 +48,19 @@ def eval_program(program, initial_environment, continuation):
     # a program is a linked list of s-expressions
     s_expressions = parser.parse(program)
 
-    if not s_expressions:
-        return continuation(None, environment)
-
     result = None
 
-    for s_expression in s_expressions:
-        result, environment = eval_s_expression(s_expression, environment, identity)
+    def eval_all_s_expressions_return(result, environment):
+        nonlocal s_expressions
+        
+        if s_expressions:
+            head = s_expressions.head
+            s_expressions = s_expressions.tail
+            return eval_s_expression(head, environment, eval_all_s_expressions_return)
+        else:
+            return continuation(result, environment)
 
-    return continuation(result, environment)
+    return eval_all_s_expressions_return(result, environment)
 
 
 def eval_s_expression(s_expression, environment, continuation):
