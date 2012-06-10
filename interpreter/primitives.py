@@ -3,7 +3,7 @@ from errors import (SchemeTypeError, RedefinedVariable, SchemeSyntaxError, Undef
                     SchemeArityError)
 from data_types import Nil, Cons, Atom, Symbol, Boolean, UserFunction, LambdaFunction
 from copy import deepcopy
-from utils import check_argument_number
+from utils import check_argument_number, identity
 
 primitives = {}
 
@@ -38,7 +38,7 @@ def define_variable(arguments, environment):
     variable_name = arguments[0].value
     variable_value_expression = arguments[1]
 
-    result, environment = eval_s_expression(variable_value_expression, environment)
+    result, environment = eval_s_expression(variable_value_expression, environment, identity)
     environment[variable_name] = result
 
     return (None, environment)
@@ -91,7 +91,7 @@ def define_normal_function(arguments, environment):
         # evaluate arguments
         _arguments = deepcopy(_arguments)
         for i in range(len(_arguments)):
-            (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment)
+            (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment, identity)
 
         # assign to parameters
         for (parameter_name, parameter_value) in zip(function_parameters,
@@ -102,7 +102,7 @@ def define_normal_function(arguments, environment):
         new_environment = dict(_environment, **local_environment)
 
         # evaluate the function block
-        result, final_environment = eval_s_expression(function_body, new_environment)
+        result, final_environment = eval_s_expression(function_body, new_environment, identity)
 
         # update any global variables that weren't masked
         for variable_name in _environment:
@@ -161,7 +161,7 @@ def define_variadic_function(arguments, environment):
         # evaluate arguments
         _arguments = deepcopy(_arguments)
         for i in range(len(_arguments)):
-            (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment)
+            (_arguments[i], _environment) = eval_s_expression(_arguments[i], _environment, identity)
 
         # assign parameters
         for (parameter, parameter_value) in zip(explicit_parameters,
@@ -178,7 +178,7 @@ def define_variadic_function(arguments, environment):
         new_environment = dict(_environment, **local_environment)
 
         # evaluate our function_body in this environment
-        (result, final_environment) = eval_s_expression(function_body, new_environment)
+        (result, final_environment) = eval_s_expression(function_body, new_environment, identity)
 
         # update global variables that weren't masked by locals
         for variable_name in _environment:
@@ -207,7 +207,7 @@ def set_variable(arguments, environment):
         raise UndefinedVariable("Can't assign to undefined variable %s." % variable_name.value)
 
     variable_value_expression = arguments[1]
-    result, environment = eval_s_expression(variable_value_expression, environment)
+    result, environment = eval_s_expression(variable_value_expression, environment, identity)
     environment[variable_name.value] = result
 
     return (None, environment)
@@ -216,16 +216,16 @@ def set_variable(arguments, environment):
 def if_function(arguments, environment):
     check_argument_number('if', arguments, 2, 3)
 
-    condition, environment = eval_s_expression(arguments[0], environment)
+    condition, environment = eval_s_expression(arguments[0], environment, identity)
 
     # everything except an explicit false boolean is true
     if not condition == Boolean(False):
         then_expression = arguments[1]
-        return eval_s_expression(then_expression, environment)
+        return eval_s_expression(then_expression, environment, identity)
     else:
         if len(arguments) == 3:
             else_expression = arguments[2]
-            return eval_s_expression(else_expression, environment)
+            return eval_s_expression(else_expression, environment, identity)
 
 
 @name_function('lambda')
@@ -250,12 +250,12 @@ def make_lambda_function(arguments, environment):
 
         for (parameter_name, parameter_expression) in zip(parameter_list,
                                                           _arguments):
-            local_environment[parameter_name.value], _environment = eval_s_expression(parameter_expression, _environment)
+            local_environment[parameter_name.value], _environment = eval_s_expression(parameter_expression, _environment, identity)
 
         new_environment = dict(_environment, **local_environment)
 
         # now we have set up the correct scope, evaluate our function block
-        (result, final_environment) = eval_s_expression(function_body, new_environment)
+        (result, final_environment) = eval_s_expression(function_body, new_environment, identity)
 
         # update any global variables that weren't masked
         for variable_name in _environment:
@@ -279,7 +279,7 @@ def evaluate_sequence(arguments, environment):
     result = None
 
     for argument in arguments:
-        result, environment = eval_s_expression(argument, environment)
+        result, environment = eval_s_expression(argument, environment, identity)
 
     return (result, environment)
 
@@ -306,7 +306,7 @@ def quasiquote(arguments, environment):
 
         elif s_expression[0] == Symbol("unquote"):
             check_argument_number('unquote', arguments, 1, 1)
-            return eval_s_expression(s_expression[1], _environment)
+            return eval_s_expression(s_expression[1], _environment, identity)
 
         else:
             # return a list of s_expressions that have been
@@ -318,7 +318,7 @@ def quasiquote(arguments, environment):
                         element[0] == Symbol('unquote-splicing'):
                     check_argument_number('unquote-splicing', element.tail, 1, 1)
 
-                    (result, _environment) = eval_s_expression(element[1], _environment)
+                    (result, _environment) = eval_s_expression(element[1], _environment, identity)
 
                     if not isinstance(result, Cons) and not isinstance(result, Nil):
                         raise SchemeArityError("unquote-splicing requires a list.")
@@ -363,7 +363,7 @@ def defmacro(arguments, environment):
         for (variable_name, variable_value) in zip(macro_arguments, arguments):
             new_environment[variable_name] = variable_value
 
-        (s_expression_after_expansion, new_environment) = eval_s_expression(replacement_body, new_environment)
+        (s_expression_after_expansion, new_environment) = eval_s_expression(replacement_body, new_environment, identity)
 
         # restore old environment, ignoring variables hidden by scope
         for variable_name in _environment:
@@ -371,7 +371,7 @@ def defmacro(arguments, environment):
                 _environment[variable_name] = new_environment[variable_name]
 
         # continue evaluation where we left off
-        return eval_s_expression(s_expression_after_expansion, _environment)
+        return eval_s_expression(s_expression_after_expansion, _environment, identity)
 
     environment[macro_name] = expand_then_eval
 

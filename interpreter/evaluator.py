@@ -16,7 +16,7 @@ def load_built_ins(environment):
             arguments = deepcopy(arguments)
             # evaluate the arguments, then pass them to the function
             for i in range(len(arguments)):
-                (arguments[i], _environment) = eval_s_expression(arguments[i], _environment)
+                (arguments[i], _environment) = eval_s_expression(arguments[i], _environment, identity)
 
             return (function(arguments), _environment)
 
@@ -54,17 +54,17 @@ def eval_program(program, initial_environment, continuation):
     result = None
 
     for s_expression in s_expressions:
-        result, environment = eval_s_expression(s_expression, environment)
+        result, environment = eval_s_expression(s_expression, environment, identity)
 
     return continuation(result, environment)
 
 
-def eval_s_expression(s_expression, environment):
+def eval_s_expression(s_expression, environment, continuation):
     if isinstance(s_expression, Atom):
-        return eval_atom(s_expression, environment)
+        return continuation(*eval_atom(s_expression, environment))
     else:
         try:
-            return eval_list(s_expression, environment)
+            return continuation(*eval_list(s_expression, environment))
         except RuntimeError as e:
             if e.args[0].startswith("maximum recursion depth exceeded"):
                 raise SchemeStackOverflow()
@@ -77,7 +77,7 @@ def eval_list(linked_list, environment):
         raise SchemeSyntaxError("() is not syntactically valid.")
 
     # find the function/primitive we are calling
-    function, environment = eval_s_expression(linked_list[0], environment)
+    function, environment = eval_s_expression(linked_list[0], environment, identity)
 
     if isinstance(function, Atom):
         raise SchemeTypeError("You can only call functions, but "
