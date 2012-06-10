@@ -49,7 +49,7 @@ def eval_program(program, initial_environment, continuation):
     s_expressions = parser.parse(program)
 
     if not s_expressions:
-        return (None, environment)
+        return continuation(None, environment)
 
     result = None
 
