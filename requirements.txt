@@ -1,3 +1,1 @@
-distribute==0.6.24
 ply==3.4
-wsgiref==0.1.2
