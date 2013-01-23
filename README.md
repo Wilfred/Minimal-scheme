@@ -1,5 +1,7 @@
 Minimal scheme: a toy scheme interpreter written in Python
 
+[![Build Status](https://secure.travis-ci.org/Wilfred/Minimal-scheme.png?branch=master)](http://travis-ci.org/Wilfred/Minimal-scheme)
+
 Targetting R5RS
 ([HTML copy of spec](http://people.csail.mit.edu/jaffer/r5rs_toc.html)),
 or at least an interesting subset of it.
