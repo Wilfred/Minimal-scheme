@@ -26,7 +26,7 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
 
-class LexerText(InterpreterTest):
+class LexerTest(InterpreterTest):
     def test_integer(self):
         program = "3"
         (internal_result, environment) = eval_program(program, None, identity)
@@ -210,6 +210,7 @@ class EquivalenceTest(InterpreterTest):
     def test_eq(self):
         program = "(eq? (quote foo) (quote foo))"
         self.assertEvaluatesTo(program, True)
+
 
 class ListTest(InterpreterTest):
     def test_car(self):
