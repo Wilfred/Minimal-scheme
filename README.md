@@ -33,7 +33,7 @@ give informative error messages.
 
 ### Running the tests
 
-    (scheme)$ python interpreter/tests.py
+    (scheme)$ nosetests interpreter/tests.py
 
 ## Terminology
 

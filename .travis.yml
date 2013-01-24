@@ -2,4 +2,4 @@ language: python
 python:
   - 3.2
 install: pip install -r requirements.txt --use-mirrors
-script: python interpreter/tests.py
+script: nosetests interpreter/tests.py
