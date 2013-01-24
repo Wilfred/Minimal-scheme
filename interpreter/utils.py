@@ -3,12 +3,6 @@ from errors import SchemeArityError
 def identity(*args):
     return args
 
-def get_type(internal_object):
-    if hasattr(internal_object, "type"):
-        return internal_object.type
-    else:
-        return "LIST"
-
 def check_argument_number(function_name, given_arguments,
                           min_arguments, max_arguments=None):
     assert max_arguments is None or min_arguments <= max_arguments
