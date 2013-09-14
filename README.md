@@ -86,7 +86,7 @@ No support for exact fractions or complex numbers.
 
 ### Vectors
 
-`make-vector`
+`make-vector`, `vector?`
 
 ### Strings
 

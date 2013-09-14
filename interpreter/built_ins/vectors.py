@@ -1,6 +1,16 @@
 from .base import name_function
 from utils import check_argument_number
-from data_types import Vector
+from data_types import Vector, Boolean
+
+
+@name_function('vector?')
+def is_vector(arguments):
+    check_argument_number('make-vector', arguments, 1, 1)
+
+    if isinstance(arguments[0], Vector):
+        return Boolean(True)
+
+    return Boolean(False)
 
 
 # todo: initialisation argument

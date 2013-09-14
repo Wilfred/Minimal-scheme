@@ -631,6 +631,13 @@ class VectorTest(InterpreterTest):
         program = '(make-vector 2)'
         self.assertEvaluatesAs(program, Vector(2))
 
+    def test_is_vector(self):
+        program = "(vector? '())"
+        self.assertEvaluatesTo(program, False)
+
+        program = "(vector? (make-vector 1))"
+        self.assertEvaluatesTo(program, True)
+
 
 class IOTest(InterpreterTest):
     def setUp(self):
