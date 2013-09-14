@@ -297,6 +297,18 @@ class ListTest(InterpreterTest):
         program = "(pair? 1)"
         self.assertEvaluatesTo(program, False)
 
+
+class ControlTest(InterpreterTest):
+    def test_is_procedure(self):
+        program = "(procedure? car)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(procedure? 1)"
+        self.assertEvaluatesTo(program, False)
+
+        program = "(procedure? (lambda (x) (+ x 1)))"
+        self.assertEvaluatesTo(program, True)
+    
     def test_map(self):
         program = "(map (lambda (x) (+ x 1)) '(2 3))"
         self.assertEvaluatesTo(program, [3, 4])

@@ -10,3 +10,4 @@ from . import chars
 from . import strings
 from . import vectors
 from . import io
+from . import control

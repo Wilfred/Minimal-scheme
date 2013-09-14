@@ -53,6 +53,7 @@
 (define (cddr x)
   (cdr (cdr x)))
 
+; control features
 (define (map function list)
   (if (null? list)
       '()
