@@ -152,6 +152,30 @@ class Nil(Sequence):
     def get_external_representation(self):
         return "()"
 
+class Vector(Sequence):
+    def __init__(self, length):
+        self.value = []
+        for index in range(length):
+            self.value.append(Nil())
+
+    def __getitem__(self, index):
+        return self.value[index]
+
+    def __len__(self):
+        return len(self.value)
+
+    def __eq__(self, other):
+        if isinstance(other, Vector) and self.value == other.value:
+            return True
+
+        return False
+
+    def get_external_representation(self):
+        item_reprs = [item.get_external_representation()
+                      for item in self.value]
+        return "#(%s)" % (" ".join(item_reprs))
+
+
 """Function classes. These are currently only used in order to add an
 external representation.
 
@@ -187,4 +211,3 @@ class LambdaFunction(Function):
 
     def get_external_representation(self):
         return "#<anonymous function>"
-        

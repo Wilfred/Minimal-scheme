@@ -6,6 +6,7 @@ from io import StringIO
 
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError
+from data_types import Vector, Nil
 
 
 class InterpreterTest(unittest.TestCase):
@@ -21,6 +22,16 @@ class InterpreterTest(unittest.TestCase):
             result = None
         else:
             result = internal_result.get_python_equivalent()
+        
+        self.assertEqual(result, expected_result)
+
+    def assertEvaluatesAs(self, program, expected_result):
+        internal_result, final_environment = eval_program(program, self.environment)
+
+        if internal_result is None:
+            result = Nil()
+        else:
+            result = internal_result
         
         self.assertEqual(result, expected_result)
 
@@ -610,6 +621,15 @@ class BooleanTest(InterpreterTest):
 
         program = "(or \"foo\" \"bar\")"
         self.assertEvaluatesTo(program, "foo")
+
+
+class VectorTest(InterpreterTest):
+    def test_make_vector(self):
+        program = '(make-vector 0)'
+        self.assertEvaluatesAs(program, Vector(0))
+
+        program = '(make-vector 2)'
+        self.assertEvaluatesAs(program, Vector(2))
 
 
 class IOTest(InterpreterTest):

@@ -84,6 +84,10 @@ No support for exact fractions or complex numbers.
 `car`, `cdr`, `caar`, `cadr`, `cdar`, `cddr`, `cons`, `null?`,
 `pair?`, `map` (unary only), `list`, `length`
 
+### Vectors
+
+`make-vector`
+
 ### Strings
 
 `string?`, `make-string`, `string-length`, `string-ref`, `string-set!`

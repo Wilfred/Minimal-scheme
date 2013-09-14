@@ -8,4 +8,5 @@ from . import numbers
 from . import equivalence
 from . import chars
 from . import strings
+from . import vectors
 from . import io
