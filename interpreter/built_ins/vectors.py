@@ -13,14 +13,22 @@ def is_vector(arguments):
     return Boolean(False)
 
 
-# todo: initialisation argument
 @name_function('make-vector')
 def make_vector(arguments):
-    check_argument_number('make-vector', arguments, 1, 1)
+    check_argument_number('make-vector', arguments, 1, 2)
 
     # todo: type check this is an integer
     vector_length = arguments[0].value
-    return Vector(vector_length)
+
+    vector = Vector(vector_length)
+
+    # If we're given an initialisation value, use it.
+    if len(arguments) == 2:
+        init_value = arguments[1]
+        for i in range(vector_length):
+            vector[i] = init_value
+    
+    return vector
 
 
 @name_function('vector-ref')
