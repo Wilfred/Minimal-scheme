@@ -17,7 +17,7 @@ give informative error messages.
 
     $ virtualenv ~/.py_envs/scheme -p python3
     $ . ~/.py_envs/scheme/bin/activate
-    (scheme)$ pip install -r requirements.txt
+    (scheme)$ pip install -r requirements.pip
     
 ### Interactive usage
     
