@@ -33,6 +33,9 @@
 (define (null? x)
   (eqv? x '()))
 
+(define (list . args)
+  args)
+
 (define (caar x)
   (car (car x)))
 
