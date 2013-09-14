@@ -93,6 +93,18 @@
      args)
     v))
 
+(define (vector->list vector)
+  ;; vector-list-iter is a recursive helper function that moves
+  ;; through the vector and builds a list.
+  (let ((vector->list-iter
+         (lambda (index)
+           (if (>= index (vector-length vector))
+               '()
+               (cons
+                (vector-ref vector index)
+                (vector->list-iter (+ index 1)))))))
+    (vector->list-iter 0)))
+
 ; I/O
 (define (newline)
   (display "\n"))

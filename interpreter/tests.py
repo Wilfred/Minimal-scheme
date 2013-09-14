@@ -668,6 +668,10 @@ class VectorTest(InterpreterTest):
             program,
             Vector.from_list([Integer(1), Integer(2)]))
 
+    def test_vector_to_list(self):
+        program = "(vector->list (vector 1 2))"
+        self.assertEvaluatesTo(program, [1, 2])
+
 
 class IOTest(InterpreterTest):
     def setUp(self):
