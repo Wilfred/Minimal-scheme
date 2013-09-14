@@ -301,6 +301,14 @@ class ListTest(InterpreterTest):
         program = "(map (lambda (x) (+ x 1)) '(2 3))"
         self.assertEvaluatesTo(program, [3, 4])
 
+    def test_for_each(self):
+        program = """(let ((total 0))
+     (for-each
+        (lambda (x) (set! total (+ total x)))
+        '(1 2 3))
+     total)"""
+        self.assertEvaluatesTo(program, 6)
+
 
 class MathsTest(InterpreterTest):
     def test_addition(self):

@@ -59,6 +59,13 @@
       (cons (function (car list))
             (map function (cdr list)))))
 
+(define (for-each function list)
+  (if (null? list)
+      '()
+      (begin
+        (function (car list))
+        (for-each function (cdr list)))))
+
 ; scoping macros
 (defmacro let (assignments . body)
   `((lambda ,(map car assignments) ,@body)
