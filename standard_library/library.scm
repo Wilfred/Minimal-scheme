@@ -66,6 +66,17 @@
         (function (car list))
         (for-each function (cdr list)))))
 
+; vector functions
+(define (vector . args)
+  (let ((v (make-vector (length args)))
+        (index 0))
+    (for-each
+     (lambda (arg)
+       (vector-set! v index arg)
+       (set! index (+ index 1)))
+     args)
+    v))
+
 ; scoping macros
 (defmacro let (assignments . body)
   `((lambda ,(map car assignments) ,@body)

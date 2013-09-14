@@ -658,6 +658,12 @@ class VectorTest(InterpreterTest):
         program = "(let ((v (make-vector 1))) (vector-set! v 0 5) (vector-ref v 0))"
         self.assertEvaluatesTo(program, 5)
 
+    def test_vector(self):
+        program = "(vector 1 2)"
+        self.assertEvaluatesAs(
+            program,
+            Vector.from_list([Integer(1), Integer(2)]))
+
 
 class IOTest(InterpreterTest):
     def setUp(self):
