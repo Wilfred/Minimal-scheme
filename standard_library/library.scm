@@ -66,17 +66,6 @@
         (function (car list))
         (for-each function (cdr list)))))
 
-; vector functions
-(define (vector . args)
-  (let ((v (make-vector (length args)))
-        (index 0))
-    (for-each
-     (lambda (arg)
-       (vector-set! v index arg)
-       (set! index (+ index 1)))
-     args)
-    v))
-
 ; scoping macros
 (defmacro let (assignments . body)
   `((lambda ,(map car assignments) ,@body)
@@ -92,6 +81,17 @@
              ,(cadr first-clause)
              ; otherwise recurse on the rest of the clauses
              (cond ,(cdr clauses))))))
+
+; vector functions
+(define (vector . args)
+  (let ((v (make-vector (length args)))
+        (index 0))
+    (for-each
+     (lambda (arg)
+       (vector-set! v index arg)
+       (set! index (+ index 1)))
+     args)
+    v))
 
 ; I/O
 (define (newline)
