@@ -82,7 +82,7 @@ No support for exact fractions or complex numbers.
 ### Lists
 
 `car`, `cdr`, `caar`, `cadr`, `cdar`, `cddr`, `cons`, `null?`,
-`pair?`, `map` (unary only)
+`pair?`, `map` (unary only), `list`, `length`
 
 ### Strings
 

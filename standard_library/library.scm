@@ -36,6 +36,11 @@
 (define (list . args)
   args)
 
+(define (length x)
+  (if (null? x)
+      0
+      (+ 1 (length (cdr x)))))
+
 (define (caar x)
   (car (car x)))
 

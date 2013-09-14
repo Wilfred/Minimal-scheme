@@ -269,6 +269,13 @@ class ListTest(InterpreterTest):
         program = "(list 1 (+ 2 3))"
         self.assertEvaluatesTo(program, [1, 5])
 
+    def test_length(self):
+        program = "(length '())"
+        self.assertEvaluatesTo(program, 0)
+
+        program = "(length (cons 2 (cons 3 '())))"
+        self.assertEvaluatesTo(program, 2)
+
     def test_pair(self):
         program = "(pair? (quote (a b)))"
         self.assertEvaluatesTo(program, True)
