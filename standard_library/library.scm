@@ -105,6 +105,16 @@
                 (vector->list-iter (+ index 1)))))))
     (vector->list-iter 0)))
 
+(define (list->vector list)
+  (let ((v (make-vector (length list)))
+        (index 0))
+    (for-each
+     (lambda (item)
+       (vector-set! v index item)
+       (set! index (+ index 1)))
+     list)
+    v))
+
 ; I/O
 (define (newline)
   (display "\n"))
