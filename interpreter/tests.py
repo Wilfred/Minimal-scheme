@@ -6,7 +6,7 @@ from io import StringIO
 
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError
-from data_types import Vector, Nil
+from data_types import Vector, Nil, Integer
 
 
 class InterpreterTest(unittest.TestCase):
@@ -637,6 +637,14 @@ class VectorTest(InterpreterTest):
 
         program = "(vector? (make-vector 1))"
         self.assertEvaluatesTo(program, True)
+
+    def test_vector_set(self):
+        program = "(let ((v (make-vector 1))) (vector-set! v 0 5) v)"
+        self.assertEvaluatesAs(program, Vector.from_list([Integer(5)]))
+
+    def test_vector_ref(self):
+        program = "(let ((v (make-vector 1))) (vector-set! v 0 5) (vector-ref v 0))"
+        self.assertEvaluatesTo(program, 5)
 
 
 class IOTest(InterpreterTest):

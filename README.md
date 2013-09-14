@@ -86,7 +86,7 @@ No support for exact fractions or complex numbers.
 
 ### Vectors
 
-`make-vector`, `vector?`
+`make-vector`, `vector?`, `vector-ref`, `vector-set!`
 
 No distinction between constant vectors and normal vectors.
 

@@ -161,6 +161,9 @@ class Vector(Sequence):
     def __getitem__(self, index):
         return self.value[index]
 
+    def __setitem__(self, index, new_value):
+        self.value[index] = new_value
+
     def __len__(self):
         return len(self.value)
 
@@ -174,6 +177,13 @@ class Vector(Sequence):
         item_reprs = [item.get_external_representation()
                       for item in self.value]
         return "#(%s)" % (" ".join(item_reprs))
+
+    @classmethod
+    def from_list(cls, values):
+        vector = Vector(len(values))
+        vector.value = values
+
+        return vector
 
 
 """Function classes. These are currently only used in order to add an
