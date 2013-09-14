@@ -635,6 +635,10 @@ class MacroTest(InterpreterTest):
         program = "(let ((x 1)) x)"
         self.assertEvaluatesTo(program, 1)
 
+    def test_let_last_argument(self):
+        program = "(let ((x 1)) 2 x)"
+        self.assertEvaluatesTo(program, 1)
+
     def test_cond(self):
         program = "(cond ((else 1)))"
         self.assertEvaluatesTo(program, 1)

@@ -352,19 +352,44 @@ def defmacro(arguments, environment):
     check_argument_number('defmacro', arguments, 3, 3)
 
     macro_name = arguments[0].value
-    macro_arguments = [arg.value for arg in arguments[1]]
+    raw_macro_arguments = [arg.value for arg in arguments[1]]
+
+    if len(raw_macro_arguments) > 1 and raw_macro_arguments[-2] == ".":
+        is_variadic = True
+        macro_arguments = raw_macro_arguments[:-2]
+
+        variadic_argument_name = raw_macro_arguments[-1]
+    else:
+        macro_arguments = raw_macro_arguments
+        is_variadic = False
+    
     replacement_body = arguments[2]
 
     def expand_then_eval(arguments, _environment):
         """Expand this macro once, then continue evaluation."""
-        if len(arguments) != len(macro_arguments):
-            raise SchemeArityError("Macro %s takes %d arguments, but got %d."
-                                   % (macro_name, len(macro_arguments),
-                                      len(arguments)))
+        if is_variadic:
+            if len(arguments) < len(macro_arguments):
+                raise SchemeArityError("Macro %s takes at least %d arguments, but got %d."
+                                       % (macro_name, len(macro_arguments),
+                                          len(arguments)))
+
+        else:
+            if len(arguments) != len(macro_arguments):
+                raise SchemeArityError("Macro %s takes %d arguments, but got %d."
+                                       % (macro_name, len(macro_arguments),
+                                          len(arguments)))
 
         new_environment = dict(_environment)
         for (variable_name, variable_value) in zip(macro_arguments, arguments):
             new_environment[variable_name] = variable_value
+
+        if is_variadic:
+            remaining_arguments = []
+            for index, arg in enumerate(arguments):
+                if index >= len(macro_arguments):
+                    remaining_arguments.append(arg)
+
+            new_environment[variadic_argument_name] = Cons.from_list(remaining_arguments)
 
         (s_expression_after_expansion, new_environment) = eval_s_expression(replacement_body, new_environment)
 

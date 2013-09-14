@@ -49,8 +49,8 @@
             (map function (cdr list)))))
 
 ; scoping macros
-(defmacro let (assignments body)
-  `((lambda ,(map car assignments) ,body)
+(defmacro let (assignments . body)
+  `((lambda ,(map car assignments) ,@body)
     ,@(map cadr assignments)))
 
 (defmacro cond (clauses)
