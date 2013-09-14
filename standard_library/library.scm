@@ -30,6 +30,9 @@
       (- x)))
 
 ; list functions
+(define (null? x)
+  (eqv? x '()))
+
 (define (caar x)
   (car (car x)))
 

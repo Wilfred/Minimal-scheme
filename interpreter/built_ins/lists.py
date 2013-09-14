@@ -30,15 +30,6 @@ def cons(arguments):
     return Cons(arguments[0], arguments[1])
 
 
-@name_function('null?')
-def is_null(arguments):
-    check_argument_number('null?', arguments, 1, 1)
-
-    if isinstance(arguments[0], Nil):
-        return Boolean(True)
-
-    return Boolean(False)
-
 @name_function('pair?')
 def pair(arguments):
     check_argument_number('pair?', arguments, 1, 1)
