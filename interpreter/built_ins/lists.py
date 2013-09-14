@@ -1,6 +1,6 @@
 from .base import name_function
 from utils import check_argument_number
-from data_types import (Cons, Nil, Boolean)
+from data_types import (Cons, Boolean)
 
 
 @name_function('car')
