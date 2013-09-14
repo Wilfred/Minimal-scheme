@@ -88,6 +88,8 @@ No support for exact fractions or complex numbers.
 
 `make-vector`, `vector?`
 
+No distinction between constant vectors and normal vectors.
+
 ### Strings
 
 `string?`, `make-string`, `string-length`, `string-ref`, `string-set!`
