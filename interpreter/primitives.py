@@ -20,7 +20,7 @@ def name_function(function_name):
 
 @name_function('define')
 def define(arguments, environment):
-    check_argument_number('define', arguments, 2, 2)
+    check_argument_number('define', arguments, 2)
 
     if isinstance(arguments[0], Atom):
         return define_variable(arguments, environment)
@@ -79,7 +79,7 @@ def define_normal_function(arguments, environment):
     function_name = function_name_with_parameters[0]
     function_parameters = function_name_with_parameters.tail
 
-    function_body = arguments[1]
+    function_body = arguments.tail
     
     # a function with a fixed number of arguments
     def named_function(_arguments, _environment):
@@ -102,12 +102,13 @@ def define_normal_function(arguments, environment):
         new_environment = dict(_environment, **local_environment)
 
         # evaluate the function block
-        result, final_environment = eval_s_expression(function_body, new_environment)
+        for s_exp in function_body:
+            result, new_environment = eval_s_expression(s_exp, new_environment)
 
         # update any global variables that weren't masked
         for variable_name in _environment:
             if variable_name not in local_environment:
-                _environment[variable_name] = final_environment[variable_name]
+                _environment[variable_name] = new_environment[variable_name]
 
         return (result, _environment)
 
@@ -123,7 +124,7 @@ def define_variadic_function(arguments, environment):
     function_name = arguments[0][0]
     function_parameters = function_name_with_parameters.tail
 
-    function_body = arguments.tail[0]
+    function_body = arguments.tail
     
     dot_position = function_parameters.index(Symbol('.'))
 
@@ -178,12 +179,13 @@ def define_variadic_function(arguments, environment):
         new_environment = dict(_environment, **local_environment)
 
         # evaluate our function_body in this environment
-        (result, final_environment) = eval_s_expression(function_body, new_environment)
+        for s_exp in function_body:
+            result, new_environment = eval_s_expression(s_exp, new_environment)
 
         # update global variables that weren't masked by locals
         for variable_name in _environment:
             if variable_name not in local_environment:
-                _environment[variable_name] = final_environment[variable_name]
+                _environment[variable_name] = new_environment[variable_name]
 
         return (result, _environment)
 
@@ -230,10 +232,10 @@ def if_function(arguments, environment):
 
 @name_function('lambda')
 def make_lambda_function(arguments, environment):
-    check_argument_number('lambda', arguments, 2, 2)
+    check_argument_number('lambda', arguments, 2)
 
     parameter_list = arguments[0]
-    function_body = arguments[1]
+    function_body = arguments.tail
 
     if isinstance(parameter_list, Atom):
         raise SchemeTypeError("The first argument to `lambda` must be a list of variables.")
@@ -255,12 +257,13 @@ def make_lambda_function(arguments, environment):
         new_environment = dict(_environment, **local_environment)
 
         # now we have set up the correct scope, evaluate our function block
-        (result, final_environment) = eval_s_expression(function_body, new_environment)
+        for s_exp in function_body:
+            result, new_environment = eval_s_expression(s_exp, new_environment)
 
         # update any global variables that weren't masked
         for variable_name in _environment:
             if variable_name not in local_environment:
-                _environment[variable_name] = final_environment[variable_name]
+                _environment[variable_name] = new_environment[variable_name]
 
         return (result, _environment)
 

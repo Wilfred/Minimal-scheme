@@ -113,6 +113,14 @@ class EvaluatorTest(InterpreterTest):
         program = "(define (x) 1) (x)"
         self.assertEvaluatesTo(program, 1)
 
+    def test_function_long_body(self):
+        program = "(define (x) 1 2) (x)"
+        self.assertEvaluatesTo(program, 2)
+
+    def test_variadic_function_long_body(self):
+        program = "(define (foo . args) 1 2) (foo)"
+        self.assertEvaluatesTo(program, 2)
+
     def test_variadic_function_definition(self):
         # test that we can put nothing in the impure list parameter
         program = "(define (foo . args) 1) (foo)"
@@ -132,6 +140,10 @@ class EvaluatorTest(InterpreterTest):
 
         program = "((lambda () 1))"
         self.assertEvaluatesTo(program, 1)
+
+    def test_lambda_long_body(self):
+        program = "((lambda () 1 2))"
+        self.assertEvaluatesTo(program, 2)
 
     def test_begin(self):
         program = "(begin)"

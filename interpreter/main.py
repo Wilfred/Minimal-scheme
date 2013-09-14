@@ -8,7 +8,7 @@ from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import InterpreterException, SchemeSyntaxError, SchemeTypeError
 
 class Repl(cmd.Cmd):
-    intro = "Welcome to Minimal Scheme 0.1 alpha."
+    intro = "Welcome to Minimal Scheme 0.2 alpha."
     prompt = "scheme> "
 
     def __init__(self, initial_environment):
