@@ -51,7 +51,7 @@
 ; scoping macros
 (defmacro let (assignments body)
   `((lambda ,(map car assignments) ,body)
-    (unquote-splicing (map cadr assignments))))
+    ,@(map cadr assignments)))
 
 (defmacro cond (clauses)
   (let ((first-clause (car clauses)))
