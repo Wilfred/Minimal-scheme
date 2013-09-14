@@ -658,6 +658,10 @@ class VectorTest(InterpreterTest):
         program = "(let ((v (make-vector 1))) (vector-set! v 0 5) (vector-ref v 0))"
         self.assertEvaluatesTo(program, 5)
 
+    def test_vector_length(self):
+        program = "(vector-length (make-vector 5))"
+        self.assertEvaluatesTo(program, 5)
+
     def test_vector(self):
         program = "(vector 1 2)"
         self.assertEvaluatesAs(

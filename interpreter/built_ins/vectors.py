@@ -1,6 +1,6 @@
 from .base import name_function
 from utils import check_argument_number
-from data_types import Vector, Boolean, Nil
+from data_types import Vector, Boolean, Nil, Integer
 
 
 @name_function('vector?')
@@ -52,3 +52,13 @@ def vector_set(arguments):
     vector[index] = new_value
 
     return Nil()
+
+
+@name_function('vector-length')
+def vector_length(arguments):
+    check_argument_number('vector-length', arguments, 1, 1)
+
+    # todo: check type
+    vector = arguments[0]
+
+    return Integer(len(vector))
