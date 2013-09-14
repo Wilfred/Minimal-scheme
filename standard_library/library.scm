@@ -115,6 +115,16 @@
      list)
     v))
 
+(define (vector-fill! vector fill)
+  (let ((vector-fill-iter
+         (lambda (index)
+           (if (>= index (vector-length vector))
+               '()
+               (begin
+                 (vector-set! vector index fill)
+                 (vector-fill-iter (+ index 1)))))))
+    (vector-fill-iter 0)))
+
 ; I/O
 (define (newline)
   (display "\n"))

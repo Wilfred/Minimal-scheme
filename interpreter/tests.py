@@ -678,6 +678,12 @@ class VectorTest(InterpreterTest):
             program,
             Vector.from_list([Integer(1), Integer(2)]))
 
+    def test_vector_fill(self):
+        program = "(let ((v (make-vector 1))) (vector-fill! v 5) v)"
+        self.assertEvaluatesAs(
+            program,
+            Vector.from_list([Integer(5)]))
+
 
 class IOTest(InterpreterTest):
     def setUp(self):

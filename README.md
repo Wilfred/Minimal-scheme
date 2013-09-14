@@ -87,7 +87,8 @@ No support for exact fractions or complex numbers.
 ### Vectors
 
 `make-vector`, `vector?`, `vector-ref`, `vector-set!`,
-`vector-length`, `vector`, `vector->list`, `list->vector`
+`vector-length`, `vector`, `vector->list`, `list->vector`,
+`vector-fill!`
 
 No distinction between constant vectors and normal vectors.
 
