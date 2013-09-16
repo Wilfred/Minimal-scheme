@@ -20,7 +20,7 @@ give informative error messages.
     
 ### Interactive usage
     
-    (scheme)$ python interpreter/main.py
+    (scheme)$ ./repl
     Welcome to Minimal Scheme 0.1 alpha.
     scheme> (+ 1 1)
     2
