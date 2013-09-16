@@ -131,15 +131,20 @@
   (display "\n"))
 
 ; booleans
-(define (not x)
-  (eqv? x #f))
-
 ; note that R5RS requires 'and and 'or to take a variable number of arguments
 (defmacro and (x y)
   `(if ,x (if ,y ,y #f) #f))
 
 (defmacro or (x y)
   `(if ,x ,x ,y))
+
+(define (not x)
+  (eqv? x #f))
+
+(define (boolean? x)
+  (or (eqv? x #f)
+      (eqv? x #t)))
+
 
 ; characters
 (define (char>? x y)

@@ -625,6 +625,13 @@ class BooleanTest(InterpreterTest):
         program = '(not \'())'
         self.assertEvaluatesTo(program, False)
 
+    def test_is_boolean(self):
+        program = "(boolean? #t)"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(boolean? 1)"
+        self.assertEvaluatesTo(program, False)
+
     def test_and(self):
         program = "(and (= 2 2) (> 2 1))"
         self.assertEvaluatesTo(program, True)
