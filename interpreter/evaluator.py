@@ -82,7 +82,7 @@ def eval_list(linked_list, environment):
                               "you gave me a %s." % function.__class__)
 
     # call it (internally we require the function to decide whether or
-    # not to evalue the arguments)
+    # not to evaluate the arguments)
     return function(linked_list.tail, environment)
 
 def eval_atom(atom, environment):
@@ -95,7 +95,7 @@ def eval_atom(atom, environment):
 def eval_symbol(symbol_string, environment):
 
     if symbol_string in primitives:
-        # we don't primitives to be overridden
+        # We don't allow primitives to be overridden.
         return (primitives[symbol_string], environment)
 
     elif symbol_string in environment:
