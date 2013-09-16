@@ -2,11 +2,10 @@ Minimal scheme: a toy scheme interpreter written in Python
 
 [![Build Status](https://secure.travis-ci.org/Wilfred/Minimal-scheme.png?branch=master)](http://travis-ci.org/Wilfred/Minimal-scheme)
 
-Targetting R5RS
+This is a from-scratch Scheme implementation written for pleasure and
+education purposes only. It is targetting R5RS
 ([HTML copy of spec](http://people.csail.mit.edu/jaffer/r5rs_toc.html)),
-or at least an interesting subset of it.
-
-Currently working towards running all the
+or at least an interesting subset of it. I'd also like it to run the
 [code in SICP](http://mitpress.mit.edu/sicp/code/index.html).
 
 All functionality is implemented with corresponding tests. Functions
@@ -50,9 +49,6 @@ A `standard function` is written in Scheme.
 
 ## Functionality implemented
 
-Travis CI is running the unit tests:
-[![Build Status](https://secure.travis-ci.org/Wilfred/Minimal-scheme.png?branch=master)](http://travis-ci.org/Wilfred/Minimal-scheme)
-
 ### Primitives
 
 `define`, `lambda`, `if`, `begin`, `quote`, `eqv?`, `eq?`,
@@ -86,7 +82,7 @@ No support for exact fractions or complex numbers.
 
 ### Control
 
-`map` (unary only), `for-each` (unary only), `procedure?`
+`map` (unary only), `for-each` (unary only), `procedure?`, `apply`
 
 ### Vectors
 
@@ -142,9 +138,9 @@ Comments work too!
 
 * Add slice support for our linked list, then clean up variadic
   function stuff
-* Remove eval_program -- it's just map(eval_s_expression,
-  s_expressions)
-* Rename internal_result to actual_result in tests.py
+* Remove `eval_program` -- it's just
+  `map(eval_s_expression, s_expressions)`
+* Rename `internal_result` to `actual_result` in tests.py
 * Fix width of evaluator.py
 * Distinguish between incorrect type errors and incorrect arity
   errors, printing accordingly
