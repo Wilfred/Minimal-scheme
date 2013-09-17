@@ -273,6 +273,13 @@ class ListTest(InterpreterTest):
         program = "(null? '(1 2))"
         self.assertEvaluatesTo(program, False)
 
+    def test_is_list(self):
+        program = "(list? '())"
+        self.assertEvaluatesTo(program, True)
+
+        program = "(list? 1)"
+        self.assertEvaluatesTo(program, False)
+
     def test_list(self):
         program = "(list)"
         self.assertEvaluatesTo(program, [])

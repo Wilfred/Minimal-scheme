@@ -33,6 +33,14 @@
 (define (null? x)
   (eqv? x '()))
 
+; FIXME: doesn't handle infinite lists
+(define (list? x)
+  (if (null? x)
+      #t
+      (if (pair? x)
+          (list? (cdr x))
+          #f)))
+
 (define (list . args)
   args)
 
