@@ -184,8 +184,27 @@ class Cons(Sequence):
             return python_list + self.tail.get_python_equivalent()
 
     def get_external_representation(self):
-        items = [item.get_external_representation() for item in self]
-        return "(%s)" % ' '.join(items)
+        if self.is_circular():
+            # todo: find a better way of printing these.
+            return "#<circular list>"
+
+        contents = ""
+        element = self
+
+        while True:
+            if isinstance(element, Nil):
+                # Reached the end of the list.
+                break
+            elif isinstance(element, Cons):
+                # Not yet at the end of the list.
+                contents += " " + element.head.get_external_representation()
+                element = element.tail
+            else:
+                # At the end of an improper list.
+                contents += " . " + element.tail.get_external_representation()
+                break
+
+        return "(%s)" % contents.strip()
 
 
 class Nil(Sequence):
