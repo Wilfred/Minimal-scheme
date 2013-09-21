@@ -201,7 +201,7 @@ class Cons(Sequence):
                 element = element.tail
             else:
                 # At the end of an improper list.
-                contents += " . " + element.tail.get_external_representation()
+                contents += " . " + element.get_external_representation()
                 break
 
         return "(%s)" % contents.strip()
