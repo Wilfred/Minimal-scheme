@@ -132,6 +132,24 @@ class Cons(Sequence):
             else:
                 # At the end of an improper list.
                 return False
+
+    def is_proper(self):
+        """Does this list end with a Nil?"""
+        if self.is_circular():
+            return False
+
+        tail = self.tail
+
+        while True:
+            if isinstance(tail, Nil):
+                # Reached the end of the list.
+                return True
+            elif isinstance(tail, Cons):
+                # Not yet at the end of the list.
+                tail = tail.tail
+            else:
+                # At the end of an improper list.
+                return False
                 
     def __getitem__(self, index):
         if index == 0:
@@ -173,6 +191,9 @@ class Cons(Sequence):
 class Nil(Sequence):
     def is_circular(self):
         return False
+
+    def is_proper(self):
+        return True
     
     # the empty list for our linked list structure
     def __len__(self):
