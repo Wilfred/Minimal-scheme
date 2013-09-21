@@ -16,7 +16,7 @@ def car(arguments):
 @define_built_in('cdr')
 def cdr(arguments):
     # TODO: check type as well as arity
-    check_argument_number('cdr', arguments, 1)
+    check_argument_number('cdr', arguments, 1, 1)
 
     list_given = arguments[0]
     return list_given.tail

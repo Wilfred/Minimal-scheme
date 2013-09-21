@@ -5,7 +5,8 @@ import sys
 from io import StringIO
 
 from evaluator import eval_program, load_standard_library, load_built_ins
-from errors import SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError
+from errors import (SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError,
+                    SchemeArityError)
 from data_types import Vector, Nil, Integer
 
 
@@ -246,6 +247,10 @@ class ListTest(InterpreterTest):
     def test_cdr(self):
         program = "(cdr (quote (1 2 3)))"
         self.assertEvaluatesTo(program, [2, 3])
+
+        program = "(cdr (quote (1 2 3)) 1)"
+        with self.assertRaises(SchemeArityError):
+            self.evaluate(program)
 
     def test_car_cdr_compositions(self):
         program = "(caar '((1 3) 2))"
