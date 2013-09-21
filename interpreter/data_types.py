@@ -164,7 +164,7 @@ class Cons(Sequence):
             return self.tail.__setitem__(index - 1, value)
 
     def __repr__(self):
-        return "<Cons: %s>" % str(self.get_python_equivalent())
+        return "<Cons: %s>" % str(self.get_external_representation())
 
     def __bool__(self):
         # a cons represents is a non-empty list, which we treat as true
