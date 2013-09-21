@@ -62,6 +62,9 @@ class Character(Atom):
 
 
 class String(Atom):
+    def __repr__(self):
+        return "<String: %r>" % self.value
+    
     def get_external_representation(self):
         return "%r" % self.value
 
