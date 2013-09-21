@@ -265,6 +265,10 @@ class ListTest(InterpreterTest):
         program = "(cddr '((1 3) 2))"
         self.assertEvaluatesTo(program, [])
 
+    def test_set_car(self):
+        program = "(define x (list 4 5 6)) (set-car! x 1) x"
+        self.assertEvaluatesTo(program, [1, 5, 6])
+
     def test_cons(self):
         program = "(cons 1 (quote (2 3)))"
         self.assertEvaluatesTo(program, [1, 2, 3])

@@ -1,6 +1,6 @@
 from .base import define_built_in
 from utils import check_argument_number
-from data_types import (Cons, Boolean)
+from data_types import (Cons, Nil, Boolean)
 
 
 @define_built_in('car')
@@ -20,6 +20,17 @@ def cdr(arguments):
 
     list_given = arguments[0]
     return list_given.tail
+
+
+@define_built_in('set-car!')
+def set_car(arguments):
+    # TODO: check type as well as arity
+    check_argument_number('set-car!', arguments, 2, 2)
+
+    list_given = arguments[0]
+    list_given.head = arguments[1]
+
+    return Nil()
 
 
 @define_built_in('cons')
