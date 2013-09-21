@@ -1,12 +1,12 @@
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 
 from data_types import (Boolean, Number)
 from errors import SchemeTypeError
 
 
-@name_function('eq?')
-@name_function('eqv?')
+@define_built_in('eq?')
+@define_built_in('eqv?')
 def test_equivalence(arguments):
     check_argument_number('eqv?', arguments, 2, 2)
 
@@ -18,7 +18,7 @@ def test_equivalence(arguments):
         return Boolean(False)
 
 
-@name_function('=')
+@define_built_in('=')
 def equality(arguments):
 
     for argument in arguments:

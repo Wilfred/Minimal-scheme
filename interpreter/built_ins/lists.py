@@ -1,9 +1,9 @@
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 from data_types import (Cons, Boolean)
 
 
-@name_function('car')
+@define_built_in('car')
 def car(arguments):
     # TODO: check type as well as arity
     check_argument_number('car', arguments, 1)
@@ -13,7 +13,7 @@ def car(arguments):
     return list_given[0]
 
 
-@name_function('cdr')
+@define_built_in('cdr')
 def cdr(arguments):
     # TODO: check type as well as arity
     check_argument_number('cdr', arguments, 1)
@@ -22,7 +22,7 @@ def cdr(arguments):
     return list_given.tail
 
 
-@name_function('cons')
+@define_built_in('cons')
 def cons(arguments):
     # TODO: check type as well as arity
     check_argument_number('cons', arguments, 2, 2)
@@ -30,7 +30,7 @@ def cons(arguments):
     return Cons(arguments[0], arguments[1])
 
 
-@name_function('pair?')
+@define_built_in('pair?')
 def pair(arguments):
     check_argument_number('pair?', arguments, 1, 1)
 

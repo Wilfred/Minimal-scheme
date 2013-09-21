@@ -8,17 +8,17 @@ from utils import check_argument_number
 primitives = {}
 
 # a decorator for creating a primitive function object and giving it a name
-def name_function(function_name):
-    def name_function_decorator(function):
+def define_primitive(function_name):
+    def define_primitive_decorator(function):
         primitives[function_name] = function
 
         # we return the function too, so we can use multiple decorators
         return function
 
-    return name_function_decorator
+    return define_primitive_decorator
 
 
-@name_function('define')
+@define_primitive('define')
 def define(arguments, environment):
     check_argument_number('define', arguments, 2)
 
@@ -196,7 +196,7 @@ def define_variadic_function(arguments, environment):
     return (None, environment)
 
 
-@name_function('set!')
+@define_primitive('set!')
 def set_variable(arguments, environment):
     check_argument_number('set!', arguments, 2, 2)
 
@@ -214,7 +214,7 @@ def set_variable(arguments, environment):
 
     return (None, environment)
 
-@name_function('if')
+@define_primitive('if')
 def if_function(arguments, environment):
     check_argument_number('if', arguments, 2, 3)
 
@@ -230,7 +230,7 @@ def if_function(arguments, environment):
             return eval_s_expression(else_expression, environment)
 
 
-@name_function('lambda')
+@define_primitive('lambda')
 def make_lambda_function(arguments, environment):
     check_argument_number('lambda', arguments, 2)
 
@@ -270,14 +270,14 @@ def make_lambda_function(arguments, environment):
     return (LambdaFunction(lambda_function), environment)
 
 
-@name_function('quote')
+@define_primitive('quote')
 def return_argument_unevaluated(arguments, environment):
     check_argument_number('quote', arguments, 1, 1)
 
     return (arguments[0], environment)
 
 
-@name_function('begin')
+@define_primitive('begin')
 def evaluate_sequence(arguments, environment):
     result = None
 
@@ -287,7 +287,7 @@ def evaluate_sequence(arguments, environment):
     return (result, environment)
 
 
-@name_function('quasiquote')
+@define_primitive('quasiquote')
 def quasiquote(arguments, environment):
     """Returns the arguments unevaluated, except for any occurrences
     of unquote.
@@ -340,7 +340,7 @@ def quasiquote(arguments, environment):
     return recursive_eval_unquote(arguments[0], environment)
 
 
-@name_function('defmacro')
+@define_primitive('defmacro')
 def defmacro(arguments, environment):
     """defmacro is a restricted version of Common Lisp's defmacro:
     http://www.ai.mit.edu/projects/iiip/doc/CommonLISP/HyperSpec/Body/mac_defmacro.html

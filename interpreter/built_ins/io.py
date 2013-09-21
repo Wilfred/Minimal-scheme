@@ -1,8 +1,8 @@
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 
 
-@name_function('display')
+@define_built_in('display')
 def display(arguments):
     check_argument_number('display', arguments, 1, 1)
 

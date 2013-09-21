@@ -1,11 +1,11 @@
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 
 from data_types import (Boolean, Character, String, Integer)
 from errors import SchemeTypeError, InvalidArgument
 
 
-@name_function('string?')
+@define_built_in('string?')
 def is_string(arguments):
     check_argument_number('string?', arguments, 1, 1)
 
@@ -15,7 +15,7 @@ def is_string(arguments):
     return Boolean(False)
 
 
-@name_function('make-string')
+@define_built_in('make-string')
 def make_string(arguments):
     check_argument_number('make-string', arguments, 1, 2)
 
@@ -45,7 +45,7 @@ def make_string(arguments):
         return String(repeated_character * string_length)
 
 
-@name_function('string-length')
+@define_built_in('string-length')
 def string_length(arguments):
     check_argument_number('string-length', arguments, 1, 1)
 
@@ -57,7 +57,7 @@ def string_length(arguments):
     string_length = len(string_atom.value)
     return Integer(string_length)
 
-@name_function('string-ref')
+@define_built_in('string-ref')
 def string_ref(arguments):
     check_argument_number('string-ref', arguments, 2, 2)
 
@@ -82,7 +82,7 @@ def string_ref(arguments):
     return Character(string[char_index])
 
 
-@name_function('string-set!')
+@define_built_in('string-set!')
 def string_set(arguments):
     check_argument_number('string-set!', arguments, 3, 3)
 

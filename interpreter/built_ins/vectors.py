@@ -1,9 +1,9 @@
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 from data_types import Vector, Boolean, Nil, Integer
 
 
-@name_function('vector?')
+@define_built_in('vector?')
 def is_vector(arguments):
     check_argument_number('make-vector', arguments, 1, 1)
 
@@ -13,7 +13,7 @@ def is_vector(arguments):
     return Boolean(False)
 
 
-@name_function('make-vector')
+@define_built_in('make-vector')
 def make_vector(arguments):
     check_argument_number('make-vector', arguments, 1, 2)
 
@@ -31,7 +31,7 @@ def make_vector(arguments):
     return vector
 
 
-@name_function('vector-ref')
+@define_built_in('vector-ref')
 def vector_ref(arguments):
     check_argument_number('vector-ref', arguments, 2, 2)
 
@@ -41,7 +41,7 @@ def vector_ref(arguments):
     return vector[index]
 
 
-@name_function('vector-set!')
+@define_built_in('vector-set!')
 def vector_set(arguments):
     check_argument_number('vector-ref', arguments, 3, 3)
 
@@ -54,7 +54,7 @@ def vector_set(arguments):
     return Nil()
 
 
-@name_function('vector-length')
+@define_built_in('vector-length')
 def vector_length(arguments):
     check_argument_number('vector-length', arguments, 1, 1)
 

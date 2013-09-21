@@ -1,16 +1,16 @@
 import math
 from copy import copy
 
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 from data_types import (Boolean, Number, Integer, FloatingPoint)
 from errors import SchemeTypeError
 
 
-@name_function('rational?')
-@name_function('real?')
-@name_function('complex?')
-@name_function('number?')
+@define_built_in('rational?')
+@define_built_in('real?')
+@define_built_in('complex?')
+@define_built_in('number?')
 def number(arguments):
     check_argument_number('number?', arguments, 1, 1)
 
@@ -20,7 +20,7 @@ def number(arguments):
     return Boolean(False)
 
 
-@name_function('exact?')
+@define_built_in('exact?')
 def exact(arguments):
     check_argument_number('exact?', arguments, 1, 1)
 
@@ -33,7 +33,7 @@ def exact(arguments):
                               "numbers as arguments, you gave me ""%s." % \
                                   len(arguments))
 
-@name_function('inexact?')
+@define_built_in('inexact?')
 def inexact(arguments):
     check_argument_number('inexact?', arguments, 1, 1)
 
@@ -46,7 +46,7 @@ def inexact(arguments):
                               "numbers as arguments, you gave me ""%s." % \
                                   len(arguments))
 
-@name_function('+')
+@define_built_in('+')
 def add(arguments):
     if not arguments:
         return Integer(0)
@@ -69,7 +69,7 @@ def add(arguments):
     return total
 
 
-@name_function('-')
+@define_built_in('-')
 def subtract(arguments):
     check_argument_number('-', arguments, 1)
 
@@ -99,7 +99,7 @@ def subtract(arguments):
     return total
 
 
-@name_function('*')
+@define_built_in('*')
 def multiply(arguments):
     if not arguments:
         return Integer(1)
@@ -123,7 +123,7 @@ def multiply(arguments):
     return product
 
 
-@name_function('/')
+@define_built_in('/')
 def divide(arguments):
     # TODO: support exact fractions
     # TODO: return integer if all arguments were integers and result is whole number
@@ -140,7 +140,7 @@ def divide(arguments):
         return result
 
 
-@name_function('<')
+@define_built_in('<')
 def less_than(arguments):
     check_argument_number('<', arguments, 2)
 
@@ -151,7 +151,7 @@ def less_than(arguments):
     return Boolean(True)
 
 
-@name_function('<=')
+@define_built_in('<=')
 def less_or_equal(arguments):
     check_argument_number('<=', arguments, 2)
 
@@ -162,7 +162,7 @@ def less_or_equal(arguments):
     return Boolean(True)
 
 
-@name_function('>')
+@define_built_in('>')
 def greater_than(arguments):
     check_argument_number('>', arguments, 2)
 
@@ -173,7 +173,7 @@ def greater_than(arguments):
     return Boolean(True)
 
 
-@name_function('>=')
+@define_built_in('>=')
 def greater_or_equal(arguments):
     check_argument_number('>=', arguments, 2)
 
@@ -184,7 +184,7 @@ def greater_or_equal(arguments):
     return Boolean(True)
 
 
-@name_function('quotient')
+@define_built_in('quotient')
 def quotient(arguments):
     # integer division
     check_argument_number('quotient', arguments, 2, 2)
@@ -202,7 +202,7 @@ def quotient(arguments):
     return Integer(result)
 
 
-@name_function('modulo')
+@define_built_in('modulo')
 def modulo(arguments):
     check_argument_number('modulo', arguments, 2, 2)
 
@@ -214,7 +214,7 @@ def modulo(arguments):
     return Integer(arguments[0].value % arguments[1].value)
 
 
-@name_function('remainder')
+@define_built_in('remainder')
 def remainder(arguments):
     check_argument_number('remainder', arguments, 2, 2)
 
@@ -231,7 +231,7 @@ def remainder(arguments):
     return Integer(value)
 
 
-@name_function('exp')
+@define_built_in('exp')
 def exp(arguments):
     check_argument_number('exp', arguments, 1, 1)
 
@@ -243,7 +243,7 @@ def exp(arguments):
     return FloatingPoint(math.exp(x1))
 
 
-@name_function('log')
+@define_built_in('log')
 def log(arguments):
     check_argument_number('log', arguments, 1, 1)
 

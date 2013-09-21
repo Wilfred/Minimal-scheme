@@ -1,11 +1,11 @@
-from .base import name_function
+from .base import define_built_in
 from utils import check_argument_number
 
 from data_types import (Boolean, Character)
 from errors import SchemeTypeError
 
 
-@name_function('char?')
+@define_built_in('char?')
 def is_char(arguments):
     check_argument_number('char?', arguments, 1, 1)
 
@@ -15,7 +15,7 @@ def is_char(arguments):
     return Boolean(False)
 
 
-@name_function('char=?')
+@define_built_in('char=?')
 def char_equal(arguments):
     check_argument_number('char=?', arguments, 2, 2)
 
@@ -30,7 +30,7 @@ def char_equal(arguments):
     return Boolean(False)
 
 
-@name_function('char<?')
+@define_built_in('char<?')
 def char_less_than(arguments):
     check_argument_number('char<?', arguments, 2, 2)
 
