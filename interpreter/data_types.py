@@ -84,7 +84,6 @@ class Cons(Sequence):
         else:
             self.tail = Nil()
             
-
     def __len__(self):
         """Find the length of this linked list. We return an error if the list
         is circular, and handle dotted lists gracefully.
@@ -93,19 +92,13 @@ class Cons(Sequence):
         iterative approach.
 
         """
+        if self.is_circular():
+            raise CircularList("Can't take the length of a circular list.")
+        
         length = 1
         tail = self.tail
-        seen_elements = set()
 
         while True:
-            if id(tail) in seen_elements:
-                raise CircularList()
-            else:
-                # We can't hash our list items, but we're only
-                # interested in checking if it's an item we've seen
-                # before. Using id() is sufficient.
-                seen_elements.add(id(tail))
-
             if isinstance(tail, Nil):
                 # Reached the end of the list.
                 return length
@@ -116,6 +109,29 @@ class Cons(Sequence):
             else:
                 # At the end of an improper list.
                 return length + 1
+
+    def is_circular(self):
+        tail = self.tail
+        seen_elements = set()
+
+        while True:
+            if id(tail) in seen_elements:
+                return True
+            else:
+                # We can't hash our list items, but we're only
+                # interested in checking if it's an item we've seen
+                # before. Using id() is sufficient.
+                seen_elements.add(id(tail))
+
+            if isinstance(tail, Nil):
+                # Reached the end of the list.
+                return False
+            elif isinstance(tail, Cons):
+                # Not yet at the end of the list.
+                tail = tail.tail
+            else:
+                # At the end of an improper list.
+                return False
                 
     def __getitem__(self, index):
         if index == 0:
@@ -155,6 +171,9 @@ class Cons(Sequence):
 
 
 class Nil(Sequence):
+    def is_circular(self):
+        return False
+    
     # the empty list for our linked list structure
     def __len__(self):
         return 0
