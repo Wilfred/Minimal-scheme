@@ -16,19 +16,11 @@ class Atom(object):
 
         return False
 
-    def get_python_equivalent(self):
-        return self.value
 
-
-"""Atom classes. Although most Scheme data types map neatly to Python
-equivalents, there are some exceptions (such as symbols and exact
-fractions). Therefore we wrap all atoms in a class so we can treat
-them uniformly.
-
-"""
 class Symbol(Atom):
     def get_external_representation(self):
         return self.value
+
 
 class Number(Atom):
     def __eq__(self, other):
@@ -191,19 +183,6 @@ class Cons(Sequence):
                 if not isinstance(element, Cons) or not isinstance(other_element, Cons):
                     return element == other_element
 
-    def get_python_equivalent(self):
-        if hasattr(self.head, "get_python_equivalent"):
-            python_list = [self.head.get_python_equivalent()]
-        else:
-            python_list = [self.head]
-
-        if isinstance(self.tail, Atom):
-            # an improper list has an atom as a tail rather than a list
-            return python_list + ['.', self.tail.get_python_equivalent()]
-        else:
-            # normal list
-            return python_list + self.tail.get_python_equivalent()
-
     def get_external_representation(self):
         if self.is_circular():
             # todo: find a better way of printing these.
@@ -256,9 +235,6 @@ class Nil(Sequence):
         if isinstance(other, Nil):
             return True
         return False
-
-    def get_python_equivalent(self):
-        return []
 
     def get_external_representation(self):
         return "()"

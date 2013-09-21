@@ -7,6 +7,7 @@ def display(arguments):
     check_argument_number('display', arguments, 1, 1)
 
     atom = arguments[0]
-    print(atom.get_python_equivalent(), end='')
+    # FIXME: should we check type? Is this funcction only for strings?
+    print(atom.value, end='')
 
     return None
