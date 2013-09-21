@@ -1,4 +1,6 @@
 from collections import Sequence
+from errors import CircularList
+
 
 class Atom(object):
     """An abstract class for every base type in Scheme."""
@@ -84,8 +86,37 @@ class Cons(Sequence):
             
 
     def __len__(self):
-        return 1 + self.tail.__len__()
+        """Find the length of this linked list. We return an error if the list
+        is circular, and handle dotted lists gracefully.
 
+        Since Python doesn't have TCO, we are forced to use an
+        iterative approach.
+
+        """
+        length = 1
+        tail = self.tail
+        seen_elements = set()
+
+        while True:
+            if id(tail) in seen_elements:
+                raise CircularList()
+            else:
+                # We can't hash our list items, but we're only
+                # interested in checking if it's an item we've seen
+                # before. Using id() is sufficient.
+                seen_elements.add(id(tail))
+
+            if isinstance(tail, Nil):
+                # Reached the end of the list.
+                return length
+            elif isinstance(tail, Cons):
+                # Not yet at the end of the list.
+                length += 1
+                tail = tail.tail
+            else:
+                # At the end of an improper list.
+                return length + 1
+                
     def __getitem__(self, index):
         if index == 0:
             return self.head

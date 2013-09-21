@@ -5,6 +5,9 @@ class InterpreterException(Exception):
     def __str__(self):
         return "Interpreter error: %s" % self.message
 
+class CircularList(InterpreterException):
+    pass
+
 class UndefinedVariable(InterpreterException):
     pass
 
