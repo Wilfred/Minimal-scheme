@@ -15,8 +15,12 @@ class InterpreterTest(unittest.TestCase):
         self.environment = load_built_ins(self.environment)
         self.environment = load_standard_library(self.environment)
 
-    def assertEvaluatesTo(self, program, expected_result):
+    def evaluate(self, program):
         internal_result, final_environment = eval_program(program, self.environment)
+        return internal_result
+
+    def assertEvaluatesTo(self, program, expected_result):
+        internal_result = self.evaluate(program)
 
         if internal_result is None:
             result = None
@@ -26,7 +30,7 @@ class InterpreterTest(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def assertEvaluatesAs(self, program, expected_result):
-        internal_result, final_environment = eval_program(program, self.environment)
+        internal_result = self.evaluate(program)
 
         if internal_result is None:
             result = Nil()
