@@ -183,6 +183,7 @@ class EvaluatorTest(InterpreterTest):
     def test_quote_sugar(self):
         program = "'(1 2 3)"
         self.assertEvaluatesTo(program, [1, 2, 3])
+        # FIXME: with TCO, this is actually just an infinite loop
 
     def test_type_error(self):
         program = "(2 2)"
