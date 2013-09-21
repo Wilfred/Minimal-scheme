@@ -33,6 +33,17 @@ def set_car(arguments):
     return Nil()
 
 
+@define_built_in('set-cdr!')
+def set_cdr(arguments):
+    # TODO: check type as well as arity
+    check_argument_number('set-cdr!', arguments, 2, 2)
+
+    list_given = arguments[0]
+    list_given.tail = arguments[1]
+
+    return Nil()
+
+
 @define_built_in('cons')
 def cons(arguments):
     # TODO: check type as well as arity

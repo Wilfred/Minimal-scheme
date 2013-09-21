@@ -78,7 +78,7 @@ No support for exact fractions or complex numbers.
 ### Lists
 
 `car`, `cdr`, `caar`, `cadr`, `cdar`, `cddr`, `cons`, `null?`,
-`pair?`, `list`, `length`, `set-car!`
+`pair?`, `list`, `length`, `set-car!`, `set-cdr!`
 
 ### Control
 

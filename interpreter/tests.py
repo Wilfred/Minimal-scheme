@@ -7,7 +7,7 @@ from io import StringIO
 from evaluator import eval_program, load_standard_library, load_built_ins
 from errors import (SchemeTypeError, SchemeStackOverflow, SchemeSyntaxError,
                     SchemeArityError)
-from data_types import Vector, Nil, Integer
+from data_types import Vector, Cons, Nil, Integer
 
 
 class InterpreterTest(unittest.TestCase):
@@ -268,6 +268,11 @@ class ListTest(InterpreterTest):
     def test_set_car(self):
         program = "(define x (list 4 5 6)) (set-car! x 1) x"
         self.assertEvaluatesTo(program, [1, 5, 6])
+
+    def test_set_cdr(self):
+        program = "(define x (list 4 5 6)) (set-cdr! x 1) x"
+        result = self.evaluate(program)
+        self.assertEqual(result, Cons(Integer(4), Integer(1)))
 
     def test_cons(self):
         program = "(cons 1 (quote (2 3)))"
