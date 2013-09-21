@@ -1,7 +1,7 @@
 from .base import define_built_in
 from utils import check_argument_number
 
-from data_types import (Boolean, Number)
+from data_types import (Cons, Atom, Boolean, Number)
 from errors import SchemeTypeError
 
 
@@ -10,12 +10,16 @@ from errors import SchemeTypeError
 def test_equivalence(arguments):
     check_argument_number('eqv?', arguments, 2, 2)
 
-    # __eq__ is defined on on Atom and Nil
-    # and == on Cons just compares references, so we can just use a normal equality test
-    if arguments[0] == arguments[1]:
-        return Boolean(True)
+    if isinstance(arguments[0], Atom):
+        # __eq__ is defined on Atom
+        return Boolean(arguments[0] == arguments[1])
+    if isinstance(arguments[0], Cons):
+        # __eq__ on Cons is deep equality
+        return Boolean(arguments[0] is arguments[1])
     else:
-        return Boolean(False)
+        # __eq__ is defined on Nil
+        # todo: test vectors
+        return Boolean(arguments[0] == arguments[1])
 
 
 @define_built_in('=')

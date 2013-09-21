@@ -170,6 +170,24 @@ class Cons(Sequence):
         # a cons represents is a non-empty list, which we treat as true
         return True
 
+    def __eq__(self, other):
+        if not isinstance(other, Cons):
+            return False
+
+        element = self
+        other_element = other
+
+        while True:
+            if element.head != other_element.head:
+                return False
+            else:
+                # continue on the list
+                element = element.tail
+                other_element = other_element.tail
+
+                if not isinstance(element, Cons) or not isinstance(other_element, Cons):
+                    return element == other_element
+
     def get_python_equivalent(self):
         if hasattr(self.head, "get_python_equivalent"):
             python_list = [self.head.get_python_equivalent()]
