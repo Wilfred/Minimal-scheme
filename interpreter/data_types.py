@@ -8,7 +8,7 @@ class Atom(object):
         self.value = value
 
     def __repr__(self):
-        return "<Atom: %s (%s)>" % (str(self.value), self.__class__.__name__)
+        return "<%s: %s>" % (self.__class__.__name__, str(self.value))
 
     def __eq__(self, other):
         if isinstance(other, self.__class__) and other.value == self.value:
