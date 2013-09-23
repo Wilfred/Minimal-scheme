@@ -1,12 +1,13 @@
 import ply.lex
 from errors import SchemeSyntaxError
 
-tokens = ('LPAREN', 'RPAREN', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT',
+tokens = ('LPAREN', 'RPAREN', 'DOT', 'SYMBOL', 'INTEGER', 'BOOLEAN', 'FLOATING_POINT',
           'CHARACTER', 'STRING', 'QUOTESUGAR', 'QUASIQUOTESUGAR',
           'UNQUOTESUGAR', 'UNQUOTESPLICINGSUGAR')
 
 t_LPAREN = r'\('
 t_RPAREN = r'\)'
+t_DOT = r'.'
 t_SYMBOL = r'[a-zA-Z!$%&*+./:<=>?"@^_~-][0-9a-zA-Z!$%&*+./:<=>?"@^_~-]*'
 t_QUOTESUGAR = r"'"
 t_QUASIQUOTESUGAR = r"`"

@@ -23,6 +23,7 @@ list : ( listarguments )
      | UNQUOTESPLICINGSUGAR sexpression
 
 listarguments : sexpression listarguments
+              | sexpression DOT sexpression
               |
 
 atom : SYMBOL | NUMBER | BOOLEAN | CHARACTER | STRING
@@ -75,6 +76,11 @@ def p_listarguments_one(p):
     "listarguments : sexpression listarguments"
     # a list is therefore a nested tuple:
     p[0] = Cons(p[1], p[2])
+
+def p_listarguments_dot(p):
+    "listarguments : sexpression DOT sexpression"
+    # an improper list
+    p[0] = Cons(p[1], p[3])
 
 def p_listargument_empty(p):
     "listarguments :"
