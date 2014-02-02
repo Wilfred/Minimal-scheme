@@ -2,6 +2,8 @@ Minimal scheme: a toy scheme interpreter written in Python
 
 [![Build Status](https://secure.travis-ci.org/Wilfred/Minimal-scheme.png?branch=master)](http://travis-ci.org/Wilfred/Minimal-scheme)
 
+# Interpreter
+
 This is a from-scratch Scheme implementation written for pleasure and
 education purposes only. It is targetting R5RS
 ([HTML copy of spec](http://people.csail.mit.edu/jaffer/r5rs_toc.html)),
@@ -160,3 +162,8 @@ Comments work too!
 * Add documentation via [docco](https://github.com/jashkenas/docco)
 * Remove PLY dependency
 * Explore R5RS compliance with http://sisc-scheme.org/r5rs_pitfall.php
+
+# Compiler
+
+There's also a skeleton compiler here, this is based on the paper
+[An Incremental Approach to Compiler Construction](http://scheme2006.cs.uchicago.edu/11-ghuloum.pdf).
