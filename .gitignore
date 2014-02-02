@@ -1,5 +1,12 @@
-*~
+# Python files
 *.pyc
 parser.out
 parsetab.py
+
+# Compiler output
+compiler/main
+
+# Editor files
+*~
 TAGS
+
