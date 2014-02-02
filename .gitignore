@@ -5,6 +5,7 @@ parsetab.py
 
 # Compiler output
 compiler/main
+compiler/scheme.s
 
 # Editor files
 *~
